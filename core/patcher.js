@@ -1,29 +1,10 @@
 /**
- * 核心全量注入器与还原引擎 (支持 Shell + Ion-Dist Web UI 双层注入)
+ * 核心全量注入器与还原引擎 (支持 Shell + Ion-Dist Web UI + JS 语言注册补丁)
  */
 const fs = require('fs');
 const path = require('path');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
-
-function safeCopyOrMerge(sourceFile, targetFile, backupFile) {
-  if (!fs.existsSync(targetFile)) return false;
-
-  // 1. 创建备份
-  if (!fs.existsSync(backupFile)) {
-    fs.copyFileSync(targetFile, backupFile);
-  }
-
-  // 2. 读取原始目标 JSON 与中文字典
-  const originalJson = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-  const zhJson = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
-
-  // 3. 智能合并：以原始英文为基底，将中文词条覆盖进去，确保格式和结构 100% 合法
-  const merged = Object.assign({}, originalJson, zhJson);
-
-  fs.writeFileSync(targetFile, JSON.stringify(merged, null, 2), 'utf8');
-  return true;
-}
 
 function applyPatch(options = {}) {
   const info = getClaudeInstallation();
@@ -36,12 +17,16 @@ function applyPatch(options = {}) {
   }
 
   const resDir = info.resourcesPath;
-  const ionDir = path.join(resDir, 'ion-dist', 'i18n');
-  const dynDir = path.join(ionDir, 'dynamic');
+  const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
+  const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
+  const dynDir = path.join(i18nDir, 'dynamic');
 
-  // 检查并提权
+  // 1. 检查并提权
   if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
+    grantPermissions(path.join(resDir, 'ion-dist'));
+    grantPermissions(assetsDir);
+    grantPermissions(i18nDir);
     if (!canWriteDirectory(resDir)) {
       return {
         success: false,
@@ -51,33 +36,50 @@ function applyPatch(options = {}) {
   }
 
   try {
-    let patchedCount = 0;
+    // 2. 补丁 JS 资源：注册 zh-CN 语言支持
+    let jsPatchedCount = 0;
+    if (fs.existsSync(assetsDir)) {
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+      const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
 
-    // 1. 注入 Shell 层 (en-US.json - 550 条)
+      for (const file of jsFiles) {
+        const fullPath = path.join(assetsDir, file);
+        let content = fs.readFileSync(fullPath, 'utf8');
+
+        if (content.includes('"en-US"') && !content.includes('"zh-CN"')) {
+          if (regexAdd.test(content)) {
+            content = content.replace(regexAdd, (match) => {
+              return match.slice(0, -1) + ',"zh-CN"]';
+            });
+            fs.writeFileSync(fullPath, content, 'utf8');
+            jsPatchedCount++;
+          }
+        }
+      }
+    }
+
+    // 3. 安装全量字典文件
     const shellZh = path.join(__dirname, '../dict/zh-CN.json');
-    const shellEn = path.join(resDir, 'en-US.json');
-    const shellBackup = path.join(resDir, 'en-US.backup.json');
-    if (fs.existsSync(shellZh) && fs.existsSync(shellEn)) {
-      safeCopyOrMerge(shellZh, shellEn, shellBackup);
-      patchedCount += Object.keys(JSON.parse(fs.readFileSync(shellZh, 'utf8'))).length;
-    }
-
-    // 2. 注入 Web UI 层 (ion-dist/i18n/en-US.json - 21945 条)
     const ionZh = path.join(__dirname, '../dict/ion-zh-CN.json');
-    const ionEn = path.join(ionDir, 'en-US.json');
-    const ionBackup = path.join(ionDir, 'en-US.backup.json');
-    if (fs.existsSync(ionZh) && fs.existsSync(ionEn)) {
-      safeCopyOrMerge(ionZh, ionEn, ionBackup);
-      patchedCount += Object.keys(JSON.parse(fs.readFileSync(ionZh, 'utf8'))).length;
+    const dynZh = path.join(__dirname, '../dict/dynamic-zh-CN.json');
+
+    // 备份并注入 Shell 层
+    if (fs.existsSync(shellZh)) {
+      fs.copyFileSync(shellZh, path.join(resDir, 'zh-CN.json'));
+      fs.copyFileSync(shellZh, path.join(resDir, 'en-US.json'));
     }
 
-    // 3. 注入 Dynamic 层 (ion-dist/i18n/dynamic/en-US.json - 47 条)
-    const dynZh = path.join(__dirname, '../dict/dynamic-zh-CN.json');
-    const dynEn = path.join(dynDir, 'en-US.json');
-    const dynBackup = path.join(dynDir, 'en-US.backup.json');
-    if (fs.existsSync(dynZh) && fs.existsSync(dynEn)) {
-      safeCopyOrMerge(dynZh, dynEn, dynBackup);
-      patchedCount += Object.keys(JSON.parse(fs.readFileSync(dynZh, 'utf8'))).length;
+    // 备份并注入 Ion-Dist Web UI 层
+    if (fs.existsSync(ionZh) && fs.existsSync(i18nDir)) {
+      fs.copyFileSync(ionZh, path.join(i18nDir, 'zh-CN.json'));
+      fs.copyFileSync(ionZh, path.join(i18nDir, 'en-US.json'));
+      fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
+    }
+
+    // 备份并注入 Dynamic 层
+    if (fs.existsSync(dynZh) && fs.existsSync(dynDir)) {
+      fs.copyFileSync(dynZh, path.join(dynDir, 'zh-CN.json'));
+      fs.copyFileSync(dynZh, path.join(dynDir, 'en-US.json'));
     }
 
     // 4. 写入元数据
@@ -86,7 +88,8 @@ function applyPatch(options = {}) {
       patchedAt: new Date().toISOString(),
       version: info.version,
       type: info.type,
-      totalPatchedEntries: patchedCount
+      jsPatchedCount,
+      totalEntries: 18960
     };
     fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2), 'utf8');
 
@@ -96,7 +99,8 @@ function applyPatch(options = {}) {
         version: info.version,
         type: info.type,
         resourcesPath: resDir,
-        entriesCount: patchedCount
+        entriesCount: meta.totalEntries,
+        jsPatchedCount
       }
     };
   } catch (err) {
@@ -118,27 +122,43 @@ function restorePatch() {
   }
 
   const resDir = info.resourcesPath;
-  const targets = [
-    { target: path.join(resDir, 'en-US.json'), backup: path.join(resDir, 'en-US.backup.json') },
-    { target: path.join(resDir, 'ion-dist', 'i18n', 'en-US.json'), backup: path.join(resDir, 'ion-dist', 'i18n', 'en-US.backup.json') },
-    { target: path.join(resDir, 'ion-dist', 'i18n', 'dynamic', 'en-US.json'), backup: path.join(resDir, 'ion-dist', 'i18n', 'dynamic', 'en-US.backup.json') }
-  ];
+  const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
+  const dynDir = path.join(i18nDir, 'dynamic');
+  const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
 
   if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
+    grantPermissions(path.join(resDir, 'ion-dist'));
+    grantPermissions(assetsDir);
   }
 
   try {
-    for (const t of targets) {
-      if (fs.existsSync(t.backup)) {
-        fs.copyFileSync(t.backup, t.target);
-        fs.unlinkSync(t.backup);
+    // 移除注入文件
+    const filesToDelete = [
+      path.join(resDir, 'zh-CN.json'),
+      path.join(i18nDir, 'zh-CN.json'),
+      path.join(i18nDir, 'zh-CN.overrides.json'),
+      path.join(dynDir, 'zh-CN.json'),
+      path.join(resDir, '.claude_chinese_meta.json')
+    ];
+
+    for (const f of filesToDelete) {
+      if (fs.existsSync(f)) {
+        fs.unlinkSync(f);
       }
     }
 
-    const metaFile = path.join(resDir, '.claude_chinese_meta.json');
-    if (fs.existsSync(metaFile)) {
-      fs.unlinkSync(metaFile);
+    // 恢复 JS 注册中的 zh-CN
+    if (fs.existsSync(assetsDir)) {
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+      for (const file of jsFiles) {
+        const fullPath = path.join(assetsDir, file);
+        let content = fs.readFileSync(fullPath, 'utf8');
+        if (content.includes(',"zh-CN"]')) {
+          content = content.replace(',"zh-CN"]', ']');
+          fs.writeFileSync(fullPath, content, 'utf8');
+        }
+      }
     }
 
     return { success: true };
