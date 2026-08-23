@@ -1,11 +1,11 @@
 /**
- * Claude 安装路径与 MSIX/Win32/macOS 包探测器
+ * Claude 安装路径与 MSIX/Win32/macOS/Linux 全平台探测器
  */
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-function getClaudeInstallation() {
+function getClaudeInstallation(customPath = null) {
   const result = {
     platform: process.platform,
     type: 'unknown',
@@ -16,7 +16,20 @@ function getClaudeInstallation() {
     packageFamilyName: null
   };
 
-  if (process.platform === 'win32') {
+  // 0. 支持用户手动指定路径
+  if (customPath && fs.existsSync(customPath)) {
+    result.type = 'custom';
+    result.installPath = customPath;
+    if (fs.existsSync(path.join(customPath, 'resources'))) {
+      result.resourcesPath = path.join(customPath, 'resources');
+    } else if (fs.existsSync(path.join(customPath, 'app', 'resources'))) {
+      result.resourcesPath = path.join(customPath, 'app', 'resources');
+    } else if (fs.existsSync(path.join(customPath, 'Contents', 'Resources'))) {
+      result.resourcesPath = path.join(customPath, 'Contents', 'Resources');
+    } else {
+      result.resourcesPath = customPath;
+    }
+  } else if (process.platform === 'win32') {
     // 1. 优先检测 Windows MSIX / Appx 安装
     try {
       const output = execSync('powershell -NoProfile -Command "Get-AppxPackage -Name *Claude* | Select-Object -First 1 -Property PackageFullName, InstallLocation, Version, PackageFamilyName | ConvertTo-Json"', {
@@ -65,9 +78,27 @@ function getClaudeInstallation() {
         result.resourcesPath = resPath;
       }
     }
+  } else if (process.platform === 'linux') {
+    // 4. Linux 常见路径探测
+    const linuxCandidates = [
+      '/usr/lib/claude-desktop/resources',
+      '/usr/share/claude-desktop/resources',
+      '/opt/Claude/resources',
+      '/opt/claude-desktop/resources',
+      path.join(process.env.HOME || '', '.local/share/claude-desktop/resources')
+    ];
+
+    for (const cand of linuxCandidates) {
+      if (fs.existsSync(cand)) {
+        result.type = 'linux';
+        result.installPath = path.dirname(cand);
+        result.resourcesPath = cand;
+        break;
+      }
+    }
   }
 
-  // 4. 检查是否已汉化
+  // 5. 检查是否已汉化
   if (result.resourcesPath) {
     const enPath = path.join(result.resourcesPath, 'en-US.json');
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');

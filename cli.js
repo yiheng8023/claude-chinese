@@ -13,16 +13,24 @@ const fs = require('fs');
 const args = process.argv.slice(2);
 const command = args[0] || 'status';
 
+function getCustomPath() {
+  const pathIdx = args.indexOf('--path');
+  if (pathIdx !== -1 && args[pathIdx + 1]) {
+    return args[pathIdx + 1];
+  }
+  return null;
+}
+
 function showHelp() {
   console.log(`
 Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
 
 用法:
-  node cli.js [命令]
+  node cli.js [命令] [--path <自定义安装路径>]
 
 可用命令:
   status         检查 Claude 客户端安装与汉化补丁状态
-  install        注入中文汉化补丁 (支持 MSIX / Win32 / macOS)
+  install        注入中文汉化补丁 (支持 MSIX / Win32 / macOS / Linux)
   restore        还原为官方英文原版
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         自愈式启动 Claude (检测并自动补齐汉化后启动)
@@ -32,7 +40,8 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
 
 function handleStatus() {
   console.log('=== Claude 客户端状态检查 ===\n');
-  const info = getClaudeInstallation();
+  const customPath = getCustomPath();
+  const info = getClaudeInstallation(customPath);
 
   if (!info.installPath) {
     console.log('❌ 未检测到已安装的 Claude 桌面客户端。');
