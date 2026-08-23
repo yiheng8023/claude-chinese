@@ -1,6 +1,14 @@
 # Claude 桌面端自愈型中文汉化工具包 (Claude Chinese Toolkit)
 
 <p align="center">
+  <a href="https://github.com/yiheng8023/claude-chinese/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yiheng8023/claude-chinese/ci.yml?branch=main&label=CI&logo=github" alt="CI Status"></a>
+  <a href="https://github.com/yiheng8023/claude-chinese/releases/latest"><img src="https://img.shields.io/github/v/release/yiheng8023/claude-chinese?color=blue&label=Release" alt="Latest Release"></a>
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D16.x-brightgreen?logo=node.js" alt="Node Version">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform Support">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/yiheng8023/claude-chinese?color=green" alt="License"></a>
+</p>
+
+<p align="center">
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
@@ -100,22 +108,17 @@ node cli.js restore
 
 ## 🧪 自动化测试与质量保证 (Testing & Verification)
 
-本项目引入严格的端到端自动化测试与全维度质量审计：
+本项目引入严格的端到端自动化测试与跨平台 CI 流水线（Windows / macOS / Ubuntu），避免人工经验验证带来的遗漏：
 
 ```bash
-# 运行核心字典完整性与 ICU 防火墙测试
+# 运行全套自动化测试套件（聚合 4 大核心测试套件）
 npm test
-
-# 运行全维度一致性与质量审计工具
-node tools/comprehensive-audit.js
-
-# 运行上游版本漂移检测
-npm run scan:drift
 ```
 
-* **字典完整性断言 (`test/verify-dict.js`)**：验证核心字典结构无缺失、无空值。
-* **ICU 语法防火墙 (`test/test-icu.js`)**：确保所有模板变量、复数分支与技术专有名词 100% 结构对称。
-* **全维度质量审计 (`tools/comprehensive-audit.js`)**：自动扫描 HTML 标签闭合性、上下文规格（如 `1M` 保护）与专有名词一致性。
+- **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值。
+- **ICU 语法防火墙 (`test/test-icu.js`)**：确保所有模板变量、复数分支与技术专有名词 100% 结构对称。
+- **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 干净还原 -> 原版回退全流程。
+- **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
 
 ---
 
@@ -127,6 +130,36 @@ flowchart LR
     B -->|新增增量词条| C[AI 增量翻译与 ICU 校验]
     C -->|验证通过词库| D[双层智能注入引擎]
     D -->|自愈式挂载| E[Claude 客户端完美呈现中文]
+```
+
+---
+
+## 📁 仓库结构 (Repository Structure)
+
+```text
+claude-chinese/
+├── dict/                     # 汉化词库目录
+│   ├── zh-CN.json            # 核心 Shell 壳层汉化词典 (550+ 词条)
+│   ├── ion-zh-CN.json        # 网页端核心 UI 词典 (18,900+ 词条)
+│   └── dynamic-zh-CN.json    # 动态特性与占位符词典
+├── core/                     # 注入核心模块
+│   ├── patcher.js            # 补丁注入、JS 白名单注册与还原核心
+│   ├── msix-detector.js      # MSIX 容器探测与跨平台路径解析
+│   └── permissions.js        # Windows ACL 权限与提权工具
+├── test/                     # 自动化全真回归测试套件
+│   ├── verify-dict.js        # 字典完整性断言
+│   ├── test-icu.js           # ICU 占位符与专有名词保护断言
+│   ├── test-restore-cycle.js # 安装与还原生命周期回归测试
+│   └── test-cross-platform-live.js # 跨平台无参系统路径探测实测
+├── tools/                    # 文本提取、差量比对与漂移检测工具链
+├── docs/assets/sponsoring/   # 赞助与支持相关资产
+├── cli.js                    # 跨平台命令行生命周期管理入口
+├── install.bat / install.sh  # 一键安装脚本
+├── launch.bat                # 自愈启动脚本
+├── uninstall.bat / uninstall.sh # 一键还原脚本
+├── package.json              # 项目配置与 npm scripts
+├── LICENSE                   # MIT 开源许可证
+└── README.md                 # 说明文档
 ```
 
 ---

@@ -1,6 +1,14 @@
 # Claude Chinese Localization Toolkit (claude-chinese)
 
 <p align="center">
+  <a href="https://github.com/yiheng8023/claude-chinese/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yiheng8023/claude-chinese/ci.yml?branch=main&label=CI&logo=github" alt="CI Status"></a>
+  <a href="https://github.com/yiheng8023/claude-chinese/releases/latest"><img src="https://img.shields.io/github/v/release/yiheng8023/claude-chinese?color=blue&label=Release" alt="Latest Release"></a>
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D16.x-brightgreen?logo=node.js" alt="Node Version">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform Support">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/yiheng8023/claude-chinese?color=green" alt="License"></a>
+</p>
+
+<p align="center">
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
@@ -88,12 +96,46 @@ node cli.js drift
 
 ## 🧪 Testing & Verification
 
-```bash
-# Run full automated regression & ICU firewall assertions
-npm test
+This project uses comprehensive automated regression test suites and cross-platform CI (Windows / macOS / Ubuntu) to ensure stability:
 
-# Run comprehensive dictionary audit
-node tools/comprehensive-audit.js
+```bash
+# Run full automated regression test suite
+npm test
+```
+
+- **Dictionary Integrity (`test/verify-dict.js`)**: Validates core dictionary structure with zero missing or empty entries.
+- **ICU Syntax Firewall (`test/test-icu.js`)**: Ensures all template variables, plural branches, and technical terms remain structurally symmetrical.
+- **Lifecycle & Reversible Restore (`test/test-restore-cycle.js`)**: End-to-end install -> status check -> clean rollback -> fallback verification.
+- **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Verifies 0-argument automatic path detection on physical platform runners.
+
+---
+
+## 📁 Repository Structure
+
+```text
+claude-chinese/
+├── dict/                     # Localization dictionary assets
+│   ├── zh-CN.json            # Shell layer dictionary (550+ entries)
+│   ├── ion-zh-CN.json        # Web UI dictionary (18,900+ entries)
+│   └── dynamic-zh-CN.json    # Dynamic features and placeholder dictionary
+├── core/                     # Injection engine
+│   ├── patcher.js            # Patch injection, JS registration, and restore core
+│   ├── msix-detector.js      # MSIX container detector & cross-platform path resolver
+│   └── permissions.js        # Windows ACL permissions and elevation utilities
+├── test/                     # Automated regression test suites
+│   ├── verify-dict.js        # Dictionary integrity assertions
+│   ├── test-icu.js           # ICU variable syntax firewall assertions
+│   ├── test-restore-cycle.js # Install and restore lifecycle regression tests
+│   └── test-cross-platform-live.js # Live cross-platform path detection tests
+├── tools/                    # Text extraction, diff comparison, and drift detectors
+├── docs/assets/sponsoring/   # Sponsorship & donation assets
+├── cli.js                    # Cross-platform CLI lifecycle entry point
+├── install.bat / install.sh  # One-click installation scripts
+├── launch.bat                # Self-healing launcher script
+├── uninstall.bat / uninstall.sh # One-click restore scripts
+├── package.json              # Project configuration and npm scripts
+├── LICENSE                   # MIT License
+└── README.md                 # Documentation
 ```
 
 ---
