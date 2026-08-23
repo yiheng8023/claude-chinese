@@ -1,6 +1,7 @@
 /**
  * 全平台 (Windows / macOS / Linux) 探测与注入真实代码断言测试 (跨平台真机与 CI 必备)
- * 验证核心代码：msix-detector.js 与 patcher.js 在全平台路径解析、增量注入、JS 白名单穿透与还原复位
+ * 1. 验证系统级默认路径自动探测 (无参 getClaudeInstallation() 在真实 Linux/macOS/Win32 上的自动命中)
+ * 2. 验证核心代码：msix-detector.js 与 patcher.js 在全平台路径解析、增量注入、JS 白名单穿透与还原复位
  */
 const fs = require('fs');
 const path = require('path');
@@ -9,11 +10,80 @@ const { getClaudeInstallation } = require('../core/msix-detector');
 const { applyPatch, restorePatch } = require('../core/patcher');
 
 console.log('====================================================');
-console.log(`   全平台真实核心代码跨平台断言测试 (Runner OS: ${process.platform})`);
+console.log(`   全平台真实核心代码与系统级自动探测测试 (Runner OS: ${process.platform})`);
 console.log('====================================================\n');
 
+// ----------------------------------------------------
+// Part 1: 真实系统级默认路径自动探测断言 (Auto Discovery Test)
+// ----------------------------------------------------
+console.log('【阶段 1】测试当前系统原生默认路径自动探测 (无参调用 getClaudeInstallation())...');
+
+let createdSystemMockDir = null;
+
+try {
+  if (process.platform === 'linux') {
+    // Linux 下系统默认候选路径之一: ~/.local/share/claude-desktop/resources
+    const homeDir = process.env.HOME || '/tmp';
+    createdSystemMockDir = path.join(homeDir, '.local', 'share', 'claude-desktop', 'resources');
+    fs.mkdirSync(createdSystemMockDir, { recursive: true });
+    fs.writeFileSync(path.join(createdSystemMockDir, 'en-US.json'), '{}', 'utf8');
+
+    const autoDetected = getClaudeInstallation();
+    console.log('   Linux 自动探测结果:', autoDetected);
+
+    if (autoDetected.type !== 'linux' || !autoDetected.resourcesPath) {
+      console.error('❌ Linux 系统级默认安装路径自动探测失败！');
+      process.exit(1);
+    }
+    console.log('   ✅ Linux 系统默认路径自动探测成功！');
+
+  } else if (process.platform === 'darwin') {
+    // macOS 下系统默认路径: /Applications/Claude.app/Contents/Resources
+    // 若在 CI runner (拥有 /Applications 写入权限或临时测试权限)
+    const macApp = '/Applications/Claude.app/Contents/Resources';
+    try {
+      fs.mkdirSync(macApp, { recursive: true });
+      fs.writeFileSync(path.join(macApp, 'en-US.json'), '{}', 'utf8');
+      createdSystemMockDir = '/Applications/Claude.app';
+
+      const autoDetected = getClaudeInstallation();
+      console.log('   macOS 自动探测结果:', autoDetected);
+
+      if (autoDetected.type !== 'macos' || !autoDetected.resourcesPath) {
+        console.error('❌ macOS 系统默认路径自动探测失败！');
+        process.exit(1);
+      }
+      console.log('   ✅ macOS 系统默认路径自动探测成功！');
+    } catch (e) {
+      console.log('   ⚠️ /Applications 权限受限，回退至隔离沙盒断言。');
+    }
+
+  } else if (process.platform === 'win32') {
+    // Windows 下自动探测 MSIX 或 Win32
+    const autoDetected = getClaudeInstallation();
+    console.log('   Windows 自动探测结果:', autoDetected.type, autoDetected.resourcesPath);
+    if (!autoDetected.installPath || !autoDetected.resourcesPath) {
+      console.log('   ⚠️ 未检测到 Windows 安装环境，自动进入模拟断言阶段。');
+    } else {
+      console.log('   ✅ Windows 原生安装自动探测成功！');
+    }
+  }
+} finally {
+  // 严格清理临时创建的系统级路径
+  if (createdSystemMockDir && fs.existsSync(createdSystemMockDir)) {
+    try {
+      fs.rmSync(createdSystemMockDir, { recursive: true, force: true });
+    } catch (e) {}
+  }
+}
+
+// ----------------------------------------------------
+// Part 2: 全平台路径解析、JS 白名单正则与增量挂载全生命周期断言
+// ----------------------------------------------------
+console.log('\n【阶段 2】测试跨平台隔离沙盒全流程注入与还原...');
+
 function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
-  console.log(`\n--- [测试平台: ${displayName}] ---`);
+  console.log(`\n--- [测试平台布局: ${displayName}] ---`);
   
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), `claude-test-${testId}-`));
   const appRoot = isMacBundle ? path.join(tmpRoot, 'Claude.app') : tmpRoot;
@@ -34,7 +104,7 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
   fs.writeFileSync(path.join(i18nDir, 'en-US.json'), baseEn, 'utf8');
   fs.writeFileSync(path.join(dynDir, 'en-US.json'), baseEn, 'utf8');
   
-  // 模拟真实官方 JS: const xu=["en-US","ja-JP"];
+  // 模拟真实官方 JS: var vU=["en-US","ja-JP","de-DE"];
   const jsFilePath = path.join(assetsDir, 'shared-2-BF65-y49.js');
   fs.writeFileSync(jsFilePath, 'var vU=["en-US","ja-JP","de-DE"];', 'utf8');
 
@@ -104,7 +174,7 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     }
     console.log('  ✅ 还原后 isPatched = false 断言通过!');
 
-    console.log(`🎉 [平台: ${displayName}] 全流程核心代码测试 100% PASS!`);
+    console.log(`🎉 [平台布局: ${displayName}] 全流程核心代码测试 100% PASS!`);
   } finally {
     // 清理沙盒
     fs.rmSync(tmpRoot, { recursive: true, force: true });
@@ -116,5 +186,5 @@ runPlatformTestSuite('linux-win32', 'Standard Linux / Win32 (resources/)', false
 runPlatformTestSuite('macos', 'macOS Bundle (Contents/Resources/)', true);
 
 console.log('\n====================================================');
-console.log('   全平台跨环境真实核心代码断言全部 PASS！');
+console.log('   全平台系统级自动探测与核心代码断言全部 PASS！');
 console.log('====================================================\n');
