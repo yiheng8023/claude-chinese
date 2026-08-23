@@ -125,6 +125,13 @@ function applyPatch(options = {}) {
         const bakPath = `${fullPath}.orig.bak`;
         let content = fs.readFileSync(fullPath, 'utf8');
 
+        // 检查当前 JS 是否为官方原生未打补丁状态
+        const isCurrentUnpatched = !content.includes('"zh-CN"');
+        if (isCurrentUnpatched) {
+          // 上游版本更新或首次修改：建立/刷新官方纯净出厂备份
+          fs.copyFileSync(fullPath, bakPath);
+        }
+
         let modified = false;
         if (content.includes('"en-US"') && !content.includes('"zh-CN"')) {
           if (regexAdd.test(content)) {
@@ -147,10 +154,6 @@ function applyPatch(options = {}) {
         }
 
         if (modified) {
-          // 首次修改时保存官方物理出厂备份，确保 100% 绝对权威回滚
-          if (!fs.existsSync(bakPath)) {
-            fs.copyFileSync(fullPath, bakPath);
-          }
           fs.writeFileSync(fullPath, content, 'utf8');
           jsPatchedCount++;
         }
@@ -281,25 +284,7 @@ function restorePatch(options = {}) {
   }
 
   try {
-    // 1. 恢复官方原版 en-US.json
-    const restoreEnUS = (targetDir, defaultBaseFile) => {
-      const enFile = path.join(targetDir, 'en-US.json');
-      const bakFile = path.join(targetDir, 'en-US.backup.json');
-
-      if (fs.existsSync(bakFile)) {
-        fs.copyFileSync(bakFile, enFile);
-        fs.unlinkSync(bakFile);
-      } else if (defaultBaseFile && fs.existsSync(defaultBaseFile)) {
-        fs.copyFileSync(defaultBaseFile, enFile);
-      }
-    };
-
-    const shellBase = path.join(__dirname, '../dict/en-US.base.json');
-    restoreEnUS(resDir, shellBase);
-    if (fs.existsSync(i18nDir)) restoreEnUS(i18nDir);
-    if (fs.existsSync(dynDir)) restoreEnUS(dynDir);
-
-    // 2. 移除注入的中文文件
+    // 1. 增量挂载纯净清理：仅移除注入的中文文件与元数据，绝对不触碰官方原版 en-US.json
     const filesToDelete = [
       path.join(resDir, 'zh-CN.json'),
       path.join(i18nDir, 'zh-CN.json'),

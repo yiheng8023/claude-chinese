@@ -168,7 +168,11 @@ function handleLaunch() {
   } else {
     // Linux (claude-desktop / claude)
     try {
-      execSync('claude-desktop || claude || true', { stdio: 'ignore' });
+      const child = spawn('claude-desktop', [], { detached: true, stdio: 'ignore' });
+      child.on('error', () => {
+        spawn('claude', [], { detached: true, stdio: 'ignore' }).unref();
+      });
+      child.unref();
     } catch (e) {}
   }
 }
@@ -198,20 +202,48 @@ function handleWatch() {
   console.log('👀 守护进程运行中 (按 Ctrl+C 退出)...');
 
   let debounceTimer = null;
-  const triggerHotReload = (reason) => {
+  let stabilityCheckTimer = null;
+
+  const triggerHotReload = (reason, isUpstreamChange = false) => {
     if (debounceTimer) clearTimeout(debounceTimer);
+    if (stabilityCheckTimer) clearTimeout(stabilityCheckTimer);
+
+    // 对于本地词典变更，300ms 快速响应；对于上游更新，增加 800ms 静稳窗口以防写入冲突
+    const delay = isUpstreamChange ? 800 : 300;
+
     debounceTimer = setTimeout(() => {
-      console.log(`\n🔔 [${new Date().toLocaleTimeString()}] 检测到变动: ${reason}`);
-      console.log('⚡ 正在执行毫秒级增量热重载 (Hot Reload)...');
-      try {
-        const result = applyPatch({ customPath, autoClose: false });
-        if (result.success) {
-          console.log(`🎉 热重载完成 (已挂载 ${result.info.entriesCount} 词条)！在 Claude 中按 Ctrl+R 即可查看最新界面。`);
-        }
-      } catch (err) {
-        console.error('⚠️ 热重载同步异常:', err.message);
+      // 官方更新场景：检查文件是否写入完成 (连续检测 mtime/size 稳定)
+      if (isUpstreamChange && info.resourcesPath) {
+        const enFile = path.join(info.resourcesPath, 'en-US.json');
+        let initialSize = -1;
+        try { if (fs.existsSync(enFile)) initialSize = fs.statSync(enFile).size; } catch (e) {}
+
+        stabilityCheckTimer = setTimeout(() => {
+          let currentSize = -1;
+          try { if (fs.existsSync(enFile)) currentSize = fs.statSync(enFile).size; } catch (e) {}
+          if (initialSize !== currentSize && currentSize !== -1) {
+            console.log('⏳ 官方更新器仍在写入文件，等待下一个静稳窗口...');
+            return triggerHotReload(reason, true);
+          }
+          executePatch(reason);
+        }, 500);
+      } else {
+        executePatch(reason);
       }
-    }, 300);
+    }, delay);
+  };
+
+  const executePatch = (reason) => {
+    console.log(`\n🔔 [${new Date().toLocaleTimeString()}] 检测到变动: ${reason}`);
+    console.log('⚡ 正在执行增量热重载与自愈注入...');
+    try {
+      const result = applyPatch({ customPath, autoClose: false });
+      if (result.success) {
+        console.log(`🎉 热重载完成 (已挂载 ${result.info.entriesCount} 词条)！在 Claude 中按 Ctrl+R 即可查看最新界面。`);
+      }
+    } catch (err) {
+      console.error('⚠️ 热重载同步异常:', err.message);
+    }
   };
 
   // 监听本地 dict 目录变更 (词典热更新)
@@ -219,7 +251,7 @@ function handleWatch() {
   if (fs.existsSync(dictDir)) {
     fs.watch(dictDir, { recursive: true }, (eventType, filename) => {
       if (filename && filename.endsWith('.json')) {
-        triggerHotReload(`本地词库更新 (${filename})`);
+        triggerHotReload(`本地词库更新 (${filename})`, false);
       }
     });
   }
@@ -229,7 +261,7 @@ function handleWatch() {
   if (fs.existsSync(resDir)) {
     fs.watch(resDir, (eventType, filename) => {
       if (filename && (filename.includes('en-US.json') || filename.includes('package.json'))) {
-        triggerHotReload(`官方资源变动 (${filename})`);
+        triggerHotReload(`官方资源变动 (${filename})`, true);
       }
     });
   }

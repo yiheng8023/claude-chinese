@@ -12,154 +12,114 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-> 🚀 **High-performance, Non-invasive, Self-healing Chinese Localization Toolkit for Anthropic Claude Desktop clients (Windows MSIX / Win32 / macOS / Linux).**
-
-A robust, industrial-grade localization engine tailored for **Claude Desktop**. Built to survive frequent upstream updates, Windows MSIX ACL restrictions, and customized third-party routing (e.g., **CC Switch + DeepSeek** in `cowork + code` hybrid modes).
+High-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux). Built on official native i18n architectures with incremental overlay and self-healing lifecycle management.
 
 ---
 
-## 🌟 Core Highlights & Architectural Philosophy
+## 🌟 Core Features & Design Philosophy
 
-- 🛡️ **Non-invasive Incremental Overlay & Pure Fallback**: Merges translations on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Eliminates "update-and-break" risks when upstream adds new keys.
-- 🕊️ **Official Chinese Detection & Graceful Yield**: Automatically detects when Anthropic officially rolls out native Chinese localization and yields gracefully without manual intervention.
-- 🧬 **Self-healing & Drift-resistant**: Equipped with upstream drift detectors (`npm run scan:drift`) that monitor, diff, and auto-align with upstream updates in seconds.
-- 🎯 **100% HashKey & UI Coverage**: Over 18,900+ curated translations covering Cowork canvases, manual/auto approval flows, Claude Code, model selectors, and settings.
-- 🔒 **Strict ICU AST Syntax Firewall**: Absolute protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical specs (`1M`, `128k`, `MCP`, `API`, `OAuth`), ensuring task workflows never freeze.
-- 🪟 **MSIX & WindowsApps Specialized Adapter**: Built-in automated UAC elevation and ACL management for sideloaded Windows AppX packages.
+- 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Upstream unknown keys fall back to English gracefully.
+- 🕊️ **Official Chinese Detection & Graceful Yield**: Automatically detects when Anthropic officially rolls out native Chinese localization packages and yields gracefully.
+- 🧬 **Self-Healing & Drift-Resistant**: Equipped with upstream drift detectors (`npm run scan:drift`) that monitor, diff, and auto-align with upstream updates in seconds.
+- 🎯 **Full HashKey & UI Coverage**: Over 18,500+ curated translations covering Cowork canvases, approval flows, Claude Code, model selectors, and settings.
+- 🔒 **Strict ICU AST Syntax Firewall**: Absolute protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameters (`1M`, `128k`, `MCP`, `DeepSeek`), ensuring task workflows never freeze.
+- 🪟 **Least Privilege & MSIX Adaptation**: Strictly adheres to the least-privilege security principle, granting necessary write permissions solely to the current user.
 
 ---
 
-## 🔌 Dual-Mode Architecture
+## 🗺️ Architecture & Roadmap
 
 ```mermaid
 graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
-    subgraph Mode1 ["Mode A: Host UI Localization"]
+    subgraph Mode1 ["【Released】Host UI Localization"]
         ClaudeApp --> ShellLayer["Shell Layer (550+ entries)"]
         ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ entries)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features"]
     end
     
-    subgraph Mode2 ["Mode B: MCP Agent Suite & Gateway Routing"]
-        ClaudeApp --> MCP["MCP Server Chinese Protocols"]
-        ClaudeApp --> Rules["Chinese Interaction & Engineering Rules"]
-        ClaudeApp --> Switcher["1P Official / 3P Third-Party Gateway Routing"]
+    subgraph Mode2 ["【Roadmap / Planned】Agent Suite & Extensions"]
+        ClaudeApp -.-> MCP["MCP Server Chinese Tooling"]
+        ClaudeApp -.-> Rules["Chinese Interaction & Code Comment Rules"]
+        ClaudeApp -.-> Switcher["1P / 3P Gateway Routing Adapter"]
     end
 ```
+
+1. **Dimension A: Host UI Localization (Ready)**:
+   - Full localization of native menus, system tray, Cowork task canvas, approval dialogs, settings, and inputs.
+2. **Dimension B: Agent Extension Ecosystem (Roadmap / Planned)**:
+   - **[Planned]** MCP (Model Context Protocol) Chinese workflow integrations.
+   - **[Planned]** Adapters for gateway routers such as CC Switch and local inference endpoints.
 
 ---
 
 ## 📋 Prerequisites
 
-1. **Operating System**: Windows 10/11 (x64), macOS (Apple Silicon / Intel), Linux.
-2. **Node.js**: >= 16.x (with npm).
-3. **Claude Desktop**: Official desktop client installed.
+1. **Supported Operating Systems**:
+   - **Windows**: Windows 10 / 11 (x64) (Supports official MSIX and standard versions)
+   - **macOS**: macOS 12+ (Apple Silicon M-series & Intel)
+   - **Linux**: Major distributions (x64 / ARM64)
+2. **Node.js Runtime**:
+   - **Node.js (>= 16.x)** with `npm` (Fully compatible with Node 18/20/22/24+).
+3. **Claude Desktop**:
+   - Official Claude Desktop client installed.
 
 ---
 
 ## 🚀 Quick Start
 
-### Option 1: One-Click Script (Recommended)
+### Method 1: One-Click Scripts (Recommended)
 
 #### Windows
-* **Install**: Right-click [`install.bat`](install.bat) and choose "Run as administrator".
-* **Self-Healing Launch**: Double-click [`launch.bat`](launch.bat).
-* **Restore English**: Double-click [`uninstall.bat`](uninstall.bat).
+- **Install Patch**: Double-click [`install.bat`](install.bat)
+- **Self-Healing Launch**: Double-click [`launch.bat`](launch.bat)
+- **Restore English**: Double-click [`uninstall.bat`](uninstall.bat)
 
 #### macOS / Linux
-* **Install**: Run `./install.sh`
-* **Restore English**: Run `./uninstall.sh`
+- **Install Patch**: Run `./install.sh`
+- **Restore English**: Run `./uninstall.sh`
 
 ---
 
-### Option 2: CLI Manager
+### Method 2: CLI Command Line Manager
 
 ```bash
-# Check installation & patch status
+# 1. Check current client and patch status
 node cli.js status
 
-# Run preflight health checks (Node version, client paths, process locks, permissions)
+# 2. Run comprehensive pre-flight health checks
 node cli.js check
 
-# Install localization patch with automatic preflight and process locking guard
+# 3. One-click install (runs pre-flight, releases file locks, and mounts overlay)
 node cli.js install
 
-# Start hot-reload daemon (live reload on dict change via Ctrl+R, auto-healing on updates)
+# 4. Background watcher daemon mode (hot-reloads translations and auto-repairs on updates)
 node cli.js watch
 
-# Launch with self-healing check
+# 5. Self-healing launch
 node cli.js launch
 
-# Upstream drift detection scan
+# 6. Run upstream drift scan
 node cli.js drift
 
-# Restore official English
+# 7. One-click restore to official English version
 node cli.js restore
 ```
 
 ---
 
-## 🧪 Testing & Verification
-
-This project uses comprehensive automated regression test suites and cross-platform CI (Windows / macOS / Ubuntu) to ensure stability:
+## 🧪 Automated Testing & CI Verification
 
 ```bash
-# Run full automated regression test suite
+# Run all 4 automated test suites
 npm test
 ```
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Validates core dictionary structure with zero missing or empty entries.
-- **ICU Syntax Firewall (`test/test-icu.js`)**: Ensures all template variables, plural branches, and technical terms remain structurally symmetrical.
-- **Lifecycle & Reversible Restore (`test/test-restore-cycle.js`)**: End-to-end install -> status check -> clean rollback -> fallback verification.
-- **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Verifies 0-argument automatic path detection on physical platform runners.
-
----
-
-## 📁 Repository Structure
-
-```text
-claude-chinese/
-├── dict/                     # Localization dictionary assets
-│   ├── zh-CN.json            # Shell layer dictionary (550+ entries)
-│   ├── ion-zh-CN.json        # Web UI dictionary (18,900+ entries)
-│   └── dynamic-zh-CN.json    # Dynamic features and placeholder dictionary
-├── core/                     # Injection engine
-│   ├── patcher.js            # Patch injection, JS registration, and restore core
-│   ├── msix-detector.js      # MSIX container detector & cross-platform path resolver
-│   └── permissions.js        # Windows ACL permissions and elevation utilities
-├── test/                     # Automated regression test suites
-│   ├── verify-dict.js        # Dictionary integrity assertions
-│   ├── test-icu.js           # ICU variable syntax firewall assertions
-│   ├── test-restore-cycle.js # Install and restore lifecycle regression tests
-│   └── test-cross-platform-live.js # Live cross-platform path detection tests
-├── tools/                    # Text extraction, diff comparison, and drift detectors
-├── docs/assets/sponsoring/   # Sponsorship & donation assets
-├── cli.js                    # Cross-platform CLI lifecycle entry point
-├── install.bat / install.sh  # One-click installation scripts
-├── launch.bat                # Self-healing launcher script
-├── uninstall.bat / uninstall.sh # One-click restore scripts
-├── package.json              # Project configuration and npm scripts
-├── LICENSE                   # MIT License
-└── README.md                 # Documentation
-```
-
----
-
-## 💖 Sponsorship & Support
-
-If this project helps your daily development and you'd like to support continuous maintenance, documentation, and automated testing, voluntary sponsorship of any amount is greatly appreciated:
-
-- **PayPal**: **[PayPal Sponsorship Link](https://www.paypal.com/ncp/payment/LNTF8KXGJXMZY)**
-- **WeChat Pay / Alipay**: Supported via QR codes in [README.md](README.md).
-
----
-
-## ⚠️ Disclaimer & Compliance
-
-1. **Non-official Project**: This is an open-source community localization tool and is not affiliated with or endorsed by Anthropic, PBC.
-2. **Trademarks**: `Claude`, `Anthropic`, `DeepSeek`, and all related trademarks belong to their respective owners.
-3. **Privacy**: This project contains zero telemetry, trackers, or credential interception. 100% open-source.
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax and coverage.
+- **ICU Syntax Firewall (`test/test-icu.js`)**: Protects placeholders, variables, and technical terms.
+- **Lifecycle & Atomic Rollback (`test/test-restore-cycle.js`)**: Tests isolated install -> restore -> double-install lifecycle in sandbox fixtures.
+- **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Tests 0-argument path discovery and multi-platform layouts.
 
 ---
 
