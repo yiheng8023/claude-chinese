@@ -56,14 +56,29 @@ function applyPatch(options = {}) {
         const fullPath = path.join(assetsDir, file);
         let content = fs.readFileSync(fullPath, 'utf8');
 
+        let modified = false;
         if (content.includes('"en-US"') && !content.includes('"zh-CN"')) {
           if (regexAdd.test(content)) {
             content = content.replace(regexAdd, (match) => {
               return match.slice(0, -1) + ',"zh-CN"]';
             });
-            fs.writeFileSync(fullPath, content, 'utf8');
-            jsPatchedCount++;
+            modified = true;
           }
+        }
+
+        // 替换硬编码下拉选项（如工作树位置与自定义）
+        if (content.includes('label:"Inside project (.claude/worktrees)"')) {
+          content = content.replace('label:"Inside project (.claude/worktrees)"', 'label:"项目目录内 (.claude/worktrees)"');
+          modified = true;
+        }
+        if (content.includes('label:"Custom..."')) {
+          content = content.replace('label:"Custom..."', 'label:"自定义..."');
+          modified = true;
+        }
+
+        if (modified) {
+          fs.writeFileSync(fullPath, content, 'utf8');
+          jsPatchedCount++;
         }
       }
     }
@@ -220,8 +235,20 @@ function restorePatch(options = {}) {
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
         let content = fs.readFileSync(fullPath, 'utf8');
+        let modified = false;
         if (content.includes(',"zh-CN"]')) {
           content = content.replace(',"zh-CN"]', ']');
+          modified = true;
+        }
+        if (content.includes('label:"项目目录内 (.claude/worktrees)"')) {
+          content = content.replace('label:"项目目录内 (.claude/worktrees)"', 'label:"Inside project (.claude/worktrees)"');
+          modified = true;
+        }
+        if (content.includes('label:"自定义..."')) {
+          content = content.replace('label:"自定义..."', 'label:"Custom..."');
+          modified = true;
+        }
+        if (modified) {
           fs.writeFileSync(fullPath, content, 'utf8');
         }
       }
