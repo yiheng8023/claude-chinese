@@ -77,6 +77,10 @@ function handleInstall() {
       console.log('✅ 增量汉化补丁挂载成功（保留官方原版英文为纯净兜底）！');
       console.log(`📦 适配版本: ${result.info.version}`);
       console.log(`🇨🇳 已汉化词条数: ${result.info.entriesCount}`);
+      if (result.info.warnings && result.info.warnings.length > 0) {
+        console.log('\n⚠️ 注意 (存在潜在代码漂移项):');
+        result.info.warnings.forEach(w => console.log(`   - ${w}`));
+      }
       console.log('\n🎉 请重启 Claude 桌面客户端查看中文界面。');
     }
   } else {

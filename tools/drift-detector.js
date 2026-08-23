@@ -1,17 +1,20 @@
 /**
  * 上游版本文本漂移分析引擎 (Drift Detector)
- * 移植自 Antigravity-Chinese 汉化体系，提供官方新旧版本词条 Diff 与覆盖率报告。
+ * 包含 JSON 字典覆盖率审计与 JS 硬编码常量漂移守卫 (JS Literal Drift Guard)
  */
 const fs = require('fs');
 const path = require('path');
 const { getClaudeInstallation } = require('../core/msix-detector');
+const { JS_LITERAL_PATCHES } = require('../core/patcher');
 
 function runDriftDetection(customEnPath = null) {
   let targetEnPath = customEnPath;
+  let resourcesDir = null;
 
-  if (!targetEnPath) {
-    const info = getClaudeInstallation();
-    if (info && info.resourcesPath) {
+  const info = getClaudeInstallation();
+  if (info && info.resourcesPath) {
+    resourcesDir = info.resourcesPath;
+    if (!targetEnPath) {
       targetEnPath = path.join(info.resourcesPath, 'en-US.json');
     }
   }
@@ -35,6 +38,40 @@ function runDriftDetection(customEnPath = null) {
     ? ((matchedKeys.length / upstreamKeys.length) * 100).toFixed(2)
     : '0.00';
 
+  // 2. JS 硬编码特征漂移检测 (JS Literal Drift Guard)
+  const jsPatchesStatus = [];
+  if (resourcesDir) {
+    const assetsDir = path.join(resourcesDir, 'ion-dist', 'assets', 'v1');
+    if (fs.existsSync(assetsDir)) {
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+      let allJsContent = '';
+      for (const f of jsFiles) {
+        try {
+          allJsContent += fs.readFileSync(path.join(assetsDir, f), 'utf8') + '\n';
+        } catch (e) {}
+      }
+
+      for (const patch of (JS_LITERAL_PATCHES || [])) {
+        const matchesEn = patch.enPattern ? patch.enPattern.test(allJsContent) : false;
+        const matchesZh = patch.zhPattern ? patch.zhPattern.test(allJsContent) : false;
+        
+        let status = 'DRIFTED';
+        if (matchesZh) {
+          status = 'ACTIVE_PATCHED';
+        } else if (matchesEn) {
+          status = 'MATCHED_UNPATCHED';
+        }
+
+        jsPatchesStatus.push({
+          id: patch.id,
+          description: patch.description,
+          status,
+          healthy: status !== 'DRIFTED'
+        });
+      }
+    }
+  }
+
   const report = {
     timestamp: new Date().toISOString(),
     sourceFile: targetEnPath,
@@ -45,7 +82,8 @@ function runDriftDetection(customEnPath = null) {
     newKeysCount: newKeys.length,
     newKeysList: newKeys.map(k => ({ key: k, en: upstreamDict[k] })),
     staleKeysCount: staleKeys.length,
-    staleKeysList: staleKeys
+    staleKeysList: staleKeys,
+    jsPatchesStatus
   };
 
   return report;
@@ -59,7 +97,16 @@ if (require.main === module) {
   console.log(`📊 官方词条总量: ${report.totalUpstreamKeys}`);
   console.log(`🇨🇳 当前汉化覆盖率: ${report.coverage} (${report.matchedKeysCount} / ${report.totalUpstreamKeys})`);
   console.log(`✨ 新增未汉化词条: ${report.newKeysCount}`);
-  console.log(`🗑️ 历史陈旧废弃词条: ${report.staleKeysCount}\n`);
+  console.log(`🗑️ 历史陈旧废弃词条: ${report.staleKeysCount}`);
+
+  if (report.jsPatchesStatus && report.jsPatchesStatus.length > 0) {
+    console.log(`\n🛡️ JS 硬编码补丁守卫状态 (${report.jsPatchesStatus.length} 项):`);
+    report.jsPatchesStatus.forEach(item => {
+      const icon = item.healthy ? '✅' : '⚠️ [漂移告警]';
+      console.log(`  ${icon} [${item.id}]: ${item.description} (${item.status})`);
+    });
+  }
+  console.log('');
 
   if (report.newKeysCount > 0) {
     console.log('新增词条样例 (前 5 条):');

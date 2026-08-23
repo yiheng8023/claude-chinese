@@ -6,6 +6,29 @@ const path = require('path');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
 
+/**
+ * 官方未暴露 i18n key 的硬编码 UI 字符串补丁注册表
+ * 配备可感知命中统计 (Hit Counter) 与漂移告警 (Drift Alert) 机制
+ */
+const JS_LITERAL_PATCHES = [
+  {
+    id: 'worktrees-location-default',
+    description: 'Claude Code 工作树默认位置下拉选项',
+    enPattern: /label:\s*["']Inside project \(\.claude\/worktrees\)["']/g,
+    zhSnippet: 'label:"项目目录内 (.claude/worktrees)"',
+    zhPattern: /label:\s*["']项目目录内 \(\.claude\/worktrees\)["']/g,
+    restoreEn: 'label:"Inside project (.claude/worktrees)"'
+  },
+  {
+    id: 'worktrees-location-custom',
+    description: 'Claude Code 工作树自定义位置下拉选项',
+    enPattern: /label:\s*["']Custom\.\.\.["']/g,
+    zhSnippet: 'label:"自定义..."',
+    zhPattern: /label:\s*["']自定义\.\.\.["']/g,
+    restoreEn: 'label:"Custom..."'
+  }
+];
+
 function applyPatch(options = {}) {
   const info = getClaudeInstallation(options.customPath);
 
@@ -46,8 +69,13 @@ function applyPatch(options = {}) {
   }
 
   try {
-    // 3. 补丁 JS 资源：注册 zh-CN 语言支持
+    // 3. 补丁 JS 资源：注册 zh-CN 语言支持与硬编码下拉项
     let jsPatchedCount = 0;
+    const patchHits = {};
+    for (const p of JS_LITERAL_PATCHES) {
+      patchHits[p.id] = 0;
+    }
+
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
       const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
@@ -66,19 +94,28 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 替换硬编码下拉选项（如工作树位置与自定义）
-        if (content.includes('label:"Inside project (.claude/worktrees)"')) {
-          content = content.replace('label:"Inside project (.claude/worktrees)"', 'label:"项目目录内 (.claude/worktrees)"');
-          modified = true;
-        }
-        if (content.includes('label:"Custom..."')) {
-          content = content.replace('label:"Custom..."', 'label:"自定义..."');
-          modified = true;
+        // 结构化硬编码补丁注入与命中统计
+        for (const patch of JS_LITERAL_PATCHES) {
+          if (patch.enPattern.test(content)) {
+            content = content.replace(patch.enPattern, patch.zhSnippet);
+            patchHits[patch.id]++;
+            modified = true;
+          }
         }
 
         if (modified) {
           fs.writeFileSync(fullPath, content, 'utf8');
           jsPatchedCount++;
+        }
+      }
+    }
+
+    const warnings = [];
+    // 仅在真实 assets 存在且已有 JS 被处理时检查是否有补丁未命中
+    if (fs.existsSync(assetsDir)) {
+      for (const patch of JS_LITERAL_PATCHES) {
+        if (patchHits[patch.id] === 0) {
+          warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
         }
       }
     }
@@ -163,6 +200,7 @@ function applyPatch(options = {}) {
         resourcesPath: resDir,
         entriesCount: meta.totalEntries,
         jsPatchedCount,
+        warnings,
         mode: 'incremental_overlay'
       }
     };
@@ -229,7 +267,7 @@ function restorePatch(options = {}) {
       }
     }
 
-    // 3. 恢复 JS 注册中的 zh-CN
+    // 3. 恢复 JS 注册中的 zh-CN 与硬编码补丁
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
       for (const file of jsFiles) {
@@ -240,13 +278,11 @@ function restorePatch(options = {}) {
           content = content.replace(',"zh-CN"]', ']');
           modified = true;
         }
-        if (content.includes('label:"项目目录内 (.claude/worktrees)"')) {
-          content = content.replace('label:"项目目录内 (.claude/worktrees)"', 'label:"Inside project (.claude/worktrees)"');
-          modified = true;
-        }
-        if (content.includes('label:"自定义..."')) {
-          content = content.replace('label:"自定义..."', 'label:"Custom..."');
-          modified = true;
+        for (const patch of JS_LITERAL_PATCHES) {
+          if (patch.zhPattern.test(content)) {
+            content = content.replace(patch.zhPattern, patch.restoreEn);
+            modified = true;
+          }
         }
         if (modified) {
           fs.writeFileSync(fullPath, content, 'utf8');
@@ -265,5 +301,6 @@ function restorePatch(options = {}) {
 
 module.exports = {
   applyPatch,
-  restorePatch
+  restorePatch,
+  JS_LITERAL_PATCHES
 };
