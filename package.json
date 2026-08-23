@@ -1,6 +1,6 @@
 {
   "name": "claude-chinese",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Claude 桌面客户端高性能、可逆式、自愈型中文汉化工具包 (Self-Healing Chinese Localization Toolkit for Claude Desktop)",
   "main": "cli.js",
   "engines": {

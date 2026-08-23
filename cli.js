@@ -246,14 +246,26 @@ function handleWatch() {
     }
   };
 
-  // 监听本地 dict 目录变更 (词典热更新)
+  // 监听本地 dict 目录变更 (词典热更新，内置跨平台/版本降级保护)
   const dictDir = path.join(__dirname, 'dict');
   if (fs.existsSync(dictDir)) {
-    fs.watch(dictDir, { recursive: true }, (eventType, filename) => {
-      if (filename && filename.endsWith('.json')) {
-        triggerHotReload(`本地词库更新 (${filename})`, false);
-      }
-    });
+    try {
+      fs.watch(dictDir, { recursive: true }, (eventType, filename) => {
+        if (filename && filename.endsWith('.json')) {
+          triggerHotReload(`本地词库更新 (${filename})`, false);
+        }
+      });
+    } catch (e) {
+      // Linux 下 Node < 19.1 不支持 recursive 时的优雅降级
+      try {
+        fs.readdirSync(dictDir).forEach(f => {
+          const filePath = path.join(dictDir, f);
+          if (fs.existsSync(filePath) && fs.statSync(filePath).isFile() && f.endsWith('.json')) {
+            fs.watch(filePath, () => triggerHotReload(`本地词库更新 (${f})`, false));
+          }
+        });
+      } catch (err) {}
+    }
   }
 
   // 监听客户端 resources 目录变更 (官方升级自愈)

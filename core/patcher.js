@@ -116,6 +116,16 @@ function applyPatch(options = {}) {
       patchHits[p.id] = 0;
     }
 
+    const crypto = require('crypto');
+    const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
+
+    const metaPath = path.join(resDir, '.claude_chinese_meta.json');
+    let existingMeta = {};
+    if (fs.existsSync(metaPath)) {
+      try { existingMeta = JSON.parse(fs.readFileSync(metaPath, 'utf8')) || {}; } catch (e) {}
+    }
+    const fileManifest = existingMeta.files || {};
+
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
       const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
@@ -123,38 +133,51 @@ function applyPatch(options = {}) {
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
         const bakPath = `${fullPath}.orig.bak`;
-        let content = fs.readFileSync(fullPath, 'utf8');
+        const content = fs.readFileSync(fullPath, 'utf8');
+        const currentHash = getHash(content);
 
-        // 检查当前 JS 是否为官方原生未打补丁状态
-        const isCurrentUnpatched = !content.includes('"zh-CN"');
-        if (isCurrentUnpatched) {
-          // 上游版本更新或首次修改：建立/刷新官方纯净出厂备份
-          fs.copyFileSync(fullPath, bakPath);
-        }
+        // 检查当前文件是否已知为我们注入后的状态
+        const isKnownPatched = fileManifest[file] && fileManifest[file].patchedHash === currentHash;
 
+        let newContent = content;
         let modified = false;
-        if (content.includes('"en-US"') && !content.includes('"zh-CN"')) {
-          if (regexAdd.test(content)) {
-            content = content.replace(regexAdd, (match) => {
+
+        if (newContent.includes('"en-US"') && !newContent.includes('"zh-CN"')) {
+          if (regexAdd.test(newContent)) {
+            newContent = newContent.replace(regexAdd, (match) => {
               return match.slice(0, -1) + ',"zh-CN"]';
             });
             modified = true;
           }
         }
 
-        // 结构化硬编码补丁注入与命中统计 (包含已打补丁状态判定)
+        // 结构化硬编码补丁注入与命中统计
         for (const patch of JS_LITERAL_PATCHES) {
-          if (patch.enPattern.test(content)) {
-            content = content.replace(patch.enPattern, patch.zhSnippet);
+          if (patch.enPattern.test(newContent)) {
+            newContent = newContent.replace(patch.enPattern, patch.zhSnippet);
             patchHits[patch.id]++;
             modified = true;
-          } else if (patch.zhPattern.test(content)) {
+          } else if (patch.zhPattern.test(newContent)) {
             patchHits[patch.id]++;
           }
         }
 
-        if (modified) {
-          fs.writeFileSync(fullPath, content, 'utf8');
+        if (modified && newContent !== content) {
+          // 仅当文件确实被修改时才进行出厂备份
+          // 若当前文件不是已知已补丁状态，且尚未备份或上游内容已发生更新，则刷新出厂备份
+          if (!isKnownPatched) {
+            if (!fs.existsSync(bakPath) || (fileManifest[file] && fileManifest[file].originalHash !== currentHash)) {
+              fs.copyFileSync(fullPath, bakPath);
+            }
+            fileManifest[file] = {
+              originalHash: currentHash,
+              patchedHash: getHash(newContent)
+            };
+          } else {
+            fileManifest[file].patchedHash = getHash(newContent);
+          }
+
+          fs.writeFileSync(fullPath, newContent, 'utf8');
           jsPatchedCount++;
         }
       }
@@ -229,7 +252,7 @@ function applyPatch(options = {}) {
 
     sanitizeEnUS(resDir, path.join(__dirname, '../dict/en-US.base.json'));
 
-    // 6. 写入元数据
+    // 6. 写入元数据与文件哈希清单
     const metaFile = path.join(resDir, '.claude_chinese_meta.json');
     const meta = {
       patchedAt: new Date().toISOString(),
@@ -237,7 +260,8 @@ function applyPatch(options = {}) {
       type: info.type,
       jsPatchedCount,
       totalEntries: Object.keys(ionZh).length,
-      mode: 'incremental_overlay'
+      mode: 'incremental_overlay',
+      files: fileManifest
     };
     fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2), 'utf8');
 
