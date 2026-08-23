@@ -26,16 +26,16 @@ A robust, industrial-grade localization engine tailored for **Claude Desktop**, 
 graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
-    subgraph Mode1 [Mode A: Host UI Localization]
-        ClaudeApp --> ShellLayer[Shell Layer 550+ entries]
-        ClaudeApp --> WebUILayer[Ion-Dist Web UI 18,900+ entries]
-        ClaudeApp --> DynamicLayer[Dynamic Model Features]
+    subgraph Mode1 ["Mode A: Host UI Localization"]
+        ClaudeApp --> ShellLayer["Shell Layer (550+ entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ entries)"]
+        ClaudeApp --> DynamicLayer["Dynamic Model Features"]
     end
     
-    subgraph Mode2 [Mode B: MCP Agent Suite & Gateway Routing]
-        ClaudeApp --> MCP[MCP Server Chinese Protocols]
-        ClaudeApp --> Rules[Chinese Interaction & Engineering Rules]
-        ClaudeApp --> Switcher[1P Official / 3P Third-Party Gateway Dual Routing]
+    subgraph Mode2 ["Mode B: MCP Agent Suite & Gateway Routing"]
+        ClaudeApp --> MCP["MCP Server Chinese Protocols"]
+        ClaudeApp --> Rules["Chinese Interaction & Engineering Rules"]
+        ClaudeApp --> Switcher["1P Official / 3P Third-Party Gateway Routing"]
     end
 ```
 

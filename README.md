@@ -26,16 +26,16 @@
 graph TD
     User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
     
-    subgraph Mode1 [模式 A: 客户端宿主 UI 汉化 (Host UI)]
-        ClaudeApp --> ShellLayer[Shell 壳层 550+ 词条]
-        ClaudeApp --> WebUILayer[Ion-Dist Web UI 18,900+ 词条]
-        ClaudeApp --> DynamicLayer[Dynamic 思考模型特性]
+    subgraph Mode1 ["模式 A: 客户端宿主 UI 汉化 (Host UI)"]
+        ClaudeApp --> ShellLayer["Shell 壳层 (550+ 词条)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ 词条)"]
+        ClaudeApp --> DynamicLayer["Dynamic 思考模型特性"]
     end
     
-    subgraph Mode2 [模式 B: MCP 智能体中文插件与路由 (Agent Suite)]
-        ClaudeApp --> MCP[MCP Server 中文工程协议]
-        ClaudeApp --> Rules[中文交互与代码注释规则]
-        ClaudeApp --> Switcher[1P 官方账号 / 3P 第三方网关 (DeepSeek) 双模切换]
+    subgraph Mode2 ["模式 B: 智能体中文插件与路由 (Agent Suite)"]
+        ClaudeApp --> MCP["MCP Server 中文工程协议"]
+        ClaudeApp --> Rules["中文交互与代码注释规则"]
+        ClaudeApp --> Switcher["1P 官方账号 / 3P 第三方网关 (DeepSeek) 切换"]
     end
 ```
 
