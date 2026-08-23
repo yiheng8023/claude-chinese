@@ -20,6 +20,27 @@ A robust, industrial-grade localization engine tailored for **Claude Desktop**, 
 
 ---
 
+## 🔌 Dual-Mode Architecture
+
+```mermaid
+graph TD
+    User((Developer / User)) --> ClaudeApp[Claude Desktop App]
+    
+    subgraph Mode1 [Mode A: Host UI Localization]
+        ClaudeApp --> ShellLayer[Shell Layer 550+ entries]
+        ClaudeApp --> WebUILayer[Ion-Dist Web UI 18,900+ entries]
+        ClaudeApp --> DynamicLayer[Dynamic Model Features]
+    end
+    
+    subgraph Mode2 [Mode B: MCP Agent Suite & Gateway Routing]
+        ClaudeApp --> MCP[MCP Server Chinese Protocols]
+        ClaudeApp --> Rules[Chinese Interaction & Engineering Rules]
+        ClaudeApp --> Switcher[1P Official / 3P Third-Party Gateway Dual Routing]
+    end
+```
+
+---
+
 ## 📋 Prerequisites
 
 1. **Operating System**: Windows 10/11 (x64), macOS (Apple Silicon / Intel), Linux.
@@ -76,15 +97,20 @@ node tools/comprehensive-audit.js
 
 ---
 
-## 🔄 Self-Evolving Localization Workflow
+## 💖 Sponsorship & Support
 
-```mermaid
-flowchart LR
-    A[Upstream Release] -->|Extract Diff| B[Drift Detector]
-    B -->|Incremental Keys| C[AST & ICU Linting]
-    C -->|Verified zh-CN| D[Dual-Layer Injection]
-    D -->|Self-Healing| E[Ready in Claude Desktop]
-```
+If this project helps your daily development and you'd like to support continuous maintenance, documentation, and automated testing, voluntary sponsorship of any amount is greatly appreciated:
+
+- **PayPal**: **[PayPal Sponsorship Link](https://www.paypal.com/ncp/payment/LNTF8KXGJXMZY)**
+- **WeChat Pay / Alipay**: Supported via QR codes in [README.md](README.md).
+
+---
+
+## ⚠️ Disclaimer & Compliance
+
+1. **Non-official Project**: This is an open-source community localization tool and is not affiliated with or endorsed by Anthropic, PBC.
+2. **Trademarks**: `Claude`, `Anthropic`, `DeepSeek`, and all related trademarks belong to their respective owners.
+3. **Privacy**: This project contains zero telemetry, trackers, or credential interception. 100% open-source.
 
 ---
 

@@ -18,6 +18,35 @@
 
 ---
 
+## 🔌 双模生态：UI 本地化 + MCP 智能体增强 (Dual-Mode Architecture)
+
+借鉴 `antigravity-chinese` 的双模设计哲学，本项目不仅仅是一个单纯的界面补丁，更提供两套协同运行的本地化维度：
+
+```mermaid
+graph TD
+    User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
+    
+    subgraph Mode1 [模式 A: 客户端宿主 UI 汉化 (Host UI)]
+        ClaudeApp --> ShellLayer[Shell 壳层 550+ 词条]
+        ClaudeApp --> WebUILayer[Ion-Dist Web UI 18,900+ 词条]
+        ClaudeApp --> DynamicLayer[Dynamic 思考模型特性]
+    end
+    
+    subgraph Mode2 [模式 B: MCP 智能体中文插件与路由 (Agent Suite)]
+        ClaudeApp --> MCP[MCP Server 中文工程协议]
+        ClaudeApp --> Rules[中文交互与代码注释规则]
+        ClaudeApp --> Switcher[1P 官方账号 / 3P 第三方网关 (DeepSeek) 双模切换]
+    end
+```
+
+1. **模式 A：宿主界面全量本地化 (Host UI Localization)**：
+   - 彻底汉化客户端所有原生菜单、系统托盘、Cowork 协同任务看板、审批流弹窗、设置与输入交互。
+2. **模式 B：智能体插件与协议增强 (MCP Agent Suite)**：
+   - 支持通过官方 **MCP (Model Context Protocol)** 协议接入中文工具链与本地工作流；
+   - 完美适配 **CC Switch** 路由网关，自由在官方 Claude 与第三方模型（如 DeepSeek V3/R1）之间切换。
+
+---
+
 ## 📋 前置环境与要求 (Prerequisites)
 
 1. **操作系统支持**：
@@ -85,7 +114,7 @@ npm run scan:drift
 
 * **字典完整性断言 (`test/verify-dict.js`)**：验证核心字典结构无缺失、无空值。
 * **ICU 语法防火墙 (`test/test-icu.js`)**：确保所有模板变量、复数分支与技术专有名词 100% 结构对称。
-* **全维度质量审计 (`tools/comprehensive-audit.js`)**：自动扫描 HTML 标签闭合性、上下文规格与专有名词一致性。
+* **全维度质量审计 (`tools/comprehensive-audit.js`)**：自动扫描 HTML 标签闭合性、上下文规格（如 `1M` 保护）与专有名词一致性。
 
 ---
 
@@ -101,6 +130,33 @@ flowchart LR
 
 ---
 
+## 💖 自愿赞助与支持
+
+如果 Claude 中文汉化项目对你的工作与日常开发有所帮助，并且你愿意支持本项目的持续维护、文档优化、自动化测试与版本迭代，诚挚感谢任意金额的自愿赞助。赞助完全自愿，不构成任何服务级承诺。
+
+- **人民币赞助**：可扫描下方微信支付或支付宝收款码。
+- **跨境赞助 / 其他币种**：可以使用 **[PayPal 赞助链接](https://www.paypal.com/ncp/payment/LNTF8KXGJXMZY)**。实际可用币种、付款方式与换汇以 PayPal 结算页为准。
+
+付款前请核对结算页面显示的收款方。感谢你对开源项目的认可与支持！
+
+<table>
+  <tr>
+    <td align="center"><strong>微信支付（人民币）</strong><br><img src="docs/assets/sponsoring/wechat-pay.png" alt="微信支付自愿赞助收款码" width="260"></td>
+    <td align="center"><strong>支付宝（人民币）</strong><br><img src="docs/assets/sponsoring/alipay.png" alt="支付宝自愿赞助收款码" width="260"></td>
+  </tr>
+</table>
+
+---
+
+## ⚠️ 免责声明与合规说明 (Disclaimer & Compliance)
+
+1. **非官方项目**：本项目为社区发起的开源本地化辅助工具，**非 Anthropic 官方产品**，与 Anthropic, PBC 及其关联公司无官方从属或背书关系。
+2. **商标声明**：`Claude`, `Anthropic`, `DeepSeek` 等相关商标、产品名称及版权均归其各自所有者所有。
+3. **合法使用**：本项目仅供个人学习、技术研究及中文本地化辅助使用。本项目**绝不分发**任何官方专有二进制资产，所有修改均在用户本地客户端合法完成。
+4. **安全与隐私**：本项目**绝不包含**任何形式的遥测上报、网络后门或用户凭据读取逻辑。代码 100% 开源透明。
+
+---
+
 ## 📄 开源协议
 
-本项目采用 [MIT License](LICENSE) 开源协议。
+本项目基于 [MIT License](LICENSE) 协议开源。
