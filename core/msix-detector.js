@@ -103,40 +103,23 @@ function getClaudeInstallation(customPath = null) {
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');
     const zhPath = path.join(result.resourcesPath, 'zh-CN.json');
     const ionZhPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'zh-CN.json');
-    const assetsDir = path.join(result.resourcesPath, 'ion-dist', 'assets', 'v1');
+    const enUsPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'en-US.json');
 
-    // 检查是否存在原生 JS 支持 (官方编译包自身原生内置 zh-CN 语言白名单)
-    let nativeJsSupported = false;
-    if (fs.existsSync(assetsDir)) {
-      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
-      for (const file of jsFiles) {
-        const fullPath = path.join(assetsDir, file);
-        const bakPath = `${fullPath}.orig.bak`;
-        // 若无我们的 .orig.bak 备份，且源码本身就包含 "zh-CN"，则代表官方原生构建已内置中文
-        if (!fs.existsSync(bakPath)) {
-          const content = fs.readFileSync(fullPath, 'utf8');
-          if (content.includes('"zh-CN"') && content.includes('"en-US"')) {
-            nativeJsSupported = true;
-            break;
-          }
+    // 官方原生支持判定：官方自身随安装包分发了 ion-dist/i18n/zh-CN.json，且未打过我们的元数据补丁，且包含官方完整词典结构
+    let isOfficialNative = false;
+    if (!fs.existsSync(metaPath) && fs.existsSync(ionZhPath) && fs.existsSync(enUsPath)) {
+      try {
+        const statZh = fs.statSync(ionZhPath);
+        const statEn = fs.statSync(enUsPath);
+        // 如果官方原生分发的 zh-CN.json 词条规模与 en-US.json 相当
+        if (statZh.size > 50000 && statZh.size >= statEn.size * 0.5) {
+          isOfficialNative = true;
         }
-      }
+      } catch (e) {}
     }
 
-    if (nativeJsSupported && !fs.existsSync(metaPath)) {
-      result.hasNativeChinese = true;
-      result.isPatched = true;
-    } else if (fs.existsSync(metaPath)) {
-      result.hasNativeChinese = false;
-      result.isPatched = true;
-    } else if (fs.existsSync(zhPath) || fs.existsSync(ionZhPath)) {
-      // 存在 zh-CN 但没有元数据且 JS 无原生签名，判定为已打过第三方/非标准补丁
-      result.hasNativeChinese = false;
-      result.isPatched = true;
-    } else {
-      result.isPatched = false;
-      result.hasNativeChinese = false;
-    }
+    result.hasNativeChinese = isOfficialNative;
+    result.isPatched = fs.existsSync(metaPath) || (fs.existsSync(zhPath) && fs.existsSync(ionZhPath));
   }
 
   return result;
