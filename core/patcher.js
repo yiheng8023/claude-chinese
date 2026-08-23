@@ -6,6 +6,39 @@ const path = require('path');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
 
+const { execSync } = require('child_process');
+
+function isClaudeRunning() {
+  const platform = process.platform;
+  try {
+    if (platform === 'win32') {
+      const stdout = execSync('tasklist /FI "IMAGENAME eq Claude.exe" /NH', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+      return stdout.toLowerCase().includes('claude.exe');
+    } else {
+      const stdout = execSync('pgrep -i claude || true', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+      return stdout.trim().length > 0;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+function closeClaude() {
+  const platform = process.platform;
+  try {
+    if (platform === 'win32') {
+      execSync('taskkill /F /IM Claude.exe', { stdio: 'ignore' });
+    } else if (platform === 'darwin') {
+      execSync('killall Claude || pkill -i Claude || true', { stdio: 'ignore' });
+    } else {
+      execSync('pkill -f claude || true', { stdio: 'ignore' });
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 /**
  * 官方未暴露 i18n key 的硬编码 UI 字符串补丁注册表
  * 配备可感知命中统计 (Hit Counter) 与漂移告警 (Drift Alert) 机制
@@ -49,12 +82,19 @@ function applyPatch(options = {}) {
     };
   }
 
+  // 2. 检查进程占用，若运行中则自动安全关闭释放文件锁
+  let processAutoClosed = false;
+  if (options.autoClose !== false && isClaudeRunning()) {
+    closeClaude();
+    processAutoClosed = true;
+  }
+
   const resDir = info.resourcesPath;
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
 
-  // 2. 检查并提权
+  // 3. 检查并提权
   if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
     grantPermissions(path.join(resDir, 'ion-dist'));
@@ -69,7 +109,7 @@ function applyPatch(options = {}) {
   }
 
   try {
-    // 3. 补丁 JS 资源：注册 zh-CN 语言支持与硬编码下拉项
+    // 4. 补丁 JS 资源：注册 zh-CN 语言支持与硬编码下拉项
     let jsPatchedCount = 0;
     const patchHits = {};
     for (const p of JS_LITERAL_PATCHES) {
@@ -94,12 +134,14 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 结构化硬编码补丁注入与命中统计
+        // 结构化硬编码补丁注入与命中统计 (包含已打补丁状态判定)
         for (const patch of JS_LITERAL_PATCHES) {
           if (patch.enPattern.test(content)) {
             content = content.replace(patch.enPattern, patch.zhSnippet);
             patchHits[patch.id]++;
             modified = true;
+          } else if (patch.zhPattern.test(content)) {
+            patchHits[patch.id]++;
           }
         }
 
@@ -111,7 +153,6 @@ function applyPatch(options = {}) {
     }
 
     const warnings = [];
-    // 仅在真实 assets 存在且已有 JS 被处理时检查是否有补丁未命中
     if (fs.existsSync(assetsDir)) {
       for (const patch of JS_LITERAL_PATCHES) {
         if (patchHits[patch.id] === 0) {
@@ -200,6 +241,7 @@ function applyPatch(options = {}) {
         resourcesPath: resDir,
         entriesCount: meta.totalEntries,
         jsPatchedCount,
+        processAutoClosed,
         warnings,
         mode: 'incremental_overlay'
       }
@@ -302,5 +344,7 @@ function restorePatch(options = {}) {
 module.exports = {
   applyPatch,
   restorePatch,
+  isClaudeRunning,
+  closeClaude,
   JS_LITERAL_PATCHES
 };
