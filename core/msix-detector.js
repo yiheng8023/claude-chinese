@@ -98,18 +98,24 @@ function getClaudeInstallation(customPath = null) {
     }
   }
 
-  // 5. 检查是否已汉化 (以元数据与 zh-CN.json 的实体存在为准，避免 en-US 误判)
+  // 5. 检查是否已汉化及是否官方已原生支持中文
   if (result.resourcesPath) {
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');
     const zhPath = path.join(result.resourcesPath, 'zh-CN.json');
     const ionZhPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'zh-CN.json');
 
-    if (fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
+    // 检查官方是否原生内置了中文（未被打补丁 meta 且 zh-CN 存在）
+    if (!fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
+      result.hasNativeChinese = true;
+      result.isPatched = true;
+    } else if (fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
+      result.hasNativeChinese = false;
       result.isPatched = true;
     } else if (fs.existsSync(zhPath) && fs.existsSync(ionZhPath)) {
       result.isPatched = true;
     } else {
       result.isPatched = false;
+      result.hasNativeChinese = false;
     }
   }
 

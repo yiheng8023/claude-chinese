@@ -12,7 +12,8 @@ A robust, industrial-grade localization engine tailored for **Claude Desktop**. 
 
 ## 🌟 Core Highlights & Architectural Philosophy
 
-- 🛡️ **Non-invasive Dual-layer Injection**: Hooks directly into official i18n JSON resources (`Shell` + `Ion-Dist Web UI`) and JS language registries without binary decompilation or ASAR corruption.
+- 🛡️ **Non-invasive Incremental Overlay & Pure Fallback**: Merges translations on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Eliminates "update-and-break" risks when upstream adds new keys.
+- 🕊️ **Official Chinese Detection & Graceful Yield**: Automatically detects when Anthropic officially rolls out native Chinese localization and yields gracefully without manual intervention.
 - 🧬 **Self-healing & Drift-resistant**: Equipped with upstream drift detectors (`npm run scan:drift`) that monitor, diff, and auto-align with upstream updates in seconds.
 - 🎯 **100% HashKey & UI Coverage**: Over 18,900+ curated translations covering Cowork canvases, manual/auto approval flows, Claude Code, model selectors, and settings.
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical specs (`1M`, `128k`, `MCP`, `API`, `OAuth`), ensuring task workflows never freeze.

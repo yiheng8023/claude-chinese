@@ -1,5 +1,5 @@
 /**
- * 核心全量注入器与还原引擎 (支持 Shell + Ion-Dist Web UI + JS 语言注册补丁与完整还原闭环)
+ * 核心全量注入器与还原引擎 (支持增量挂载兜底、官方原版 en-US 零侵入保护、官方中文自动检测与优雅让位)
  */
 const fs = require('fs');
 const path = require('path');
@@ -16,12 +16,22 @@ function applyPatch(options = {}) {
     };
   }
 
+  // 1. 官方中文自动检测与优雅让位机制 (Native Chinese Auto-Detection & Graceful Yield)
+  if (info.hasNativeChinese) {
+    return {
+      success: true,
+      nativeSupported: true,
+      message: '🎉 检测到 Anthropic 官方已原生内置简体中文支持！工具包自动优雅让位，无需重复注入。',
+      info
+    };
+  }
+
   const resDir = info.resourcesPath;
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
 
-  // 1. 检查并提权
+  // 2. 检查并提权
   if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
     grantPermissions(path.join(resDir, 'ion-dist'));
@@ -36,7 +46,7 @@ function applyPatch(options = {}) {
   }
 
   try {
-    // 2. 补丁 JS 资源：注册 zh-CN 语言支持
+    // 3. 补丁 JS 资源：注册 zh-CN 语言支持
     let jsPatchedCount = 0;
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
@@ -58,55 +68,75 @@ function applyPatch(options = {}) {
       }
     }
 
-    // 3. 自动创建官方原版 en-US 备份 (防止还原时丢失纯英文基线)
-    const backupEnUS = (targetDir) => {
-      const enFile = path.join(targetDir, 'en-US.json');
-      const bakFile = path.join(targetDir, 'en-US.backup.json');
-      if (fs.existsSync(enFile) && !fs.existsSync(bakFile)) {
-        const content = fs.readFileSync(enFile, 'utf8');
-        // 确保备份的是真正的英文原版（不含汉化特征词）
-        if (!content.includes('实际大小') && !content.includes('新对话') && !content.includes('团队 (Team)')) {
-          fs.copyFileSync(enFile, bakFile);
+    // 4. 增量挂载字典文件 (保留官方原版 en-US.json 100% 纯净作为终极兜底，不直接覆盖 en-US)
+    const shellZhPath = path.join(__dirname, '../dict/zh-CN.json');
+    const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
+    const dynZhPath = path.join(__dirname, '../dict/dynamic-zh-CN.json');
+
+    const shellZh = fs.existsSync(shellZhPath) ? JSON.parse(fs.readFileSync(shellZhPath, 'utf8')) : {};
+    const ionZh = fs.existsSync(ionZhPath) ? JSON.parse(fs.readFileSync(ionZhPath, 'utf8')) : {};
+    const dynZh = fs.existsSync(dynZhPath) ? JSON.parse(fs.readFileSync(dynZhPath, 'utf8')) : {};
+
+    // 辅助函数：基于官方当前 en-US.json 进行增量合并，生成目标 zh-CN.json
+    const createIncrementalZh = (targetDir, zhDict) => {
+      const enPath = path.join(targetDir, 'en-US.json');
+      const bakPath = path.join(targetDir, 'en-US.backup.json');
+      let baseEn = {};
+
+      // 优先从纯净备份或当前官方 en-US 读取基底
+      if (fs.existsSync(bakPath)) {
+        try { baseEn = JSON.parse(fs.readFileSync(bakPath, 'utf8')); } catch (e) {}
+      } else if (fs.existsSync(enPath)) {
+        try { baseEn = JSON.parse(fs.readFileSync(enPath, 'utf8')); } catch (e) {}
+      }
+
+      // 增量合并：官方未翻译词条保留英文作为兜底，已翻译词条精准替换
+      const merged = Object.assign({}, baseEn, zhDict);
+      fs.writeFileSync(path.join(targetDir, 'zh-CN.json'), JSON.stringify(merged, null, 2), 'utf8');
+    };
+
+    // A. 注入 Shell 层 zh-CN.json
+    createIncrementalZh(resDir, shellZh);
+
+    // B. 注入 Ion-Dist Web UI 层 zh-CN.json + zh-CN.overrides.json
+    if (fs.existsSync(i18nDir)) {
+      createIncrementalZh(i18nDir, ionZh);
+      fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
+    }
+
+    // C. 注入 Dynamic 层 zh-CN.json
+    if (fs.existsSync(dynDir)) {
+      createIncrementalZh(dynDir, dynZh);
+    }
+
+    // 5. 如果历史遗留的 en-US 曾被覆盖为中文，还原为纯净英文基线
+    const sanitizeEnUS = (targetDir, fallbackBase) => {
+      const enPath = path.join(targetDir, 'en-US.json');
+      const bakPath = path.join(targetDir, 'en-US.backup.json');
+
+      if (fs.existsSync(bakPath)) {
+        fs.copyFileSync(bakPath, enPath);
+      } else if (fs.existsSync(enPath)) {
+        const content = fs.readFileSync(enPath, 'utf8');
+        if (content.includes('实际大小') || content.includes('新对话') || content.includes('团队 (Team)')) {
+          if (fallbackBase && fs.existsSync(fallbackBase)) {
+            fs.copyFileSync(fallbackBase, enPath);
+          }
         }
       }
     };
 
-    backupEnUS(resDir);
-    if (fs.existsSync(i18nDir)) backupEnUS(i18nDir);
-    if (fs.existsSync(dynDir)) backupEnUS(dynDir);
+    sanitizeEnUS(resDir, path.join(__dirname, '../dict/en-US.base.json'));
 
-    // 4. 安装全量字典文件
-    const shellZh = path.join(__dirname, '../dict/zh-CN.json');
-    const ionZh = path.join(__dirname, '../dict/ion-zh-CN.json');
-    const dynZh = path.join(__dirname, '../dict/dynamic-zh-CN.json');
-
-    // 注入 Shell 层
-    if (fs.existsSync(shellZh)) {
-      fs.copyFileSync(shellZh, path.join(resDir, 'zh-CN.json'));
-      fs.copyFileSync(shellZh, path.join(resDir, 'en-US.json'));
-    }
-
-    // 注入 Ion-Dist Web UI 层
-    if (fs.existsSync(ionZh) && fs.existsSync(i18nDir)) {
-      fs.copyFileSync(ionZh, path.join(i18nDir, 'zh-CN.json'));
-      fs.copyFileSync(ionZh, path.join(i18nDir, 'en-US.json'));
-      fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
-    }
-
-    // 注入 Dynamic 层
-    if (fs.existsSync(dynZh) && fs.existsSync(dynDir)) {
-      fs.copyFileSync(dynZh, path.join(dynDir, 'zh-CN.json'));
-      fs.copyFileSync(dynZh, path.join(dynDir, 'en-US.json'));
-    }
-
-    // 5. 写入元数据
+    // 6. 写入元数据
     const metaFile = path.join(resDir, '.claude_chinese_meta.json');
     const meta = {
       patchedAt: new Date().toISOString(),
       version: info.version,
       type: info.type,
       jsPatchedCount,
-      totalEntries: 18960
+      totalEntries: Object.keys(ionZh).length,
+      mode: 'incremental_overlay'
     };
     fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2), 'utf8');
 
@@ -117,7 +147,8 @@ function applyPatch(options = {}) {
         type: info.type,
         resourcesPath: resDir,
         entriesCount: meta.totalEntries,
-        jsPatchedCount
+        jsPatchedCount,
+        mode: 'incremental_overlay'
       }
     };
   } catch (err) {
@@ -150,7 +181,7 @@ function restorePatch(options = {}) {
   }
 
   try {
-    // 1. 恢复官方原版 en-US.json (彻底闭环解决覆盖污染)
+    // 1. 恢复官方原版 en-US.json
     const restoreEnUS = (targetDir, defaultBaseFile) => {
       const enFile = path.join(targetDir, 'en-US.json');
       const bakFile = path.join(targetDir, 'en-US.backup.json');

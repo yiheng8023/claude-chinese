@@ -54,8 +54,11 @@ function handleStatus() {
   console.log(`📂 安装路径: ${info.installPath}`);
   console.log(`📁 资源路径: ${info.resourcesPath}`);
 
-  if (info.isPatched) {
-    console.log('\n🟢 汉化状态: 已汉化 (Patched - 中文界面就绪)');
+  if (info.hasNativeChinese) {
+    console.log('\n🎉 汉化状态: 官方原生支持 (Native Official Chinese)');
+    console.log('💡 Anthropic 官方已内置简体中文，工具包自动优雅让位。');
+  } else if (info.isPatched) {
+    console.log('\n🟢 汉化状态: 已增量挂载汉化 (Patched - 中文界面就绪)');
   } else {
     console.log('\n🟡 汉化状态: 未汉化 / 原版英文 (Original)');
     console.log('💡 运行 "node cli.js install" 或双击 "install.bat" 即可一键汉化。');
@@ -64,13 +67,18 @@ function handleStatus() {
 
 function handleInstall() {
   console.log('=== 开始安装 Claude 中文汉化补丁 ===\n');
-  const result = applyPatch();
+  const customPath = getCustomPath();
+  const result = applyPatch({ customPath });
 
   if (result.success) {
-    console.log('✅ 汉化补丁注入成功！');
-    console.log(`📦 适配版本: ${result.info.version}`);
-    console.log(`🇨🇳 已汉化词条数: ${result.info.entriesCount}`);
-    console.log('\n🎉 请重启 Claude 桌面客户端查看中文界面。');
+    if (result.nativeSupported) {
+      console.log(result.message);
+    } else {
+      console.log('✅ 增量汉化补丁挂载成功（保留官方原版英文为纯净兜底）！');
+      console.log(`📦 适配版本: ${result.info.version}`);
+      console.log(`🇨🇳 已汉化词条数: ${result.info.entriesCount}`);
+      console.log('\n🎉 请重启 Claude 桌面客户端查看中文界面。');
+    }
   } else {
     console.error(`❌ 汉化失败: ${result.error}`);
   }
