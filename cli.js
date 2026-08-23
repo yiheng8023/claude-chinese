@@ -5,6 +5,7 @@
  */
 const { getClaudeInstallation } = require('./core/msix-detector');
 const { applyPatch, restorePatch } = require('./core/patcher');
+const { runPreflightCheck } = require('./core/preflight');
 const { runDriftDetection } = require('./tools/drift-detector');
 const { execSync, spawn } = require('child_process');
 const path = require('path');
@@ -30,12 +31,30 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
 
 可用命令:
   status         检查 Claude 客户端安装与汉化补丁状态
+  check          执行前置环境全维预检 (Node 弹性版本、客户端安装、进程锁定与权限)
   install        注入中文汉化补丁 (支持 MSIX / Win32 / macOS / Linux)
   restore        还原为官方英文原版
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         自愈式启动 Claude (检测并自动补齐汉化后启动)
   help           显示此帮助信息
 `);
+}
+
+function handlePreflight() {
+  console.log('=== 执行前置环境全维健康预检 (Pre-flight Health Check) ===\n');
+  const customPath = getCustomPath();
+  const preflight = runPreflightCheck({ customPath, autoClose: false });
+
+  for (const c of preflight.checks) {
+    const icon = c.passed ? '✅' : (c.critical ? '❌' : '⚠️');
+    console.log(`  ${icon} [${c.name}]: ${c.detail}`);
+  }
+
+  if (preflight.allPassed) {
+    console.log('\n🎉 所有核心前置条件 100% 就绪，可直接执行安装！');
+  } else {
+    console.log('\n❌ 部分核心前置条件未满足，请根据上方提示调整环境后再试。');
+  }
 }
 
 function handleStatus() {
@@ -68,12 +87,27 @@ function handleStatus() {
 function handleInstall() {
   console.log('=== 开始安装 Claude 中文汉化补丁 ===\n');
   const customPath = getCustomPath();
+
+  console.log('🔍 [1/3] 正在执行前置环境全维预检...');
+  const preflight = runPreflightCheck({ customPath });
+  for (const c of preflight.checks) {
+    const icon = c.passed ? '✅' : (c.critical ? '❌' : '⚠️');
+    console.log(`  ${icon} ${c.name}: ${c.detail}`);
+  }
+
+  if (!preflight.allPassed) {
+    console.error('\n❌ 前置条件检查未通过，安装中止。请根据上方排查环境。');
+    return;
+  }
+
+  console.log('\n⚙️ [2/3] 正在应用增量汉化补丁与 JS 注入...');
   const result = applyPatch({ customPath });
 
   if (result.success) {
     if (result.nativeSupported) {
       console.log(result.message);
     } else {
+      console.log('\n📦 [3/3] 汉化挂载完成！');
       console.log('✅ 增量汉化补丁挂载成功（保留官方原版英文为纯净兜底）！');
       console.log(`📦 适配版本: ${result.info.version}`);
       console.log(`🇨🇳 已汉化词条数: ${result.info.entriesCount}`);
@@ -132,9 +166,75 @@ function handleLaunch() {
   }
 }
 
+function handleWatch() {
+  console.log('=== 启动 Claude 中文汉化热重载与自愈守护进程 (Hot-Reload Daemon) ===\n');
+  const customPath = getCustomPath();
+  const info = getClaudeInstallation(customPath);
+
+  if (!info.installPath || !info.resourcesPath) {
+    console.error('❌ 未找到 Claude 客户端安装路径。请确保已安装 Claude Desktop。');
+    return;
+  }
+
+  // 1. 初次静默自愈注入
+  if (!info.isPatched) {
+    console.log('⚡ 检测到当前未安装汉化，正在执行初始热注入...');
+    applyPatch({ customPath, autoClose: false });
+    console.log('✅ 初始汉化挂载完成！\n');
+  }
+
+  console.log(`📁 监听项目词库: ${path.join(__dirname, 'dict')}`);
+  console.log(`📁 监听客户端资源: ${info.resourcesPath}`);
+  console.log('💡 守护特性已激活:');
+  console.log('   1. 词库热更新: 编辑本地 dict/*.json 后，在客户端按 Ctrl+R 即可秒级生效最新翻译！');
+  console.log('   2. 官方自愈守卫: 检测到 Claude 官方静默覆盖更新时，自动重打补丁自愈恢复中文！\n');
+  console.log('👀 守护进程运行中 (按 Ctrl+C 退出)...');
+
+  let debounceTimer = null;
+  const triggerHotReload = (reason) => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      console.log(`\n🔔 [${new Date().toLocaleTimeString()}] 检测到变动: ${reason}`);
+      console.log('⚡ 正在执行毫秒级增量热重载 (Hot Reload)...');
+      try {
+        const result = applyPatch({ customPath, autoClose: false });
+        if (result.success) {
+          console.log(`🎉 热重载完成 (已挂载 ${result.info.entriesCount} 词条)！在 Claude 中按 Ctrl+R 即可查看最新界面。`);
+        }
+      } catch (err) {
+        console.error('⚠️ 热重载同步异常:', err.message);
+      }
+    }, 300);
+  };
+
+  // 监听本地 dict 目录变更 (词典热更新)
+  const dictDir = path.join(__dirname, 'dict');
+  if (fs.existsSync(dictDir)) {
+    fs.watch(dictDir, { recursive: true }, (eventType, filename) => {
+      if (filename && filename.endsWith('.json')) {
+        triggerHotReload(`本地词库更新 (${filename})`);
+      }
+    });
+  }
+
+  // 监听客户端 resources 目录变更 (官方升级自愈)
+  const resDir = info.resourcesPath;
+  if (fs.existsSync(resDir)) {
+    fs.watch(resDir, (eventType, filename) => {
+      if (filename && (filename.includes('en-US.json') || filename.includes('package.json'))) {
+        triggerHotReload(`官方资源变动 (${filename})`);
+      }
+    });
+  }
+}
+
 switch (command) {
   case 'status':
     handleStatus();
+    break;
+  case 'check':
+  case 'preflight':
+    handlePreflight();
     break;
   case 'install':
   case 'patch':
@@ -151,6 +251,10 @@ switch (command) {
   case 'launch':
   case 'start':
     handleLaunch();
+    break;
+  case 'watch':
+  case 'daemon':
+    handleWatch();
     break;
   case 'help':
   default:
