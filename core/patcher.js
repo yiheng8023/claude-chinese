@@ -7,7 +7,7 @@ const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
 
 function applyPatch(options = {}) {
-  const info = getClaudeInstallation();
+  const info = getClaudeInstallation(options.customPath);
 
   if (!info.installPath || !info.resourcesPath) {
     return {
@@ -128,8 +128,8 @@ function applyPatch(options = {}) {
   }
 }
 
-function restorePatch() {
-  const info = getClaudeInstallation();
+function restorePatch(options = {}) {
+  const info = getClaudeInstallation(options.customPath);
 
   if (!info.installPath || !info.resourcesPath) {
     return {
