@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.tmp
+*.log
+dict/multilang-ref.json
+dict/en_all.json
+dict/batch*.json
+tools/drift-report.json

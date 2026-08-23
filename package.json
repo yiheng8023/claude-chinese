@@ -1,0 +1,34 @@
+{
+  "name": "claude-chinese",
+  "version": "1.0.0",
+  "description": "Claude 桌面客户端高性能、非侵入式、自愈型中文汉化工具包 (Self-Healing Chinese Localization Toolkit for Claude Desktop)",
+  "main": "cli.js",
+  "bin": {
+    "claude-cn": "./cli.js"
+  },
+  "scripts": {
+    "test": "node test/verify-dict.js && node test/test-icu.js",
+    "test:dict": "node test/verify-dict.js",
+    "test:icu": "node test/test-icu.js",
+    "scan:drift": "node tools/drift-detector.js",
+    "compile": "node tools/compile-zh-dict.js",
+    "status": "node cli.js status",
+    "install": "node cli.js install",
+    "restore": "node cli.js restore",
+    "launch": "node cli.js launch"
+  },
+  "keywords": [
+    "claude",
+    "claude-desktop",
+    "cowork",
+    "claude-code",
+    "localization",
+    "chinese",
+    "electron",
+    "msix",
+    "i18n",
+    "zh-cn"
+  ],
+  "author": "Claude Chinese Open Source Community",
+  "license": "MIT"
+}
