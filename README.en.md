@@ -6,7 +6,7 @@
 
 > 🚀 **High-performance, Non-invasive, Self-healing Chinese Localization Toolkit for Anthropic Claude Desktop clients (Windows MSIX / Win32 / macOS / Linux).**
 
-A robust, industrial-grade localization engine tailored for **Claude Desktop**, fully aligned with the **`antigravity-chinese`** architectural principles. Built to survive frequent upstream updates, Windows MSIX ACL restrictions, and customized third-party routing (e.g., **CC Switch + DeepSeek** in `cowork + code` hybrid modes).
+A robust, industrial-grade localization engine tailored for **Claude Desktop**. Built to survive frequent upstream updates, Windows MSIX ACL restrictions, and customized third-party routing (e.g., **CC Switch + DeepSeek** in `cowork + code` hybrid modes).
 
 ---
 

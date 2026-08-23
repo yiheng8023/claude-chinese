@@ -4,7 +4,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、非侵入式中文本地化工具包。效仿并对齐 **`antigravity-chinese`** 的工业级自愈工程体系，完美解决官方版本频繁更新、MSIX 权限封锁、动态占位符破损以及第三方模型路由（如 **CC Switch + DeepSeek** 下的 `cowork + code` 混合模式）的汉化与自愈需求。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、非侵入式中文本地化工具包。具备工业级自愈工程体系，完美解决官方版本频繁更新、MSIX 权限封锁、动态占位符破损以及第三方模型路由（如 **CC Switch + DeepSeek** 等在 `cowork + code` 混合模式下）的汉化与自愈需求。
 
 ---
 
@@ -18,9 +18,9 @@
 
 ---
 
-## 🔌 双模生态：UI 本地化 + MCP 智能体增强 (Dual-Mode Architecture)
+## 🔌 双模生态：UI 本地化 + 智能体增强 (Dual-Mode Architecture)
 
-借鉴 `antigravity-chinese` 的双模设计哲学，本项目不仅仅是一个单纯的界面补丁，更提供两套协同运行的本地化维度：
+本项目不仅仅是一个单纯的界面补丁，更提供两套协同运行的本地化维度（宿主界面全量汉化 + 智能体协议增强）：
 
 ```mermaid
 graph TD
