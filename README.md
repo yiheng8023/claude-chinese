@@ -22,7 +22,7 @@
 
 1. 下载或克隆本项目至本地：
    ```bash
-   git clone https://github.com/your-username/claude-chinese.git
+   git clone https://github.com/yiheng8023/claude-chinese.git
    cd claude-chinese
    ```
 2. 右键以管理员身份运行 **`install.bat`**；
