@@ -1,5 +1,5 @@
 /**
- * Claude 安装路径与 MSIX/Win32/macOS/Linux 全平台探测器
+ * Claude 安装路径与 MSIX/Win32/macOS/Linux 全平台探测器 (精准状态判定)
  */
 const fs = require('fs');
 const path = require('path');
@@ -98,19 +98,18 @@ function getClaudeInstallation(customPath = null) {
     }
   }
 
-  // 5. 检查是否已汉化
+  // 5. 检查是否已汉化 (以元数据与 zh-CN.json 的实体存在为准，避免 en-US 误判)
   if (result.resourcesPath) {
-    const enPath = path.join(result.resourcesPath, 'en-US.json');
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');
-    if (fs.existsSync(metaPath)) {
+    const zhPath = path.join(result.resourcesPath, 'zh-CN.json');
+    const ionZhPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'zh-CN.json');
+
+    if (fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
       result.isPatched = true;
-    } else if (fs.existsSync(enPath)) {
-      try {
-        const content = fs.readFileSync(enPath, 'utf8');
-        if (content.includes('实际大小') || content.includes('新对话') || content.includes('团队 (Team)')) {
-          result.isPatched = true;
-        }
-      } catch (e) {}
+    } else if (fs.existsSync(zhPath) && fs.existsSync(ionZhPath)) {
+      result.isPatched = true;
+    } else {
+      result.isPatched = false;
     }
   }
 

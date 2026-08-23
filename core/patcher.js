@@ -1,5 +1,5 @@
 /**
- * 核心全量注入器与还原引擎 (支持 Shell + Ion-Dist Web UI + JS 语言注册补丁)
+ * 核心全量注入器与还原引擎 (支持 Shell + Ion-Dist Web UI + JS 语言注册补丁与完整还原闭环)
  */
 const fs = require('fs');
 const path = require('path');
@@ -58,31 +58,48 @@ function applyPatch(options = {}) {
       }
     }
 
-    // 3. 安装全量字典文件
+    // 3. 自动创建官方原版 en-US 备份 (防止还原时丢失纯英文基线)
+    const backupEnUS = (targetDir) => {
+      const enFile = path.join(targetDir, 'en-US.json');
+      const bakFile = path.join(targetDir, 'en-US.backup.json');
+      if (fs.existsSync(enFile) && !fs.existsSync(bakFile)) {
+        const content = fs.readFileSync(enFile, 'utf8');
+        // 确保备份的是真正的英文原版（不含汉化特征词）
+        if (!content.includes('实际大小') && !content.includes('新对话') && !content.includes('团队 (Team)')) {
+          fs.copyFileSync(enFile, bakFile);
+        }
+      }
+    };
+
+    backupEnUS(resDir);
+    if (fs.existsSync(i18nDir)) backupEnUS(i18nDir);
+    if (fs.existsSync(dynDir)) backupEnUS(dynDir);
+
+    // 4. 安装全量字典文件
     const shellZh = path.join(__dirname, '../dict/zh-CN.json');
     const ionZh = path.join(__dirname, '../dict/ion-zh-CN.json');
     const dynZh = path.join(__dirname, '../dict/dynamic-zh-CN.json');
 
-    // 备份并注入 Shell 层
+    // 注入 Shell 层
     if (fs.existsSync(shellZh)) {
       fs.copyFileSync(shellZh, path.join(resDir, 'zh-CN.json'));
       fs.copyFileSync(shellZh, path.join(resDir, 'en-US.json'));
     }
 
-    // 备份并注入 Ion-Dist Web UI 层
+    // 注入 Ion-Dist Web UI 层
     if (fs.existsSync(ionZh) && fs.existsSync(i18nDir)) {
       fs.copyFileSync(ionZh, path.join(i18nDir, 'zh-CN.json'));
       fs.copyFileSync(ionZh, path.join(i18nDir, 'en-US.json'));
       fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
     }
 
-    // 备份并注入 Dynamic 层
+    // 注入 Dynamic 层
     if (fs.existsSync(dynZh) && fs.existsSync(dynDir)) {
       fs.copyFileSync(dynZh, path.join(dynDir, 'zh-CN.json'));
       fs.copyFileSync(dynZh, path.join(dynDir, 'en-US.json'));
     }
 
-    // 4. 写入元数据
+    // 5. 写入元数据
     const metaFile = path.join(resDir, '.claude_chinese_meta.json');
     const meta = {
       patchedAt: new Date().toISOString(),
@@ -133,7 +150,25 @@ function restorePatch() {
   }
 
   try {
-    // 移除注入文件
+    // 1. 恢复官方原版 en-US.json (彻底闭环解决覆盖污染)
+    const restoreEnUS = (targetDir, defaultBaseFile) => {
+      const enFile = path.join(targetDir, 'en-US.json');
+      const bakFile = path.join(targetDir, 'en-US.backup.json');
+
+      if (fs.existsSync(bakFile)) {
+        fs.copyFileSync(bakFile, enFile);
+        fs.unlinkSync(bakFile);
+      } else if (defaultBaseFile && fs.existsSync(defaultBaseFile)) {
+        fs.copyFileSync(defaultBaseFile, enFile);
+      }
+    };
+
+    const shellBase = path.join(__dirname, '../dict/en-US.base.json');
+    restoreEnUS(resDir, shellBase);
+    if (fs.existsSync(i18nDir)) restoreEnUS(i18nDir);
+    if (fs.existsSync(dynDir)) restoreEnUS(dynDir);
+
+    // 2. 移除注入的中文文件
     const filesToDelete = [
       path.join(resDir, 'zh-CN.json'),
       path.join(i18nDir, 'zh-CN.json'),
@@ -148,7 +183,7 @@ function restorePatch() {
       }
     }
 
-    // 恢复 JS 注册中的 zh-CN
+    // 3. 恢复 JS 注册中的 zh-CN
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
       for (const file of jsFiles) {
