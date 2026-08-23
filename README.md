@@ -91,16 +91,22 @@ graph TD
 # 1. 查看当前客户端及汉化状态
 node cli.js status
 
-# 2. 一键安装汉化（自动备份并完成双层注入与 JS 注册）
+# 2. 执行前置环境全维健康预检 (Node 弹性版本、客户端安装、进程锁定与权限)
+node cli.js check
+
+# 3. 一键安装汉化（自动执行前置预检、安全释放文件锁并完成增量挂载）
 node cli.js install
 
-# 3. 自愈启动（自动检测版本覆盖并在需要时秒级自愈挂载）
+# 4. 启动热重载与自愈守护进程 (编辑词库后按 Ctrl+R 秒级生效，官方更新自动自愈)
+node cli.js watch
+
+# 5. 自愈启动（自动检测版本覆盖并在需要时秒级自愈挂载后拉起客户端）
 node cli.js launch
 
-# 4. 执行上游版本文本漂移分析 (Drift Detection)
+# 6. 执行上游版本文本漂移分析 (Drift Detection)
 node cli.js drift
 
-# 5. 一键还原回官方英文原版
+# 7. 一键还原回官方英文原版
 node cli.js restore
 ```
 

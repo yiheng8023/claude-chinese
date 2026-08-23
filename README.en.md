@@ -76,20 +76,26 @@ graph TD
 ### Option 2: CLI Manager
 
 ```bash
-# Check client and patch health status
+# Check installation & patch status
 node cli.js status
 
-# Install full localization patch
+# Run preflight health checks (Node version, client paths, process locks, permissions)
+node cli.js check
+
+# Install localization patch with automatic preflight and process locking guard
 node cli.js install
 
-# Restore official English
-node cli.js restore
+# Start hot-reload daemon (live reload on dict change via Ctrl+R, auto-healing on updates)
+node cli.js watch
 
 # Launch with self-healing check
 node cli.js launch
 
 # Upstream drift detection scan
 node cli.js drift
+
+# Restore official English
+node cli.js restore
 ```
 
 ---
