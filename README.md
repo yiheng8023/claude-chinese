@@ -43,7 +43,7 @@ graph TD
    - 彻底汉化客户端所有原生菜单、系统托盘、Cowork 协同任务看板、审批流弹窗、设置与输入交互。
 2. **模式 B：智能体插件与协议增强 (MCP Agent Suite)**：
    - 支持通过官方 **MCP (Model Context Protocol)** 协议接入中文工具链与本地工作流；
-   - 完美适配 **CC Switch** 路由网关，自由在官方 Claude 与第三方模型（如 DeepSeek V3/R1）之间切换。
+   - 完美适配 **CC Switch** 等路由网关，自由在官方 Claude 与各类第三方前沿大模型（如 DeepSeek 全系列、本地与云端推理端点）之间无缝切换。
 
 ---
 
