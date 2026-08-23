@@ -10,6 +10,7 @@
     "test": "node test/verify-dict.js && node test/test-icu.js",
     "test:dict": "node test/verify-dict.js",
     "test:icu": "node test/test-icu.js",
+    "audit": "node tools/comprehensive-audit.js",
     "scan:drift": "node tools/drift-detector.js",
     "compile": "node tools/compile-zh-dict.js",
     "status": "node cli.js status",
@@ -29,6 +30,6 @@
     "i18n",
     "zh-cn"
   ],
-  "author": "Claude Chinese Open Source Community",
+  "author": "yiheng8023",
   "license": "MIT"
 }
