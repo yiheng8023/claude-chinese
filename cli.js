@@ -124,7 +124,8 @@ function handleInstall() {
 
 function handleRestore() {
   console.log('=== 正在还原官方英文原版 ===\n');
-  const result = restorePatch();
+  const customPath = getCustomPath();
+  const result = restorePatch({ customPath });
 
   if (result.success) {
     console.log('✅ 还原成功！已恢复官方英文界面。');
@@ -143,11 +144,12 @@ function handleDrift() {
 }
 
 function handleLaunch() {
-  const info = getClaudeInstallation();
+  const customPath = getCustomPath();
+  const info = getClaudeInstallation(customPath);
 
   if (!info.isPatched) {
     console.log('⚡ 检测到汉化尚未挂载，正在执行静默自愈注入...');
-    applyPatch();
+    applyPatch({ customPath });
   }
 
   console.log('🚀 正在启动 Claude 客户端...');
@@ -163,6 +165,11 @@ function handleLaunch() {
     }
   } else if (process.platform === 'darwin') {
     execSync('open -a "Claude"', { stdio: 'ignore' });
+  } else {
+    // Linux (claude-desktop / claude)
+    try {
+      execSync('claude-desktop || claude || true', { stdio: 'ignore' });
+    } catch (e) {}
   }
 }
 

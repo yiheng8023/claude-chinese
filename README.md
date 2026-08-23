@@ -12,47 +12,47 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、非侵入式中文本地化工具包。具备工业级自愈工程体系，完美解决官方版本频繁更新、MSIX 权限封锁、动态占位符破损以及第三方模型路由（如 **CC Switch + DeepSeek** 等在 `cowork + code` 混合模式下）的汉化与自愈需求。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
 
 ## 🌟 核心特性与设计哲学
 
-- 🛡️ **非侵入式增量挂载与纯净兜底 (Incremental Overlay & Fallback)**：基于官方原版 `en-US` 进行增量合并，**绝不粗暴覆盖原版英文字典**。当官方更新引入全新词条时自动回退英文，彻底拆除“更新即碎”的隐患。
-- 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位，无需人工干预。
+- 🛡️ **可逆式增量挂载与纯净兜底 (Incremental Overlay & Fallback)**：基于官方原版 `en-US` 进行增量合并，**绝不粗暴覆盖原版英文字典**。当官方更新引入全新词条时自动回退英文，彻底拆除“更新即白屏”的隐患。
+- 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言与原生 JS 白名单自动嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位。
 - 🧬 **自愈与抗漂移 (Self-Healing & Drift-Resistant)**：内置版本漂移检测引擎 (`npm run scan:drift`)，官方发版更新后秒级检测新增与废弃词条，彻底终结更新后满世界找新补丁的痛点。
 - 🎯 **全量 HashKey 界面覆盖**：覆盖全量 18,900+ 核心词条（包含完整的 Cowork 协同画布、权限审批流、Claude Code 模式、模型规格选择器与设置面板）。
 - 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与规格参数（如 `1M`, `128k`, `MCP`, `DeepSeek` 等），确保任务流执行永不卡死。
-- 🪟 **MSIX / WindowsApps 专属适配**：深度适配 Windows MSIX 旁加载版本，提供自动提权夺权注入与静默自愈启动器。
+- 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，杜绝全局 Users 组高危赋权。
 
 ---
 
-## 🔌 双模生态：UI 本地化 + 智能体增强 (Dual-Mode Architecture)
+## 🗺️ 架构与演进路线图 (Architecture & Roadmap)
 
-本项目不仅仅是一个单纯的界面补丁，更提供两套协同运行的本地化维度（宿主界面全量汉化 + 智能体协议增强）：
+本项目采用分阶段演进架构：
 
 ```mermaid
 graph TD
     User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
     
-    subgraph Mode1 ["模式 A: 客户端宿主 UI 汉化 (Host UI)"]
+    subgraph Mode1 ["【已上线】客户端宿主 UI 汉化 (Host UI Localization)"]
         ClaudeApp --> ShellLayer["Shell 壳层 (550+ 词条)"]
         ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ 词条)"]
         ClaudeApp --> DynamicLayer["Dynamic 思考模型特性"]
     end
     
-    subgraph Mode2 ["模式 B: 智能体中文插件与路由 (Agent Suite)"]
-        ClaudeApp --> MCP["MCP Server 中文工程协议"]
-        ClaudeApp --> Rules["中文交互与代码注释规则"]
-        ClaudeApp --> Switcher["1P 官方账号 / 3P 第三方网关 (DeepSeek) 切换"]
+    subgraph Mode2 ["【规划中 / Roadmap】智能体扩展生态 (Agent Suite)"]
+        ClaudeApp -.-> MCP["MCP Server 中文工程协议"]
+        ClaudeApp -.-> Rules["中文交互与代码注释规则"]
+        ClaudeApp -.-> Switcher["1P 官方账号 / 3P 第三方网关 (DeepSeek) 切换"]
     end
 ```
 
-1. **模式 A：宿主界面全量本地化 (Host UI Localization)**：
-   - 彻底汉化客户端所有原生菜单、系统托盘、Cowork 协同任务看板、审批流弹窗、设置与输入交互。
-2. **模式 B：智能体插件与协议增强 (MCP Agent Suite)**：
-   - 支持通过官方 **MCP (Model Context Protocol)** 协议接入中文工具链与本地工作流；
-   - 完美适配 **CC Switch** 等路由网关，自由在官方 Claude 与各类第三方前沿大模型（如 DeepSeek 全系列、本地与云端推理端点）之间无缝切换。
+1. **维度 A：客户端宿主全量本地化 (Host UI Localization - 已就绪)**：
+   - 彻底汉化客户端所有原生菜单、系统托盘、Cowork 协同任务画布、审批流弹窗、设置与输入交互。
+2. **维度 B：智能体扩展生态 (MCP Agent Suite - 规划演进中)**：
+   - **[计划]** 通过官方 **MCP (Model Context Protocol)** 协议接入中文工具链与本地工作流；
+   - **[计划]** 适配 **CC Switch** 等路由网关，支持在官方 Claude 与第三方推理端点之间无缝切换。
 
 ---
 

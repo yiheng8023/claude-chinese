@@ -117,11 +117,12 @@ function applyPatch(options = {}) {
     }
 
     if (fs.existsSync(assetsDir)) {
-      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
       const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
 
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
+        const bakPath = `${fullPath}.orig.bak`;
         let content = fs.readFileSync(fullPath, 'utf8');
 
         let modified = false;
@@ -146,6 +147,10 @@ function applyPatch(options = {}) {
         }
 
         if (modified) {
+          // 首次修改时保存官方物理出厂备份，确保 100% 绝对权威回滚
+          if (!fs.existsSync(bakPath)) {
+            fs.copyFileSync(fullPath, bakPath);
+          }
           fs.writeFileSync(fullPath, content, 'utf8');
           jsPatchedCount++;
         }
@@ -309,25 +314,34 @@ function restorePatch(options = {}) {
       }
     }
 
-    // 3. 恢复 JS 注册中的 zh-CN 与硬编码补丁
+    // 3. 权威物理出厂恢复：从 .orig.bak 还原官方被修改 JS 资源
     if (fs.existsSync(assetsDir)) {
-      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
-        let content = fs.readFileSync(fullPath, 'utf8');
-        let modified = false;
-        if (content.includes(',"zh-CN"]')) {
-          content = content.replace(',"zh-CN"]', ']');
-          modified = true;
-        }
-        for (const patch of JS_LITERAL_PATCHES) {
-          if (patch.zhPattern.test(content)) {
-            content = content.replace(patch.zhPattern, patch.restoreEn);
+        const bakPath = `${fullPath}.orig.bak`;
+
+        if (fs.existsSync(bakPath)) {
+          // 物理级 100% 纯净出厂覆盖还原
+          fs.copyFileSync(bakPath, fullPath);
+          fs.unlinkSync(bakPath);
+        } else {
+          // 兜底：正则清理
+          let content = fs.readFileSync(fullPath, 'utf8');
+          let modified = false;
+          if (content.includes(',"zh-CN"]')) {
+            content = content.replace(',"zh-CN"]', ']');
             modified = true;
           }
-        }
-        if (modified) {
-          fs.writeFileSync(fullPath, content, 'utf8');
+          for (const patch of JS_LITERAL_PATCHES) {
+            if (patch.zhPattern.test(content)) {
+              content = content.replace(patch.zhPattern, patch.restoreEn);
+              modified = true;
+            }
+          }
+          if (modified) {
+            fs.writeFileSync(fullPath, content, 'utf8');
+          }
         }
       }
     }

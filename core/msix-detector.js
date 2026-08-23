@@ -98,20 +98,40 @@ function getClaudeInstallation(customPath = null) {
     }
   }
 
-  // 5. 检查是否已汉化及是否官方已原生支持中文
+  // 5. 检查是否已汉化及是否官方已原生支持中文 (严谨特征判定)
   if (result.resourcesPath) {
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');
     const zhPath = path.join(result.resourcesPath, 'zh-CN.json');
     const ionZhPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'zh-CN.json');
+    const assetsDir = path.join(result.resourcesPath, 'ion-dist', 'assets', 'v1');
 
-    // 检查官方是否原生内置了中文（未被打补丁 meta 且 zh-CN 存在）
-    if (!fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
+    // 检查是否存在原生 JS 支持 (官方编译包自身原生内置 zh-CN 语言白名单)
+    let nativeJsSupported = false;
+    if (fs.existsSync(assetsDir)) {
+      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
+      for (const file of jsFiles) {
+        const fullPath = path.join(assetsDir, file);
+        const bakPath = `${fullPath}.orig.bak`;
+        // 若无我们的 .orig.bak 备份，且源码本身就包含 "zh-CN"，则代表官方原生构建已内置中文
+        if (!fs.existsSync(bakPath)) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          if (content.includes('"zh-CN"') && content.includes('"en-US"')) {
+            nativeJsSupported = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (nativeJsSupported && !fs.existsSync(metaPath)) {
       result.hasNativeChinese = true;
       result.isPatched = true;
-    } else if (fs.existsSync(metaPath) && (fs.existsSync(zhPath) || fs.existsSync(ionZhPath))) {
+    } else if (fs.existsSync(metaPath)) {
       result.hasNativeChinese = false;
       result.isPatched = true;
-    } else if (fs.existsSync(zhPath) && fs.existsSync(ionZhPath)) {
+    } else if (fs.existsSync(zhPath) || fs.existsSync(ionZhPath)) {
+      // 存在 zh-CN 但没有元数据且 JS 无原生签名，判定为已打过第三方/非标准补丁
+      result.hasNativeChinese = false;
       result.isPatched = true;
     } else {
       result.isPatched = false;
