@@ -1,14 +1,13 @@
 @echo off
-chcp 65001 >nul
-title Claude 汉化还原程序
+chcp 65001 >nul 2>&1
+cd /d "%~dp0"
 
 net session >nul 2>&1
-if %errorLevel% neq 0 (
-    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+if %errorlevel% neq 0 (
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -ArgumentList '/c cd /d ""%~dp0"" && node cli.js restore && pause' -Verb RunAs"
     exit /b
 )
 
-cd /d "%~dp0"
 node cli.js restore
 echo.
 pause
