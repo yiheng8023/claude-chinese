@@ -4,12 +4,33 @@
 const fs = require('fs');
 const path = require('path');
 const { extractVariables } = require('./icu-validator');
+const { getClaudeInstallation } = require('../core/msix-detector');
 
-const ionZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/ion-zh-CN.json'), 'utf8'));
-const backup = JSON.parse(fs.readFileSync('C:/Program Files/WindowsApps/Claude_1.34493.1.0_x64__pzs8sxrjxfjjc/app/resources/ion-dist/i18n/en-US.backup.json', 'utf8'));
-const shellZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/zh-CN.json'), 'utf8'));
-const shellBase = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/en-US.base.json'), 'utf8'));
-const dynZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/dynamic-zh-CN.json'), 'utf8'));
+const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
+const shellZhPath = path.join(__dirname, '../dict/zh-CN.json');
+const shellBasePath = path.join(__dirname, '../dict/en-US.base.json');
+const dynZhPath = path.join(__dirname, '../dict/dynamic-zh-CN.json');
+
+const ionZh = JSON.parse(fs.readFileSync(ionZhPath, 'utf8'));
+const shellZh = JSON.parse(fs.readFileSync(shellZhPath, 'utf8'));
+const shellBase = JSON.parse(fs.readFileSync(shellBasePath, 'utf8'));
+const dynZh = JSON.parse(fs.readFileSync(dynZhPath, 'utf8'));
+
+// 动态寻找官方 en-US 词典路径
+const info = getClaudeInstallation();
+let ionEn = {};
+let foundEnPath = null;
+
+if (info.resourcesPath) {
+  const cand1 = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json');
+  const cand2 = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.backup.json');
+  if (fs.existsSync(cand1)) foundEnPath = cand1;
+  else if (fs.existsSync(cand2)) foundEnPath = cand2;
+}
+
+if (foundEnPath && fs.existsSync(foundEnPath)) {
+  try { ionEn = JSON.parse(fs.readFileSync(foundEnPath, 'utf8')); } catch (e) {}
+}
 
 console.log('====================================================');
 console.log('   Claude-Chinese 终极全局一致性深度体检');
@@ -20,7 +41,7 @@ let issues = [];
 // 1. 检查 Effort 术语是否还有遗留的“工作量”或“努力程度”
 console.log('【一致性检查 1】Effort / 推理强度 术语一致性');
 for (const [k, zhVal] of Object.entries(ionZh)) {
-  const enVal = backup[k];
+  const enVal = ionEn[k];
   if (!enVal || typeof zhVal !== 'string') continue;
 
   if (/\beffort\b/i.test(enVal)) {
@@ -34,7 +55,7 @@ for (const [k, zhVal] of Object.entries(ionZh)) {
 // 2. 检查模式术语 (Manual / Plan / Accept edits / Bypass permissions)
 console.log('\n【一致性检查 2】工作流与审批模式 术语一致性');
 for (const [k, zhVal] of Object.entries(ionZh)) {
-  const enVal = backup[k];
+  const enVal = ionEn[k];
   if (!enVal || typeof zhVal !== 'string') continue;
 
   if (enVal === 'Accept edits' && zhVal !== '接受编辑') {
@@ -65,7 +86,7 @@ const actionMap = {
 
 for (const [enAction, expectedZh] of Object.entries(actionMap)) {
   for (const [k, zhVal] of Object.entries(ionZh)) {
-    const enVal = backup[k];
+    const enVal = ionEn[k];
     if (enVal === enAction && zhVal !== expectedZh) {
       console.log(`  ⚠️ [动作词不一致] [${k}] EN: "${enVal}" -> ZH: "${zhVal}" (期望: "${expectedZh}")`);
       issues.push({ key: k, type: 'action_inconsistency', en: enVal, zh: zhVal });
@@ -77,7 +98,7 @@ for (const [enAction, expectedZh] of Object.entries(actionMap)) {
 console.log('\n【一致性检查 4】ICU 占位符与变量结构一致性');
 let icuErrors = 0;
 for (const [k, zhVal] of Object.entries(ionZh)) {
-  const enVal = backup[k];
+  const enVal = ionEn[k];
   if (!enVal || typeof zhVal !== 'string') continue;
 
   const enVars = extractVariables(enVal).sort();
@@ -95,7 +116,7 @@ console.log('\n【一致性检查 5】HTML 标签对称性');
 const tags = ['b', 'i', 'code', 'link', 'a', 'span', 'strong', 'em', 'bold'];
 let tagErrors = 0;
 for (const [k, zhVal] of Object.entries(ionZh)) {
-  const enVal = backup[k];
+  const enVal = ionEn[k];
   if (!enVal || typeof zhVal !== 'string') continue;
 
   for (const tag of tags) {
