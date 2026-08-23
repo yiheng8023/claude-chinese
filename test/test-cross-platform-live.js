@@ -1,6 +1,6 @@
 /**
- * Linux / macOS 跨平台探测与注入真机模拟测试脚本
- * 专门用于在 Linux (WSL/CI) 或 macOS 环境下验证 detector 和 patcher 真实表现
+ * 全平台 (Windows / macOS / Linux) 探测与注入真实代码断言测试 (跨平台真机与 CI 必备)
+ * 验证核心代码：msix-detector.js 与 patcher.js 在全平台路径解析、增量注入、JS 白名单穿透与还原复位
  */
 const fs = require('fs');
 const path = require('path');
@@ -9,90 +9,112 @@ const { getClaudeInstallation } = require('../core/msix-detector');
 const { applyPatch, restorePatch } = require('../core/patcher');
 
 console.log('====================================================');
-console.log(`   跨平台真机/系统环境深度实测 (OS: ${process.platform})`);
+console.log(`   全平台真实核心代码跨平台断言测试 (Runner OS: ${process.platform})`);
 console.log('====================================================\n');
 
-// 1. 模拟 Linux 真实客户端安装路径 (/opt/claude-desktop/resources)
-const testLinuxPaths = [
-  '/usr/lib/claude-desktop/resources',
-  '/opt/Claude/resources',
-  '/opt/claude-desktop/resources'
-];
+function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
+  console.log(`\n--- [测试平台: ${displayName}] ---`);
+  
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), `claude-test-${testId}-`));
+  const appRoot = isMacBundle ? path.join(tmpRoot, 'Claude.app') : tmpRoot;
+  const resDir = isMacBundle
+    ? path.join(appRoot, 'Contents', 'Resources')
+    : path.join(appRoot, 'resources');
+    
+  const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
+  const dynDir = path.join(i18nDir, 'dynamic');
+  const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
 
-console.log('【步骤 1】探测系统真实安装或候选路径...');
-const detected = getClaudeInstallation();
-console.log('当前探测结果:', detected);
+  fs.mkdirSync(dynDir, { recursive: true });
+  fs.mkdirSync(assetsDir, { recursive: true });
 
-// 2. 在临时目录或系统目录搭建 Linux 规范目录结构
-const isLinux = process.platform === 'linux';
-const isMac = process.platform === 'darwin';
+  // 写入基线官方英文与前端编译 JS 文件（包含真实的官方语言白名单数组）
+  const baseEn = JSON.stringify({ "key": `Hello from ${displayName} Claude` });
+  fs.writeFileSync(path.join(resDir, 'en-US.json'), baseEn, 'utf8');
+  fs.writeFileSync(path.join(i18nDir, 'en-US.json'), baseEn, 'utf8');
+  fs.writeFileSync(path.join(dynDir, 'en-US.json'), baseEn, 'utf8');
+  
+  // 模拟真实官方 JS: const xu=["en-US","ja-JP"];
+  const jsFilePath = path.join(assetsDir, 'shared-2-BF65-y49.js');
+  fs.writeFileSync(jsFilePath, 'var vU=["en-US","ja-JP","de-DE"];', 'utf8');
 
-if (isLinux || isMac) {
-  console.log(`\n【步骤 2】在 ${process.platform} 环境下创建标准模拟应用包并实测...`);
-  const targetMockRoot = isLinux ? '/tmp/claude-desktop-test' : '/tmp/Claude.app';
-  const targetRes = isLinux ? path.join(targetMockRoot, 'resources') : path.join(targetMockRoot, 'Contents', 'Resources');
-  const mockIon = path.join(targetRes, 'ion-dist', 'i18n');
-  const mockDyn = path.join(mockIon, 'dynamic');
-  const mockAssets = path.join(targetRes, 'ion-dist', 'assets', 'v1');
+  try {
+    // 1. 验证路径探测与解析
+    console.log('  1. 验证 customPath 跨平台路径解析...');
+    const detected = getClaudeInstallation(appRoot);
+    if (!detected.resourcesPath || path.resolve(detected.resourcesPath) !== path.resolve(resDir)) {
+      console.error(`  ❌ 路径解析断言失败! 期望: ${resDir}, 实际: ${detected.resourcesPath}`);
+      process.exit(1);
+    }
+    console.log(`  ✅ 路径解析成功: ${detected.resourcesPath}`);
 
-  fs.mkdirSync(mockDyn, { recursive: true });
-  fs.mkdirSync(mockAssets, { recursive: true });
+    // 2. 验证真实 applyPatch 注入
+    console.log('  2. 验证 applyPatch 核心注入与 JS 白名单正则穿透...');
+    const patchRes = applyPatch({ customPath: appRoot });
+    if (!patchRes.success) {
+      console.error('  ❌ 注入失败:', patchRes.error);
+      process.exit(1);
+    }
 
-  const baseEn = JSON.stringify({ "key": "Hello from POSIX Claude" });
-  fs.writeFileSync(path.join(targetRes, 'en-US.json'), baseEn, 'utf8');
-  fs.writeFileSync(path.join(mockIon, 'en-US.json'), baseEn, 'utf8');
-  fs.writeFileSync(path.join(mockDyn, 'en-US.json'), baseEn, 'utf8');
-  fs.writeFileSync(path.join(mockAssets, 'shared-2-BF65-y49.js'), 'const xu=["en-US","ja-JP"];', 'utf8');
+    // 检查 JS 文件中是否真正由 patcher.js 写入了 "zh-CN"
+    const patchedJsContent = fs.readFileSync(jsFilePath, 'utf8');
+    if (!patchedJsContent.includes('"zh-CN"')) {
+      console.error('  ❌ patcher.js 未能通过正则在 JS 文件中注册 "zh-CN"!');
+      process.exit(1);
+    }
+    console.log('  ✅ JS 语言白名单通过 patcher.js 正则成功穿透注册!');
 
-  console.log(`   已就绪模拟应用包: ${targetMockRoot}`);
+    // 检查 zh-CN.json 与 meta 是否生成
+    if (!fs.existsSync(path.join(resDir, 'zh-CN.json')) || !fs.existsSync(path.join(resDir, '.claude_chinese_meta.json'))) {
+      console.error('  ❌ 注入文件缺失!');
+      process.exit(1);
+    }
+    console.log('  ✅ 增量 zh-CN.json 与补丁元数据就绪!');
 
-  // 测试自定义与跨平台指定路径
-  const customDetect = getClaudeInstallation(targetMockRoot);
-  console.log('   自定义路径探测结果:', customDetect);
+    // 3. 验证 status 状态断言
+    console.log('  3. 验证汉化后 status 判定...');
+    const patchedStatus = getClaudeInstallation(appRoot);
+    if (patchedStatus.isPatched !== true) {
+      console.error('  ❌ 注入后 isPatched 判定异常: false');
+      process.exit(1);
+    }
+    console.log('  ✅ 注入后 isPatched = true 断言通过!');
 
-  if (!customDetect.resourcesPath || customDetect.resourcesPath !== targetRes) {
-    console.error(`❌ 跨平台路径解析失败: 期望 ${targetRes}，实际 ${customDetect.resourcesPath}`);
-    process.exit(1);
+    // 4. 验证真实 restorePatch 还原
+    console.log('  4. 验证 restorePatch 真实还原与复位...');
+    const restoreRes = restorePatch({ customPath: appRoot });
+    if (!restoreRes.success) {
+      console.error('  ❌ 还原失败:', restoreRes.error);
+      process.exit(1);
+    }
+
+    // 检查 JS 是否复原
+    const restoredJsContent = fs.readFileSync(jsFilePath, 'utf8');
+    if (restoredJsContent.includes('"zh-CN"')) {
+      console.error('  ❌ restorePatch 未能清除 JS 中的 "zh-CN"!');
+      process.exit(1);
+    }
+    console.log('  ✅ JS 语言白名单已由 restorePatch 干净清除!');
+
+    // 检查 status 复位
+    const finalStatus = getClaudeInstallation(appRoot);
+    if (finalStatus.isPatched !== false) {
+      console.error('  ❌ 还原后 isPatched 未能复位为 false!');
+      process.exit(1);
+    }
+    console.log('  ✅ 还原后 isPatched = false 断言通过!');
+
+    console.log(`🎉 [平台: ${displayName}] 全流程核心代码测试 100% PASS!`);
+  } finally {
+    // 清理沙盒
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
   }
-  console.log('   ✅ 跨平台路径解析 100% 正确！');
-
-  // 测试安装与注入
-  console.log('\n【步骤 3】执行 POSIX 注入测试...');
-  const patchRes = applyPatch({ customPath: targetMockRoot });
-  console.log('   注入结果:', patchRes);
-
-  if (!patchRes.success) {
-    console.error('❌ 注入失败:', patchRes.error);
-    process.exit(1);
-  }
-  console.log('   ✅ POSIX 增量注入与 JS 白名单修改成功！');
-
-  // 验证注入后的 JS 文件
-  const patchedJs = fs.readFileSync(path.join(mockAssets, 'shared-2-BF65-y49.js'), 'utf8');
-  if (!patchedJs.includes('"zh-CN"')) {
-    console.error('❌ JS 白名单未成功注入 zh-CN！');
-    process.exit(1);
-  }
-  console.log('   ✅ JS 白名单已成功追加 "zh-CN"！');
-
-  // 测试还原
-  console.log('\n【步骤 4】执行 POSIX 还原测试...');
-  const restoreRes = restorePatch({ customPath: targetMockRoot });
-  console.log('   还原结果:', restoreRes);
-
-  const afterRestore = getClaudeInstallation(targetMockRoot);
-  if (afterRestore.isPatched !== false) {
-    console.error('❌ 还原后状态未正确复位！');
-    process.exit(1);
-  }
-  console.log('   ✅ POSIX 还原与状态复位 100% 成功！');
-
-  // 清理
-  fs.rmSync(targetMockRoot, { recursive: true, force: true });
-} else {
-  console.log('当前非 Linux/macOS 环境，请在 WSL 中运行。');
 }
 
+// 依次在不同平台目录布局下运行真实核心代码测试
+runPlatformTestSuite('linux-win32', 'Standard Linux / Win32 (resources/)', false);
+runPlatformTestSuite('macos', 'macOS Bundle (Contents/Resources/)', true);
+
 console.log('\n====================================================');
-console.log('   跨平台深度实测全部 PASS！');
-console.log('====================================================');
+console.log('   全平台跨环境真实核心代码断言全部 PASS！');
+console.log('====================================================\n');
