@@ -13915,7 +13915,7 @@
   "kCKK+84T6p": "绕过权限不能与 root/sudo 一起使用。请以非 root 用户身份运行，或在设置中关闭绕过权限。",
   "kCulmcpn4R": "今日应付款总额：",
   "kD5Nz+s3Pa": "正在加载成员",
-  "kDEj60CmLq": "超高",
+  "kDEj60CmLq": "极高",
   "kDKLmvtolF": "整个仓库",
   "kDYzre2KOj": "正在请求访问...",
   "kEyEtF92qF": "开启使用额度，这样达到计划限制后也能继续使用。额度会与你的计划分开计费——请参阅我们的 <link>帮助中心文章</link>。",
@@ -14070,7 +14070,7 @@
   "kkEftjMeP8": "{name} 会在下次使用时重新连接。",
   "kkHagW77CO": "网站图标",
   "kkaYP/82RW": "每位成员的支出限额",
-  "kkjl2vQekD": "最大",
+  "kkjl2vQekD": "最高",
   "kko7my3fcS": "软件开发人员",
   "klFoBvyvcG": "我们尚未向你发送发票。",
   "klUsQACr00": "检测到的工具",
@@ -18455,5 +18455,8 @@
   "/Ya5z/8UtM": "每位团队成员的 Claude 都能记住他们过去对话中的上下文。记忆对每个人保持私密。<a>了解更多</a>",
   "/uNRZlm2Pe": "社区连接器经过了自动化审查，但未经 Anthropic 官方验证。我们无法控制其提供的工具，也无法保证它们能按预期工作或不发生变化，因此请仅连接你信任的开发者。<a>了解更多</a>。",
   "14c/QurJSL": "你提交到 <dirLink>目录</dirLink> 的 Claude Code 和 Cowork 插件。审核通过的插件可供任何人在市场中安装。<docsLink>了解更多</docsLink>",
-  "1YUA7DnK8J": "未通过远程控制连接到 {machineName}。<link>了解更多</link>"
+  "1YUA7DnK8J": "未通过远程控制连接到 {machineName}。<link>了解更多</link>",
+  "HoZQmASaw3": "极高",
+  "Zk4EtKw26K": "最高",
+  "dapWFrcWv4": "更高的推理强度意味着更详尽深入的回答，但耗时更长且更快消耗限额。"
 }
