@@ -59,6 +59,102 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"自定义..."',
     zhPattern: /label:\s*["']自定义\.\.\.["']/g,
     restoreEn: 'label:"Custom..."'
+  },
+  {
+    id: 'sidebar-toggle-tooltip',
+    description: '侧边栏收起/展开按钮提示词',
+    enPattern: /content:([a-zA-Z0-9_$]+)\?"Expand sidebar":"Collapse sidebar"/g,
+    zhSnippet: 'content:$1?"展开侧边栏":"收起侧边栏"',
+    zhPattern: /content:([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
+    restoreEn: 'content:$1?"Expand sidebar":"Collapse sidebar"'
+  },
+  {
+    id: 'sidebar-toggle-aria',
+    description: '侧边栏收起/展开无障碍标签',
+    enPattern: /"aria-label":([a-zA-Z0-9_$]+)\?"Expand sidebar":"Collapse sidebar"/g,
+    zhSnippet: '"aria-label":$1?"展开侧边栏":"收起侧边栏"',
+    zhPattern: /"aria-label":([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
+    restoreEn: '"aria-label":$1?"Expand sidebar":"Collapse sidebar"'
+  },
+  {
+    id: 'sidebar-search-tooltip',
+    description: '侧边栏搜索按钮提示词',
+    enPattern: /content:"Search",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
+    zhSnippet: 'content:"搜索",shortcut:$1,side:"bottom"',
+    zhPattern: /content:"搜索",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
+    restoreEn: 'content:"Search",shortcut:$1,side:"bottom"'
+  },
+  {
+    id: 'filter-status-label',
+    description: 'Code 模式侧边栏过滤菜单 Status 标签',
+    enPattern: /label:"Status",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),active:"active"!==/g,
+    zhSnippet: 'label:"状态",options:$1,value:$2,onChange:$3,active:"active"!==',
+    zhPattern: /label:"状态",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),active:"active"!==/g,
+    restoreEn: 'label:"Status",options:$1,value:$2,onChange:$3,active:"active"!=='
+  },
+  {
+    id: 'filter-last-activity-label',
+    description: 'Code 模式侧边栏过滤菜单 Last activity 标签',
+    enPattern: /label:"Last activity",options:([a-zA-Z0-9_$]+),value:String\(([a-zA-Z0-9_$]+)\)/g,
+    zhSnippet: 'label:"最近活动",options:$1,value:String($2)',
+    zhPattern: /label:"最近活动",options:([a-zA-Z0-9_$]+),value:String\(([a-zA-Z0-9_$]+)\)/g,
+    restoreEn: 'label:"Last activity",options:$1,value:String($2)'
+  },
+  {
+    id: 'filter-show-empty-folders',
+    description: '侧边栏过滤菜单显示空文件夹选项',
+    enPattern: /children:"Show empty folders"/g,
+    zhSnippet: 'children:"显示空文件夹"',
+    zhPattern: /children:"显示空文件夹"/g,
+    restoreEn: 'children:"Show empty folders"'
+  },
+  {
+    id: 'filter-clear-filters',
+    description: '侧边栏过滤菜单清除过滤器按钮',
+    enPattern: /children:"Clear filters"/g,
+    zhSnippet: 'children:"清除过滤器"',
+    zhPattern: /children:"清除过滤器"/g,
+    restoreEn: 'children:"Clear filters"'
+  },
+  {
+    id: 'filter-options-yM',
+    description: '侧边栏过滤状态选项 (活跃/已归档/全部)',
+    enPattern: /\[\["active","Active"\],\["archived","Archived"\],\["all","All"\]\]/g,
+    zhSnippet: '[["active","活跃"],["archived","已归档"],["all","全部"]]',
+    zhPattern: /\[\["active","活跃"\],\["archived","已归档"\],\["all","全部"\]\]/g,
+    restoreEn: '[["active","Active"],["archived","Archived"],["all","All"]]'
+  },
+  {
+    id: 'filter-options-wM',
+    description: '侧边栏排序选项 (按字母/创建时间/最近)',
+    enPattern: /\[\["alpha","Alphabetically"\],\["created","Created time"\],\["recency","Recency"\]\]/g,
+    zhSnippet: '[["alpha","按字母顺序"],["created","创建时间"],["recency","最近"]]',
+    zhPattern: /\[\["alpha","按字母顺序"\],\["created","创建时间"\],\["recency","最近"\]\]/g,
+    restoreEn: '[["alpha","Alphabetically"],["created","Created time"],["recency","Recency"]]'
+  },
+  {
+    id: 'filter-options-group-by-code',
+    description: 'Code 模式侧边栏分组选项 (日期/文件夹/状态/自定义/无)',
+    enPattern: /return\[\["date","Date"\],\.\.\."code"===([a-zA-Z0-9_$]+)\?\[\["project","Folder"\]\]:\[\],\.\.\."code"===\1&&([a-zA-Z0-9_$]+)\?\[\["state","State"\]\]:\[\],\.\.\."code"===\1\?\[\["custom","Custom groups"\]\]:\[\],\["none","None"\]\]/g,
+    zhSnippet: 'return[["date","日期"],..."code"===$1?[["project","文件夹"]]:[],..."code"===$1&&$2?[["state","状态"]]:[],..."code"===$1?[["custom","自定义分组"]]:[],["none","无"]]',
+    zhPattern: /return\[\["date","日期"\],\.\.\."code"===([a-zA-Z0-9_$]+)\?\[\["project","文件夹"\]\]:\[\],\.\.\."code"===\1&&([a-zA-Z0-9_$]+)\?\[\["state","状态"\]\]:\[\],\.\.\."code"===\1\?\[\["custom","自定义分组"\]\]:\[\],\["none","无"\]\]/g,
+    restoreEn: 'return[["date","Date"],..."code"===$1?[["project","Folder"]]:[],..."code"===$1&&$2?[["state","State"]]:[],..."code"===$1?[["custom","Custom groups"]]:[],["none","None"]]'
+  },
+  {
+    id: 'filter-group-by-label-fallback',
+    description: '侧边栏过滤菜单 Group by 回退标签',
+    enPattern: /label:"Group by",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),separatorBefore:"none"/g,
+    zhSnippet: 'label:"分组依据",options:$1,value:$2,onChange:$3,separatorBefore:"none"',
+    zhPattern: /label:"分组依据",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),separatorBefore:"none"/g,
+    restoreEn: 'label:"Group by",options:$1,value:$2,onChange:$3,separatorBefore:"none"'
+  },
+  {
+    id: 'filter-sort-by-label-fallback',
+    description: '侧边栏过滤菜单 Sort by 回退标签',
+    enPattern: /label:"Sort by",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
+    zhSnippet: 'label:"排序方式",options:$1,value:$2,onChange:$3',
+    zhPattern: /label:"排序方式",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
+    restoreEn: 'label:"Sort by",options:$1,value:$2,onChange:$3'
   }
 ];
 
