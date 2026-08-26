@@ -106,7 +106,8 @@ const JS_LITERAL_PATCHES = [
     enPattern: /children:"Show empty folders"/g,
     zhSnippet: 'children:"显示空文件夹"',
     zhPattern: /children:"显示空文件夹"/g,
-    restoreEn: 'children:"Show empty folders"'
+    restoreEn: 'children:"Show empty folders"',
+    intlKey: '3Jz2qrg77Q'
   },
   {
     id: 'filter-clear-filters',
@@ -114,7 +115,8 @@ const JS_LITERAL_PATCHES = [
     enPattern: /children:"Clear filters"/g,
     zhSnippet: 'children:"清除过滤器"',
     zhPattern: /children:"清除过滤器"/g,
-    restoreEn: 'children:"Clear filters"'
+    restoreEn: 'children:"Clear filters"',
+    intlKey: '8sO4P8f1Fz'
   },
   {
     id: 'filter-options-yM',
@@ -285,7 +287,7 @@ function applyPatch(options = {}) {
     const warnings = [];
     if (fs.existsSync(assetsDir)) {
       for (const patch of JS_LITERAL_PATCHES) {
-        if (patchHits[patch.id] === 0) {
+        if (patchHits[patch.id] === 0 && !patch.intlKey) {
           warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
         }
       }
