@@ -14,8 +14,18 @@ function runDriftDetection(customEnPath = null) {
   const info = getClaudeInstallation();
   if (info && info.resourcesPath) {
     resourcesDir = info.resourcesPath;
-    if (!targetEnPath) {
-      targetEnPath = path.join(info.resourcesPath, 'en-US.json');
+    if (!targetEnPath || (fs.existsSync(targetEnPath) && fs.statSync(targetEnPath).isDirectory())) {
+      const candidates = [
+        path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json'),
+        path.join(info.resourcesPath, 'i18n', 'en-US.json'),
+        path.join(info.resourcesPath, 'en-US.json')
+      ];
+      for (const cand of candidates) {
+        if (fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+          targetEnPath = cand;
+          break;
+        }
+      }
     }
   }
 
@@ -24,7 +34,9 @@ function runDriftDetection(customEnPath = null) {
   }
 
   const upstreamDict = JSON.parse(fs.readFileSync(targetEnPath, 'utf8'));
-  const zhPath = path.join(__dirname, '../dict/zh-CN.json');
+  const zhPath = fs.existsSync(path.join(__dirname, '../dict/ion-zh-CN.json'))
+    ? path.join(__dirname, '../dict/ion-zh-CN.json')
+    : path.join(__dirname, '../dict/zh-CN.json');
   const zhDict = fs.existsSync(zhPath) ? JSON.parse(fs.readFileSync(zhPath, 'utf8')) : {};
 
   const upstreamKeys = Object.keys(upstreamDict);
