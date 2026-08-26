@@ -192,6 +192,9 @@ function applyPatch(options = {}) {
 
   // 3. 检查并提权
   if (!canWriteDirectory(resDir)) {
+    if (info.installPath) {
+      grantPermissions(info.installPath);
+    }
     grantPermissions(resDir);
     grantPermissions(path.join(resDir, 'ion-dist'));
     grantPermissions(assetsDir);
@@ -199,7 +202,7 @@ function applyPatch(options = {}) {
     if (!canWriteDirectory(resDir)) {
       return {
         success: false,
-        error: '目录写权限不足。请以管理员身份运行。'
+        error: '目录写权限不足。请以管理员身份运行（或双击 install.bat）。'
       };
     }
   }

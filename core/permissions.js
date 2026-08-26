@@ -1,6 +1,7 @@
 /**
  * 权限管理与 Windows 最小特权 ACL 适配器
  * 支持 WindowsApps / TrustedInstaller 目录的 takeown 夺权与精准 ACL 授权
+ * 采用 Base64 EncodedCommand 彻底杜绝 Windows 命令行引号转义丢失导致的提权静默失败
  */
 const fs = require('fs');
 const path = require('path');
@@ -24,6 +25,8 @@ function canWriteDirectory(dirPath) {
 function grantPermissions(targetDir) {
   if (process.platform !== 'win32' || !targetDir || !fs.existsSync(targetDir)) return true;
 
+  if (canWriteDirectory(targetDir)) return true;
+
   const username = process.env.USERNAME;
 
   // 1. 尝试当前进程直接夺权与授予 ACL (如果当前已经在管理员上下文中运行)
@@ -45,15 +48,16 @@ function grantPermissions(targetDir) {
     return true;
   }
 
-  // 2. 若当前为非管理员进程或权限仍受限，通过 PowerShell 弹出 UAC 提权执行 takeown 与 icacls
+  // 2. 若当前为非管理员进程或权限仍受限，通过 Base64 编码的 PowerShell 脚本触发 UAC 原生提权
   try {
-    const psScript = [
-      `takeown /f \\"${targetDir}\\" /r /d y`,
-      username ? `icacls \\"${targetDir}\\" /grant \\"${username}:(OI)(CI)F\\" /t /c /q` : '',
-      `icacls \\"${targetDir}\\" /grant \\"*S-1-5-32-544:(OI)(CI)F\\" /t /c /q`
-    ].filter(Boolean).join('; ');
-
-    const uacCommand = `powershell -NoProfile -Command "Start-Process powershell -ArgumentList '-NoProfile -Command \"${psScript}\"' -Verb RunAs -Wait"`;
+    const psScript = `
+$target = "${targetDir.replace(/\\/g, '\\\\')}"
+takeown /f "$target" /r /d y
+${username ? `icacls "$target" /grant "${username}:(OI)(CI)F" /t /c /q` : ''}
+icacls "$target" /grant "*S-1-5-32-544:(OI)(CI)F" /t /c /q
+`;
+    const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
+    const uacCommand = `powershell -NoProfile -Command "Start-Process powershell -ArgumentList '-NoProfile -EncodedCommand ${encoded}' -Verb RunAs -Wait"`;
     execSync(uacCommand, { stdio: 'ignore' });
   } catch (e) {}
 
