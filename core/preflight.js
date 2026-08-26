@@ -43,11 +43,11 @@ function runPreflightCheck(options = {}) {
   const isRunning = isClaudeRunning();
   let processDetail = '已就绪 (未运行，无文件锁占用)';
   if (isRunning) {
-    if (options.autoClose !== false) {
+    if (options.autoClose === true) {
       const closed = closeClaude();
-      processDetail = closed ? '已就绪 (检测到正在运行，已自动退出释放文件占用)' : '正在运行 (请手动退出客户端)';
+      processDetail = closed ? '已就绪 (检测到正在运行，已安全退出释放文件占用)' : '正在运行 (请手动退出客户端)';
     } else {
-      processDetail = '运行中 (建议退出客户端以避免文件锁冲突)';
+      processDetail = '运行中 (安装器将在执行前提示您保存工作并确认退出)';
     }
   }
   checks.push({

@@ -4,7 +4,7 @@
  * claude-chinese 一体化命令行入口 (CLI)
  */
 const { getClaudeInstallation } = require('./core/msix-detector');
-const { applyPatch, restorePatch } = require('./core/patcher');
+const { applyPatch, restorePatch, isClaudeRunning, closeClaude } = require('./core/patcher');
 const { runPreflightCheck } = require('./core/preflight');
 const { runDriftDetection } = require('./tools/drift-detector');
 const { execSync, spawn } = require('child_process');
@@ -13,6 +13,33 @@ const fs = require('fs');
 
 const args = process.argv.slice(2);
 const command = args[0] || 'status';
+
+function confirmCloseClient(appName = 'Claude') {
+  if (args.includes('--force') || args.includes('-f') || args.includes('-y') || args.includes('--yes')) {
+    return true;
+  }
+
+  if (!process.stdin.isTTY) {
+    console.error(`\n⚠️ 检测到 ${appName} 客户端当前正在运行！`);
+    console.error(`为保护未保存的工作，安装器已安全暂停。请先手动退出客户端，或附加 --force 参数执行。`);
+    return false;
+  }
+
+  console.log(`\n⚠️ 检测到 ${appName} 客户端当前正在运行！`);
+  console.log(`为避免文件写入冲突并保护您正在进行的对话与未保存工作，请确认是否允许关闭客户端继续？`);
+  process.stdout.write(`👉 输入 [y/N] 确认关闭并继续 (默认 N 取消): `);
+
+  try {
+    const buffer = Buffer.alloc(1024);
+    const bytesRead = fs.readSync(0, buffer, 0, 1024, null);
+    const answer = buffer.toString('utf8', 0, bytesRead).trim().toLowerCase();
+    if (answer === 'y' || answer === 'yes') {
+      return true;
+    }
+  } catch (e) {}
+
+  return false;
+}
 
 function getCustomPath() {
   const pathIdx = args.indexOf('--path');
@@ -100,6 +127,16 @@ function handleInstall() {
     return;
   }
 
+  if (isClaudeRunning()) {
+    const shouldClose = confirmCloseClient('Claude');
+    if (!shouldClose) {
+      console.log('\nℹ️ 已安全取消安装。请在保存工作并退出 Claude 客户端后重新执行。');
+      return;
+    }
+    console.log('\n🔄 正在安全退出客户端以释放资源写入锁...');
+    closeClaude();
+  }
+
   console.log('\n⚙️ [2/3] 正在应用增量汉化补丁与 JS 注入...');
   const result = applyPatch({ customPath });
 
@@ -125,6 +162,17 @@ function handleInstall() {
 function handleRestore() {
   console.log('=== 正在还原官方英文原版 ===\n');
   const customPath = getCustomPath();
+
+  if (isClaudeRunning()) {
+    const shouldClose = confirmCloseClient('Claude');
+    if (!shouldClose) {
+      console.log('\nℹ️ 已安全取消还原。请在保存工作并退出 Claude 客户端后重新执行。');
+      return;
+    }
+    console.log('\n🔄 正在安全退出客户端以释放资源写入锁...');
+    closeClaude();
+  }
+
   const result = restorePatch({ customPath });
 
   if (result.success) {
