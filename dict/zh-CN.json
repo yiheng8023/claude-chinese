@@ -548,5 +548,21 @@
   "zAYm/Z684h": "帮助",
   "zTrDHxC7yZ": "BLE API 仅在桌面应用处于开发者模式时可用。它专为创客和开发者设计，不是官方支持的产品功能。",
   "zasatRyQg/": "在访达 (Finder) 中显示 Cowork 会话数据",
-  "ze7mxSJ8h8": "打开"
+  "ze7mxSJ8h8": "打开",
+  "Open Folder...": "打开文件夹...",
+  "Open Folder": "打开文件夹",
+  "Settings": "设置",
+  "Command Palette...": "命令面板...",
+  "Command Palette": "命令面板",
+  "Sidebar": "侧边栏",
+  "Terminal": "终端",
+  "Diff": "差异对比",
+  "Preview": "预览",
+  "Side Chat": "侧边对话",
+  "Close Pane": "关闭面板",
+  "Previous Sidebar Tab": "上一个侧边栏标签页",
+  "Next Sidebar Tab": "下一个侧边栏标签页",
+  "Full Screen": "全屏",
+  "Toggle Full Screen": "切换全屏",
+  "About Claude": "关于 Claude"
 }

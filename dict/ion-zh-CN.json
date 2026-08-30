@@ -18734,5 +18734,12 @@
   "3b6nGnLx6b": "启用工具搜索",
   "jPPLehrZ3d": "按需加载 MCP 工具结构定义（工具搜索），而不是将每个工具结构全部内联到上下文。",
   "NHwL+4YYfH": "Code 交互表面",
-  "R0nTUNCSi6": "Code 会话设置。仅在启用 Code 模式时生效。"
+  "R0nTUNCSi6": "Code 会话设置。仅在启用 Code 模式时生效。",
+  "N2lNsOXNuF": "跳过 WebFetch 域名检查",
+  "3dSlpHs3f5": "在 Code 会话中跳过 Claude Code 对 api.anthropic.com 的 WebFetch 域名查找。默认关闭；当该主机被阻止时请开启。",
+  "t3bJrMvGzZ": "SSH 主机允许名单",
+  "zD9OL2DoYK": "用户在 Code 会话中可通过 SSH 连接的主机。未设置表示关闭 SSH 远程会话；* 表示允许任何主机。",
+  "EC49vAdH1s": "允许 Claude 在本地沙箱中运行代码，以分析其无法原生读取的附加文件（如 Excel 和 PowerPoint）。默认关闭。",
+  "1h3TR2uKST": "附加到 Chat、Cowork 和 Code 中的 Claude 系统提示词。这是模型遵循的指导原则，而非强制控制。最多 3,000 个字符。",
+  "tevwj/1wDb": "始终用英式英语回答。绝不要在回答中包含客户账号。"
 }
