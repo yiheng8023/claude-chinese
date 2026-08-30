@@ -51,7 +51,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"项目目录内 (.claude/worktrees)"',
     zhPattern: /label:\s*["']项目目录内 \(\.claude\/worktrees\)["']/g,
     restoreEn: 'label:"Inside project (.claude/worktrees)"'
-  },
+  ,
+    intlKey: 'eI3zYFFnpz'},
   {
     id: 'worktrees-location-custom',
     description: 'Claude Code 工作树自定义位置下拉选项',
@@ -59,7 +60,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"自定义..."',
     zhPattern: /label:\s*["']自定义\.\.\.["']/g,
     restoreEn: 'label:"Custom..."'
-  },
+  ,
+    intlKey: 'lKjjJ7PIFW'},
   {
     id: 'sidebar-toggle-tooltip',
     description: '侧边栏收起/展开按钮提示词',
@@ -67,7 +69,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'content:$1?"展开侧边栏":"收起侧边栏"',
     zhPattern: /content:([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
     restoreEn: 'content:$1?"Expand sidebar":"Collapse sidebar"'
-  },
+  ,
+    intlKey: 'eOJ4QUCTXl'},
   {
     id: 'sidebar-toggle-aria',
     description: '侧边栏收起/展开无障碍标签',
@@ -75,7 +78,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: '"aria-label":$1?"展开侧边栏":"收起侧边栏"',
     zhPattern: /"aria-label":([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
     restoreEn: '"aria-label":$1?"Expand sidebar":"Collapse sidebar"'
-  },
+  ,
+    intlKey: '+G35mRWa75'},
   {
     id: 'sidebar-search-tooltip',
     description: '侧边栏搜索按钮提示词',
@@ -83,7 +87,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'content:"搜索",shortcut:$1,side:"bottom"',
     zhPattern: /content:"搜索",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
     restoreEn: 'content:"Search",shortcut:$1,side:"bottom"'
-  },
+  ,
+    intlKey: 'vFf4r9k1F2'},
   {
     id: 'filter-status-label',
     description: 'Code 模式侧边栏过滤菜单 Status 标签',
@@ -91,7 +96,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"状态",options:$1,value:$2,onChange:$3,active:"active"!==',
     zhPattern: /label:"状态",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),active:"active"!==/g,
     restoreEn: 'label:"Status",options:$1,value:$2,onChange:$3,active:"active"!=='
-  },
+  ,
+    intlKey: 'ku+mDU6MeW'},
   {
     id: 'filter-last-activity-label',
     description: 'Code 模式侧边栏过滤菜单 Last activity 标签',
@@ -99,7 +105,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"最近活动",options:$1,value:String($2)',
     zhPattern: /label:"最近活动",options:([a-zA-Z0-9_$]+),value:String\(([a-zA-Z0-9_$]+)\)/g,
     restoreEn: 'label:"Last activity",options:$1,value:String($2)'
-  },
+  ,
+    intlKey: 'FgG7d+eCOU'},
   {
     id: 'filter-show-empty-folders',
     description: '侧边栏过滤菜单显示空文件夹选项',
@@ -125,7 +132,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: '[["active","活跃"],["archived","已归档"],["all","全部"]]',
     zhPattern: /\[\["active","活跃"\],\["archived","已归档"\],\["all","全部"\]\]/g,
     restoreEn: '[["active","Active"],["archived","Archived"],["all","All"]]'
-  },
+  ,
+    intlKey: 'zQvVDJ+j59'},
   {
     id: 'filter-options-wM',
     description: '侧边栏排序选项 (按字母/创建时间/最近)',
@@ -133,7 +141,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: '[["alpha","按字母顺序"],["created","创建时间"],["recency","最近"]]',
     zhPattern: /\[\["alpha","按字母顺序"\],\["created","创建时间"\],\["recency","最近"\]\]/g,
     restoreEn: '[["alpha","Alphabetically"],["created","Created time"],["recency","Recency"]]'
-  },
+  ,
+    intlKey: 'Yjk5Ow/k5f'},
   {
     id: 'filter-options-group-by-code',
     description: 'Code 模式侧边栏分组选项 (日期/文件夹/状态/自定义/无)',
@@ -141,7 +150,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'return[["date","日期"],..."code"===$1?[["project","文件夹"]]:[],..."code"===$1&&$2?[["state","状态"]]:[],..."code"===$1?[["custom","自定义分组"]]:[],["none","无"]]',
     zhPattern: /return\[\["date","日期"\],\.\.\."code"===([a-zA-Z0-9_$]+)\?\[\["project","文件夹"\]\]:\[\],\.\.\."code"===\1&&([a-zA-Z0-9_$]+)\?\[\["state","状态"\]\]:\[\],\.\.\."code"===\1\?\[\["custom","自定义分组"\]\]:\[\],\["none","无"\]\]/g,
     restoreEn: 'return[["date","Date"],..."code"===$1?[["project","Folder"]]:[],..."code"===$1&&$2?[["state","State"]]:[],..."code"===$1?[["custom","Custom groups"]]:[],["none","None"]]'
-  },
+  ,
+    intlKey: 'QkJXbQOXt/'},
   {
     id: 'filter-group-by-label-fallback',
     description: '侧边栏过滤菜单 Group by 回退标签',
@@ -149,7 +159,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"分组依据",options:$1,value:$2,onChange:$3,separatorBefore:"none"',
     zhPattern: /label:"分组依据",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),separatorBefore:"none"/g,
     restoreEn: 'label:"Group by",options:$1,value:$2,onChange:$3,separatorBefore:"none"'
-  },
+  ,
+    intlKey: 'HWWSQ/N0ve'},
   {
     id: 'filter-sort-by-label-fallback',
     description: '侧边栏过滤菜单 Sort by 回退标签',
@@ -157,7 +168,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'label:"排序方式",options:$1,value:$2,onChange:$3',
     zhPattern: /label:"排序方式",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
     restoreEn: 'label:"Sort by",options:$1,value:$2,onChange:$3'
-  }
+  ,
+    intlKey: 'hDI+JMUhFd'}
 ];
 
 function applyPatch(options = {}) {
