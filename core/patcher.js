@@ -192,9 +192,9 @@ function applyPatch(options = {}) {
     };
   }
 
-  // 2. 检查进程占用，若运行中则自动安全关闭释放文件锁
+  // 2. 检查进程占用，若显式要求 autoClose 则安全关闭释放文件锁
   let processAutoClosed = false;
-  if (options.autoClose !== false && isClaudeRunning()) {
+  if (options.autoClose === true && isClaudeRunning()) {
     closeClaude();
     processAutoClosed = true;
   }
