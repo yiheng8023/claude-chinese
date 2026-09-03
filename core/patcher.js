@@ -246,11 +246,8 @@ function applyPatch(options = {}) {
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
         const bakPath = `${fullPath}.orig.bak`;
-        const content = fs.readFileSync(fullPath, 'utf8');
+        const content = fs.existsSync(bakPath) ? fs.readFileSync(bakPath, 'utf8') : fs.readFileSync(fullPath, 'utf8');
         const currentHash = getHash(content);
-
-        // 检查当前文件是否已知为我们注入后的状态
-        const isKnownPatched = fileManifest[file] && fileManifest[file].patchedHash === currentHash;
 
         let newContent = content;
         let modified = false;
@@ -285,19 +282,13 @@ function applyPatch(options = {}) {
         }
 
         if (modified && newContent !== content) {
-          // 仅当文件确实被修改时才进行出厂备份
-          // 若当前文件不是已知已补丁状态，且尚未备份或上游内容已发生更新，则刷新出厂备份
-          if (!isKnownPatched) {
-            if (!fs.existsSync(bakPath) || (fileManifest[file] && fileManifest[file].originalHash !== currentHash)) {
-              fs.copyFileSync(fullPath, bakPath);
-            }
-            fileManifest[file] = {
-              originalHash: currentHash,
-              patchedHash: getHash(newContent)
-            };
-          } else {
-            fileManifest[file].patchedHash = getHash(newContent);
+          if (!fs.existsSync(bakPath)) {
+            fs.copyFileSync(fullPath, bakPath);
           }
+          fileManifest[file] = {
+            originalHash: currentHash,
+            patchedHash: getHash(newContent)
+          };
 
           fs.writeFileSync(fullPath, newContent, 'utf8');
           jsPatchedCount++;
