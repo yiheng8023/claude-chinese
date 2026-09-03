@@ -275,6 +275,15 @@ function applyPatch(options = {}) {
           }
         }
 
+        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器
+        const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
+        if (fs.existsSync(longDocsPath) && newContent.includes('function z(e,t){return{text:e,...t}}')) {
+          const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
+          const zRepl = `var __ZH_DOCS__=${JSON.stringify(longDocs)};function z(e,t){var tr=__ZH_DOCS__[e];if(!tr&&typeof e==="string"){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}return{text:tr||e,...t}}`;
+          newContent = newContent.replace('function z(e,t){return{text:e,...t}}', zRepl);
+          modified = true;
+        }
+
         if (modified && newContent !== content) {
           // 仅当文件确实被修改时才进行出厂备份
           // 若当前文件不是已知已补丁状态，且尚未备份或上游内容已发生更新，则刷新出厂备份
