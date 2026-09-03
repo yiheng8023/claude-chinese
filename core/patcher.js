@@ -167,9 +167,18 @@ const JS_LITERAL_PATCHES = [
     enPattern: /label:"Sort by",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
     zhSnippet: 'label:"排序方式",options:$1,value:$2,onChange:$3',
     zhPattern: /label:"排序方式",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
-    restoreEn: 'label:"Sort by",options:$1,value:$2,onChange:$3'
-  ,
-    intlKey: 'hDI+JMUhFd'}
+    restoreEn: 'label:"Sort by",options:$1,value:$2,onChange:$3',
+    intlKey: 'hDI+JMUhFd'
+  },
+  {
+    id: 'output-style-labels-mapping',
+    description: 'Code 模式输出风格下拉选项 (简洁/详尽/启发/主动)',
+    enPattern: /for\(let t of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\1\?\.customs\?\?\[\]\]\)\{let r=t\.toLowerCase\(\);t\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(r\)\|\|\(\2\.add\(r\),([a-zA-Z0-9_$]+)\.push\(\{value:t,label:t\}\)\)\}/g,
+    zhSnippet: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();if(t.length!==0&&!$2.has(r)){$2.add(r);let zhLabels={"default":"默认","concise":"简洁 (Concise)","explanatory":"详尽 (Explanatory)","learning":"启发 (Learning)","proactive":"主动 (Proactive)"};let lbl=zhLabels[r]||t;$3.push({value:t,label:lbl})}}',
+    zhPattern: /zhLabels=\{"default":"默认","concise":"简洁 \(Concise\)"/g,
+    restoreEn: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();t.length===0||$2.has(r)||($2.add(r),$3.push({value:t,label:t}))}',
+    intlKey: 'outStyleMap'
+  }
 ];
 
 function applyPatch(options = {}) {
