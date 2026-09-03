@@ -196,6 +196,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /var zhMap=\{"default":"默认","Concise":"简洁 \(Concise\)"/g,
     restoreEn: 'return $1.map($2=>{let $3=$4===$5;return{label:$2,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
     intlKey: 'sessionAsyncOutStyleMap'
+  },
+  {
+    id: 'sidebar-view-all-tooltip',
+    description: '侧边栏跳转详情悬浮提示词 (View all ➔ 查看全部)',
+    enPattern: /([a-zA-Z0-9_$]+)="View all"/g,
+    zhSnippet: '$1="查看全部"',
+    zhPattern: /([a-zA-Z0-9_$]+)="查看全部"/g,
+    restoreEn: '$1="View all"',
+    intlKey: 'sidebarViewAll'
   }
 ];
 
