@@ -1,28 +1,29 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal
 chcp 65001 >nul 2>&1
 
-:: 获取当前批处理所在绝对路径
-set "SCRIPT_DIR=%~dp0"
-set "SCRIPT_PATH=%~f0"
+:: 获取脚本所在真实绝对路径
+set "BASE_DIR=%~dp0"
+cd /d "%BASE_DIR%"
 
-:: 检测是否具有管理员权限
+:: 检测当前是否具有管理员权限
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [提示] 正在申请管理员权限以还原 WindowsApps 官方资源...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -ArgumentList '/k cd /d \"%SCRIPT_DIR%\" && \"%SCRIPT_PATH%\" elevated' -Verb RunAs"
+    echo.
+    echo ====================================================
+    echo   [提示] 正在申请管理员权限以还原 WindowsApps 官方资源...
+    echo ====================================================
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -WorkingDirectory '%BASE_DIR:~0,-1%' -ArgumentList '/c \"\"%~f0\"\" admin' -Verb RunAs"
     exit /b
 )
 
-:: 无论从何处启动，强制锁定进入脚本所在物理目录
-cd /d "%SCRIPT_DIR%"
-
+echo.
 echo ====================================================
 echo   Claude 桌面端中文汉化工具包一键还原器
 echo ====================================================
 echo.
 
-node "%SCRIPT_DIR%cli.js" restore
+node "%BASE_DIR%cli.js" restore
 echo.
 pause
 exit /b
