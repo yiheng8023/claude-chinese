@@ -187,6 +187,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /children:\(function\(l\)\{var m=\{"default":"默认"/g,
     restoreEn: 'children:$1.label},$2))}),$3&&i(r,{children:[',
     intlKey: 'subOutStyleMap'
+  },
+  {
+    id: 'session-async-output-style-mapping',
+    description: '会话右上角动态异步输出风格项构造函数 (Ml) 名称汉化',
+    enPattern: /return\s*([a-zA-Z0-9_$]+)\.map\(([a-zA-Z0-9_$]+)=>\{let\s*([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)===([a-zA-Z0-9_$]+);return\{label:\2,checked:\3,onSelect:\(\)=>\{\3\|\|([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.id,\2\)\}\}\}\)/g,
+    zhSnippet: 'return $1.map($2=>{let $3=$4===$5;var zhMap={"default":"默认","Concise":"简洁 (Concise)","Explanatory":"详尽 (Explanatory)","Learning":"启发 (Learning)","Proactive":"主动 (Proactive)"};var lbl=zhMap[$2]||$2;return{label:lbl,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
+    zhPattern: /var zhMap=\{"default":"默认","Concise":"简洁 \(Concise\)"/g,
+    restoreEn: 'return $1.map($2=>{let $3=$4===$5;return{label:$2,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
+    intlKey: 'sessionAsyncOutStyleMap'
   }
 ];
 
