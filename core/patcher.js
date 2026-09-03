@@ -178,6 +178,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /zhLabels=\{"default":"默认","concise":"简洁 \(Concise\)"/g,
     restoreEn: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();t.length===0||$2.has(r)||($2.add(r),$3.push({value:t,label:t}))}',
     intlKey: 'outStyleMap'
+  },
+  {
+    id: 'submenu-output-style-label-mapping',
+    description: '会话右上角与各级子菜单输出风格项名称汉化',
+    enPattern: /children:([a-zA-Z0-9_$]+)\.label\},([a-zA-Z0-9_$]+)\)\)\}\),([a-zA-Z0-9_$]+)&&[a-zA-Z0-9_$]+\([a-zA-Z0-9_$]+,\{children:\[/g,
+    zhSnippet: 'children:(function(l){var m={"default":"默认","Concise":"简洁 (Concise)","Explanatory":"详尽 (Explanatory)","Learning":"启发 (Learning)","Proactive":"主动 (Proactive)"};return m[l]||l;})($1.label)},$2))}),$3&&i(r,{children:[',
+    zhPattern: /children:\(function\(l\)\{var m=\{"default":"默认"/g,
+    restoreEn: 'children:$1.label},$2))}),$3&&i(r,{children:[',
+    intlKey: 'subOutStyleMap'
   }
 ];
 
