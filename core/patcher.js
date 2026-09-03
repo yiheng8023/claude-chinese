@@ -174,8 +174,8 @@ const JS_LITERAL_PATCHES = [
     id: 'output-style-labels-mapping',
     description: 'Code 模式输出风格下拉选项 (简洁/详尽/启发/主动)',
     enPattern: /for\(let t of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\1\?\.customs\?\?\[\]\]\)\{let r=t\.toLowerCase\(\);t\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(r\)\|\|\(\2\.add\(r\),([a-zA-Z0-9_$]+)\.push\(\{value:t,label:t\}\)\)\}/g,
-    zhSnippet: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();if(t.length!==0&&!$2.has(r)){$2.add(r);let zhLabels={"default":"默认","concise":"简洁 (Concise)","explanatory":"详尽 (Explanatory)","learning":"启发 (Learning)","proactive":"主动 (Proactive)"};let lbl=zhLabels[r]||t;$3.push({value:t,label:lbl})}}',
-    zhPattern: /zhLabels=\{"default":"默认","concise":"简洁 \(Concise\)"/g,
+    zhSnippet: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();if(t.length!==0&&!$2.has(r)){$2.add(r);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[r]||t;$3.push({value:t,label:lbl})}}',
+    zhPattern: /zhLabels=\{"default":"默认","concise":"简洁"/g,
     restoreEn: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();t.length===0||$2.has(r)||($2.add(r),$3.push({value:t,label:t}))}',
     intlKey: 'outStyleMap'
   },
@@ -183,7 +183,7 @@ const JS_LITERAL_PATCHES = [
     id: 'submenu-output-style-label-mapping',
     description: '会话右上角与各级子菜单输出风格项名称汉化',
     enPattern: /children:([a-zA-Z0-9_$]+)\.label\},([a-zA-Z0-9_$]+)\)\)\}\),([a-zA-Z0-9_$]+)&&[a-zA-Z0-9_$]+\([a-zA-Z0-9_$]+,\{children:\[/g,
-    zhSnippet: 'children:(function(l){var m={"default":"默认","Concise":"简洁 (Concise)","Explanatory":"详尽 (Explanatory)","Learning":"启发 (Learning)","Proactive":"主动 (Proactive)"};return m[l]||l;})($1.label)},$2))}),$3&&i(r,{children:[',
+    zhSnippet: 'children:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($1.label)},$2))}),$3&&i(r,{children:[',
     zhPattern: /children:\(function\(l\)\{var m=\{"default":"默认"/g,
     restoreEn: 'children:$1.label},$2))}),$3&&i(r,{children:[',
     intlKey: 'subOutStyleMap'
@@ -192,8 +192,8 @@ const JS_LITERAL_PATCHES = [
     id: 'session-async-output-style-mapping',
     description: '会话右上角动态异步输出风格项构造函数 (Ml) 名称汉化',
     enPattern: /return\s*([a-zA-Z0-9_$]+)\.map\(([a-zA-Z0-9_$]+)=>\{let\s*([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)===([a-zA-Z0-9_$]+);return\{label:\2,checked:\3,onSelect:\(\)=>\{\3\|\|([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.id,\2\)\}\}\}\)/g,
-    zhSnippet: 'return $1.map($2=>{let $3=$4===$5;var zhMap={"default":"默认","Concise":"简洁 (Concise)","Explanatory":"详尽 (Explanatory)","Learning":"启发 (Learning)","Proactive":"主动 (Proactive)"};var lbl=zhMap[$2]||$2;return{label:lbl,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
-    zhPattern: /var zhMap=\{"default":"默认","Concise":"简洁 \(Concise\)"/g,
+    zhSnippet: 'return $1.map($2=>{let $3=$4===$5;var zhMap={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};var lbl=zhMap[$2]||$2;return{label:lbl,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
+    zhPattern: /var zhMap=\{"default":"默认","Concise":"简洁"/g,
     restoreEn: 'return $1.map($2=>{let $3=$4===$5;return{label:$2,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
     intlKey: 'sessionAsyncOutStyleMap'
   },
