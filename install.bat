@@ -1,29 +1,13 @@
 @echo off
-setlocal
 chcp 65001 >nul 2>&1
-
-:: 获取脚本所在真实绝对路径
-set "BASE_DIR=%~dp0"
-cd /d "%BASE_DIR%"
-
-:: 检测当前是否具有管理员权限
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo.
-    echo ====================================================
-    echo   [提示] 正在申请管理员权限以修改 WindowsApps 资源目录...
-    echo ====================================================
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd.exe -WorkingDirectory '%BASE_DIR:~0,-1%' -ArgumentList '/c \"\"%~f0\"\" admin' -Verb RunAs"
-    exit /b
-)
-
 echo.
 echo ====================================================
 echo   Claude 桌面端中文汉化工具包一键安装器
+echo   (Client Host UI Localization)
 echo ====================================================
 echo.
+cd /d "%~dp0"
 
-node "%BASE_DIR%cli.js" install
+node cli.js install
 echo.
 pause
-exit /b
