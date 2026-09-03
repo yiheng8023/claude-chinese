@@ -3,6 +3,9 @@
 <p align="center">
   <a href="https://github.com/yiheng8023/claude-chinese/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yiheng8023/claude-chinese/ci.yml?branch=main&label=CI&logo=github" alt="CI Status"></a>
   <a href="https://github.com/yiheng8023/claude-chinese/releases/latest"><img src="https://img.shields.io/github/v/release/yiheng8023/claude-chinese?color=blue&label=Release" alt="Latest Release"></a>
+  <a href="https://github.com/yiheng8023/claude-chinese/releases"><img src="https://img.shields.io/github/downloads/yiheng8023/claude-chinese/total?style=flat&color=3388ff&logo=github&label=Downloads" alt="Total Downloads"></a>
+  <a href="https://github.com/yiheng8023/claude-chinese/stargazers"><img src="https://img.shields.io/github/stars/yiheng8023/claude-chinese?style=flat&logo=github&color=ffaa00" alt="GitHub Stars"></a>
+  <a href="https://github.com/yiheng8023/claude-chinese/network/members"><img src="https://img.shields.io/github/forks/yiheng8023/claude-chinese?style=flat&logo=github&color=grey" alt="GitHub Forks"></a>
   <img src="https://img.shields.io/badge/Node.js-%3E%3D16.x-brightgreen?logo=node.js" alt="Node Version">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform Support">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/yiheng8023/claude-chinese?color=green" alt="License"></a>
@@ -120,6 +123,24 @@ npm test
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Protects placeholders, variables, and technical terms.
 - **Lifecycle & Atomic Rollback (`test/test-restore-cycle.js`)**: Tests isolated install -> restore -> double-install lifecycle in sandbox fixtures.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Tests 0-argument path discovery and multi-platform layouts.
+
+---
+
+## 👥 Contributors
+
+Heartfelt thanks to all developers who contribute code, report bugs, and improve translations and documentation!
+
+<p align="center">
+  <a href="https://github.com/yiheng8023/claude-chinese/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=yiheng8023/claude-chinese" alt="Contributors" />
+  </a>
+</p>
+
+---
+
+## 📈 Star History & Community Growth
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yiheng8023/claude-chinese,yiheng8023/antigravity-chinese&type=Date)](https://star-history.com/#yiheng8023/claude-chinese&yiheng8023/antigravity-chinese&Date)
 
 ---
 
