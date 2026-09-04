@@ -173,10 +173,10 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'output-style-labels-mapping',
     description: 'Code 模式输出风格下拉选项 (简洁/详尽/启发/主动)',
-    enPattern: /for\(let t of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\1\?\.customs\?\?\[\]\]\)\{let r=t\.toLowerCase\(\);t\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(r\)\|\|\(\2\.add\(r\),([a-zA-Z0-9_$]+)\.push\(\{value:t,label:t\}\)\)\}/g,
-    zhSnippet: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();if(t.length!==0&&!$2.has(r)){$2.add(r);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[r]||t;$3.push({value:t,label:lbl})}}',
+    enPattern: /for\(let ([a-zA-Z0-9_$]+) of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\2\?\.customs\?\?\[\]\]\)\{let ([a-zA-Z0-9_$]+)=\1\.toLowerCase\(\);\1\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(\3\)\|\|\(\4\.add\(\3\),([a-zA-Z0-9_$]+)\.push\(\{value:\1,label:\1\}\)\)\}/g,
+    zhSnippet: 'for(let $1 of[...$2?.builtIns??[],...$2?.customs??[]]){let $3=$1.toLowerCase();if($1.length!==0&&!$4.has($3)){$4.add($3);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[$3]||$1;$5.push({value:$1,label:lbl})}}',
     zhPattern: /zhLabels=\{"default":"默认","concise":"简洁"/g,
-    restoreEn: 'for(let t of[...$1?.builtIns??[],...$1?.customs??[]]){let r=t.toLowerCase();t.length===0||$2.has(r)||($2.add(r),$3.push({value:t,label:t}))}',
+    restoreEn: 'for(let $1 of[...$2?.builtIns??[],...$2?.customs??[]]){let $3=$1.toLowerCase();$1.length===0||$4.has($3)||($4.add($3),$5.push({value:$1,label:$1}))}',
     intlKey: 'outStyleMap'
   },
   {
@@ -190,11 +190,11 @@ const JS_LITERAL_PATCHES = [
   },
   {
     id: 'session-async-output-style-mapping',
-    description: '会话右上角动态异步输出风格项构造函数 (Ml) 名称汉化',
-    enPattern: /return\s*([a-zA-Z0-9_$]+)\.map\(([a-zA-Z0-9_$]+)=>\{let\s*([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)===([a-zA-Z0-9_$]+);return\{label:\2,checked:\3,onSelect:\(\)=>\{\3\|\|([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.id,\2\)\}\}\}\)/g,
-    zhSnippet: 'return $1.map($2=>{let $3=$4===$5;var zhMap={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};var lbl=zhMap[$2]||$2;return{label:lbl,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
-    zhPattern: /var zhMap=\{"default":"默认","Concise":"简洁"/g,
-    restoreEn: 'return $1.map($2=>{let $3=$4===$5;return{label:$2,checked:$3,onSelect:()=>{$3||$6($7.id,$2)}}})',
+    description: '会话右上角动态异步输出风格项构造函数 (items 列表) 名称汉化',
+    enPattern: /items:\[\.\.\.\(([a-zA-Z0-9_$]+)\?\?\[\]\)\.map\(([a-zA-Z0-9_$]+)=>\({\s*label:\2\.label,\s*checked:\2\.checked,\s*onSelect:\2\.onSelect\s*}\)\)/g,
+    zhSnippet: 'items:[...($1??[]).map($2=>({label:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($2.label),checked:$2.checked,onSelect:$2.onSelect}))',
+    zhPattern: /var m=\{"default":"默认","Concise":"简洁","Explanatory":"详尽"/g,
+    restoreEn: 'items:[...($1??[]).map($2=>({label:$2.label,checked:$2.checked,onSelect:$2.onSelect}))',
     intlKey: 'sessionAsyncOutStyleMap'
   },
   {
