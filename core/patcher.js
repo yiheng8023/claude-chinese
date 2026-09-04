@@ -308,15 +308,18 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (适配所有版本混淆函数名，如 function z / function L)
+        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (适配所有版本混淆函数名，同时劫持 short/long 的所有解构函数)
         const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
-        const zFnRegex = /function\s+([a-zA-Z0-9_$]+)\(e,t\)\{return\{text:e,\.\.\.t\}\}/;
+        const zFnRegex = /function\s+([a-zA-Z0-9_$]+)\(e,t\)\{return\{text:e,\.\.\.t\}\}/g;
         if (fs.existsSync(longDocsPath) && zFnRegex.test(newContent)) {
           const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
-          const matchFn = newContent.match(zFnRegex);
-          const fnName = matchFn ? matchFn[1] : 'z';
-          const zRepl = `var __ZH_DOCS__=${JSON.stringify(longDocs)};function ${fnName}(e,t){var tr=__ZH_DOCS__[e];if(!tr&&typeof e==="string"){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}return{text:tr||e,...t}}`;
-          newContent = newContent.replace(zFnRegex, zRepl);
+          let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
+          let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)};`;
+          newContent = newContent.replace(zFnRegex, (match, fnName) => {
+            const repl = `${header}function ${fnName}(e,t){var tr=__ZH_DOCS__[e];if(!tr&&typeof e==="string"){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}return{text:tr||e,...t}}`;
+            header = '';
+            return repl;
+          });
           modified = true;
         }
 
