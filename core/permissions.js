@@ -49,6 +49,14 @@ function grantPermissions(targetDir) {
     execSync(`icacls "${targetDir}" /grant:r "*S-1-5-32-544":(OI)(CI)F /t /q /c`, { stdio: 'ignore' });
   } catch (e) {}
 
+  if (canWriteDirectory(targetDir)) return true;
+
+  // 4. 若当前进程无管理员权限，自动触发 UAC 弹窗提权赋权 (Elevated PowerShell ACL)
+  try {
+    const psCmd = `takeown /f '${targetDir}' /r /d y; icacls '${targetDir}' /grant:r '${username}':(OI)(CI)F /t /q /c`;
+    execSync(`powershell -NoProfile -Command "Start-Process powershell -Verb RunAs -Wait -ArgumentList '-NoProfile -Command \\"${psCmd}\\"'"`, { stdio: 'ignore' });
+  } catch (eUac) {}
+
   return canWriteDirectory(targetDir);
 }
 
