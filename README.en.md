@@ -15,6 +15,10 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
+> [!WARNING]
+> ### 🚨 **Anthropicはマジでずる賢い！（Anthropic is sneaky as hell!）** 🚨
+> Sneakily scrambling and re-minifying AST function names on every micro-patch? No worries—our generic AST dynamic interceptor catches every single one!
+
 High-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux). Built on official native i18n architectures with incremental overlay and self-healing lifecycle management.
 
 ---

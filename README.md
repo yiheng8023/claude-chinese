@@ -15,6 +15,12 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
+> [!WARNING]
+> ### 🚨 **Anthropicはマジでずる賢い！（Anthropic 简直太鸡贼了！）** 🚨
+> 每次发版都偷偷混淆重排 AST 语法树函数名来背刺汉化？放心，本项目全自动泛型 AST 动态拦截探针稳如泰山，见招拆招！
+
+---
+
 专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
