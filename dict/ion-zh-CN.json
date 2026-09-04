@@ -19070,5 +19070,13 @@
   "0v5PlsRKXz": "{pane} 设置",
   "puYbi1ayLl": "预览 (开发服务器运行中)",
   "zora1tCQsv": "显示开发服务器日志",
-  "lzHqHgtBBs": "浏览器 (开发服务器运行中)"
+  "lzHqHgtBBs": "浏览器 (开发服务器运行中)",
+  "g4j6UWSXgd": "此文件夹未关联 GitHub 远程仓库",
+  "GQrrmfzD4R": "阻止读取工作目录外部的文件",
+  "CIeOvXouGu": "禁用绕过权限模式",
+  "Zhe9UuhccO": "OpenTelemetry 日志与指标的发送目标端点。留空则禁用。",
+  "t/LNoeQ72j": "完全停止 Claude 桌面端获取更新 (无时间限制)。您需要手动推送新版本。",
+  "ConfigRecheckIntervalMinutesTitle": "配置重新检查间隔",
+  "ConfigRecheckIntervalMinutesShort": "运行中的应用检查托管配置变更的间隔分钟数。留空 = 10 分钟。",
+  "DJ6DrJYlMf": "每个用户的软上限，在客户端按 Token 上限时间窗口统计。并非服务端强制配额。"
 }
