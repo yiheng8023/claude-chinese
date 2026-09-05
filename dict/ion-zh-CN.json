@@ -658,7 +658,7 @@
   "0RGqBmxKSt": "选择一个仓库以查看议题。",
   "0RIhCsnSlI": "未找到活跃的会话。",
   "0RKvJUM8LD": "你仍可访问至 {endDate}",
-  "0S+iNJivmx": "添加文件或照片",
+  "0S+iNJivmx": "添加文件或图片",
   "0StYQKzFD4": "例如：销售",
   "0TPgIp3K/q": "浏览",
   "0TerLPGBdw": "无法连接到 {server}",
@@ -19088,5 +19088,15 @@
   "t/LNoeQ72j": "完全停止 Claude 桌面端获取更新 (无时间限制)。您需要手动推送新版本。",
   "ConfigRecheckIntervalMinutesTitle": "配置重新检查间隔",
   "ConfigRecheckIntervalMinutesShort": "运行中的应用检查托管配置变更的间隔分钟数。留空 = 10 分钟。",
-  "DJ6DrJYlMf": "每个用户的软上限，在客户端按 Token 上限时间窗口统计。并非服务端强制配额。"
+  "DJ6DrJYlMf": "每个用户的软上限，在客户端按 Token 上限时间窗口统计。并非服务端强制配额。",
+  "2YChxhwK1R": "在 Code 会话运行期间阻止计算机休眠，以便长任务能够完成。显示器仍可关闭。合上笔记本上盖仍会使其进入休眠。",
+  "vSpvldmS33": "阻止 Claude 读取 Code 会话工作目录之外的文件。文件工具将拒绝此类读取；沙箱化的 Shell 命令将无法访问用户主目录。",
+  "eXwx/L4TgM": "从 Code 会话和 Cowork 任务中移除绕过权限模式，使 Claude 始终遵循权限策略。默认关闭。",
+  "0I38l/TM7C": "阻止外部应用程序和网站通过 claude:// 链接打开 Claude 桌面端。",
+  "TnZHycC4Xk": "SSH 客户端程序",
+  "CkU2BFhxiC": "应用在运行 SSH 会话时所调用的 OpenSSH ssh 程序绝对路径。未设置时：默认使用用户 PATH 环境变量中的第一个 ssh。",
+  "p2x5qWfyvX": "每个{day} {approx, select, yes {约 } other {}}{time}",
+  "mztYPMn2LJ": "工作日 {approx, select, yes {约 } other {}}{time}",
+  "CxO3AEvYdU": "每天 {approx, select, yes {约 } other {}}{time}",
+  "2vOM74UoiD": "工作日 {time} ({timezone})。"
 }
