@@ -252,7 +252,7 @@ function applyPatch(options = {}) {
     if (!canWriteDirectory(resDir)) {
       return {
         success: false,
-        error: '目录写权限不足。请以管理员身份运行（或双击 install.bat）。'
+        error: '目录写权限不足。请右键点击 install.bat 选择【以管理员身份运行】。'
       };
     }
   }
