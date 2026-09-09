@@ -15,9 +15,6 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-> [!WARNING]
-> ### 🚨 **Anthropic is sneaky as hell!** 🚨
-> Sneakily scrambling and re-minifying AST function names on every micro-patch? No worries—our generic AST dynamic interceptor catches every single one!
 
 High-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux). Built on official native i18n architectures with incremental overlay and self-healing lifecycle management.
 
@@ -28,7 +25,7 @@ High-performance, reversible Chinese localization toolkit designed for Anthropic
 - 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Upstream unknown keys fall back to English gracefully.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Automatically detects when Anthropic officially rolls out native Chinese localization packages and yields gracefully.
 - 🧬 **Self-Healing & Drift-Resistant**: Equipped with upstream drift detectors (`npm run scan:drift`) that monitor, diff, and auto-align with upstream updates in seconds.
-- 🎯 **Full HashKey & UI Coverage**: Over 18,500+ curated translations covering Cowork canvases, approval flows, Claude Code, model selectors, and settings.
+- 🎯 **Full HashKey & UI Coverage**: Over 19,900+ curated translations covering Cowork canvases, approval flows, Claude Code, model selectors, and settings.
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameters (`1M`, `128k`, `MCP`, `DeepSeek`), ensuring task workflows never freeze.
 - 🪟 **Least Privilege & MSIX Adaptation**: Strictly adheres to the least-privilege security principle, granting necessary write permissions solely to the current user.
 
@@ -41,8 +38,8 @@ graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
     subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (550+ entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ entries)"]
+        ClaudeApp --> ShellLayer["Shell Layer (760+ entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (19,300+ entries)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features"]
     end
     

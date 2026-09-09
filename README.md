@@ -15,11 +15,6 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-> [!WARNING]
-> ### 🚨 **Anthropic 简直太鸡贼了！** 🚨
-> 每次发版都偷偷混淆重排 AST 语法树函数名来背刺汉化？放心，本项目全自动泛型 AST 动态拦截探针稳如泰山，见招拆招！
-
----
 
 专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
@@ -30,7 +25,7 @@
 - 🛡️ **可逆式增量挂载与纯净兜底 (Incremental Overlay & Fallback)**：基于官方原版 `en-US` 进行增量合并，**绝不粗暴覆盖原版英文字典**。当官方更新引入全新词条时自动回退英文，彻底拆除“更新即白屏”的隐患。
 - 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言与原生 JS 白名单自动嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位。
 - 🧬 **自愈与抗漂移 (Self-Healing & Drift-Resistant)**：内置版本漂移检测引擎 (`npm run scan:drift`)，官方发版更新后秒级检测新增与废弃词条，彻底终结更新后满世界找新补丁的痛点。
-- 🎯 **全量 HashKey 界面覆盖**：覆盖全量 18,900+ 核心词条（包含完整的 Cowork 协同画布、权限审批流、Claude Code 模式、模型规格选择器与设置面板）。
+- 🎯 **全量 HashKey 界面覆盖**：覆盖全量 19,900+ 核心词条（包含完整的 Cowork 协同画布、权限审批流、Claude Code 模式、模型规格选择器与设置面板）。
 - 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与规格参数（如 `1M`, `128k`, `MCP`, `DeepSeek` 等），确保任务流执行永不卡死。
 - 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，杜绝全局 Users 组高危赋权。
 
@@ -45,8 +40,8 @@ graph TD
     User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
     
     subgraph Mode1 ["【已上线】客户端宿主 UI 汉化 (Host UI Localization)"]
-        ClaudeApp --> ShellLayer["Shell 壳层 (550+ 词条)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (18,900+ 词条)"]
+        ClaudeApp --> ShellLayer["Shell 壳层 (760+ 词条)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (19,300+ 词条)"]
         ClaudeApp --> DynamicLayer["Dynamic 思考模型特性"]
     end
     
