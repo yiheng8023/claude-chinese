@@ -88,7 +88,7 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /content:"搜索",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
     restoreEn: 'content:"Search",shortcut:$1,side:"bottom"'
   ,
-    intlKey: 'vFf4r9k1F2'},
+    intlKey: 'xmcVZ0BU63'},
   {
     id: 'filter-status-label',
     description: 'Code 模式侧边栏过滤菜单 Status 标签',
@@ -114,7 +114,7 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'children:"显示空文件夹"',
     zhPattern: /children:"显示空文件夹"/g,
     restoreEn: 'children:"Show empty folders"',
-    intlKey: '3Jz2qrg77Q'
+    intlKey: 'NgcLgMejq0'
   },
   {
     id: 'filter-clear-filters',
@@ -123,7 +123,7 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: 'children:"清除过滤器"',
     zhPattern: /children:"清除过滤器"/g,
     restoreEn: 'children:"Clear filters"',
-    intlKey: '8sO4P8f1Fz'
+    intlKey: 'F4gyn3vRX6'
   },
   {
     id: 'filter-options-yM',

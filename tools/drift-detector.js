@@ -72,6 +72,8 @@ function runDriftDetection(customEnPath = null) {
           status = 'ACTIVE_PATCHED';
         } else if (matchesEn) {
           status = 'MATCHED_UNPATCHED';
+        } else if (patch.intlKey && (upstreamDict[patch.intlKey] || zhDict[patch.intlKey])) {
+          status = 'UPSTREAM_STANDARDIZED';
         }
 
         jsPatchesStatus.push({

@@ -4,9 +4,20 @@
 const fs = require('fs');
 const path = require('path');
 const { extractVariables, extractPlaceholders } = require('./icu-validator');
+const { getClaudeInstallation } = require('../core/msix-detector');
 
 const ionZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/ion-zh-CN.json'), 'utf8'));
-const ionEnBackup = JSON.parse(fs.readFileSync('C:/Program Files/WindowsApps/Claude_1.34493.1.0_x64__pzs8sxrjxfjjc/app/resources/ion-dist/i18n/en-US.backup.json', 'utf8'));
+const info = getClaudeInstallation();
+let ionEnBackup = {};
+if (info && info.resourcesPath) {
+  const cand = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json');
+  const candBak = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.backup.json');
+  if (fs.existsSync(cand)) {
+    try { ionEnBackup = JSON.parse(fs.readFileSync(cand, 'utf8')); } catch (e) {}
+  } else if (fs.existsSync(candBak)) {
+    try { ionEnBackup = JSON.parse(fs.readFileSync(candBak, 'utf8')); } catch (e) {}
+  }
+}
 const shellZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/zh-CN.json'), 'utf8'));
 const shellEnBase = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/en-US.base.json'), 'utf8'));
 const dynZh = JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/dynamic-zh-CN.json'), 'utf8'));
