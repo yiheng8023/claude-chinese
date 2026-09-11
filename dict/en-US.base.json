@@ -588,5 +588,19 @@
   "o5W3PYH1Xy": "Reconnecting to {host} stopped: the ssh program your organization configured can no longer be used on this computer. The sessions you left running there are kept; ask your IT administrator, then reconnect.",
   "wyN59otbn9": "Reconnecting to {host} stopped: the ssh now on this computer is older than OpenSSH 7.6, which Claude needs. The sessions you left running there are kept; update ssh and they reconnect.",
   "ieBAXijLM8": "{host} refused the SFTP subsystem Claude uses to copy its files, so the sessions you left running there can’t reconnect until it’s enabled (sshd_config: Subsystem sftp) — ask the host’s administrator if it isn’t yours.",
-  "2ghFwBnwj8": "Claude couldn't be moved to the Applications folder. You can keep using it from here, or drag it to Applications yourself from Finder."
+  "2ghFwBnwj8": "Claude couldn't be moved to the Applications folder. You can keep using it from here, or drag it to Applications yourself from Finder.",
+  "t77UbkPnXg": "Reopen Closed Session",
+  "3xS1DFaGn/": "Use this computer from your phone and claude.ai?",
+  "twIdcONUNJ": "This computer is now available from your other devices",
+  "XMVF/cxpzt": "Your organization’s policy requires a newer version of Claude. Update to continue using Code.",
+  "ggM3HEsBzV": "Update required",
+  "YkF3DHGT/t": "Update now",
+  "ad3f8cex7w": "Ask your administrator to update Claude.",
+  "1I3EHFKWyW": "OK",
+  "9o9sl64t8z": "Not now",
+  "V0OtiFGi/9": "Not now",
+  "ptrLkEscH0": "To show your cursor, press {esc}",
+  "neAqlHLGN6": "Claude Code is installed on {host} but isn’t responding, so the sessions you left running there can’t reconnect yet. Give the host a minute, then reconnect from the session.",
+  "p07Bv4hJry": "While Claude is open, sessions on your other devices can read and edit files and run commands in the folders you trust here, following your approval settings. What they read or run is sent to Anthropic. You can turn this off anytime in Settings.",
+  "ccARujX7Gf": "While Claude is running, sessions on your phone and claude.ai, including your cloud sessions, can read and edit files and run commands in your trusted folders. Click to choose folders or turn this off."
 }
