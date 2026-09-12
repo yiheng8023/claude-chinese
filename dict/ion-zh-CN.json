@@ -9950,7 +9950,7 @@
   "WSnfMuDLFD": "移除成员失败。请刷新页面后重试。",
   "WStTnUWlP8": "描述你的项目、目标、主题等…",
   "WT2fpp+SiB": "你确定要拒绝 {name} 的邀请请求吗？此操作无法撤销。",
-  "WTrOy36sdu": "聊天",
+  "WTrOy36sdu": "Chat",
   "WU2fOEXp5S": "Claude 使用你的布局、字体和模板，让每张幻灯片保持品牌一致。",
   "WUV28A6Pf2": "保存中…",
   "WV6U7uYD/h": "您也可以等待 {limitName} 重置后再继续工作。",
@@ -18651,7 +18651,7 @@
   "k+ptrunPTe": "在新建对话或任务顶部提示导入：“detect”：仅当在本机上发现较早的 Claude 会话时；“show”：始终显示。未设置时隐藏。",
   "N8nKVnjFDF": "启用 Cowork。Claude 处理更长周期的任务，如研究、分析和撰写文档。",
   "/vs1W12TA0": "启用 Code。Claude 编写并运行代码。",
-  "z2x73mCBZ9": "启用聊天。快速提问与起草内容。",
+  "z2x73mCBZ9": "启用 Chat。快速提问与起草内容。",
   "vDcS6jXepg": "Claude 可在其中工作的文件夹。适用于 Cowork 和 Code 会话。留空表示不受限制访问。",
   "Q90IY9SGu1": "禁用 Claude Code 捆绑的技能与工作流（如深度研究等）。在 WebFetch/WebSearch 不可用时使用。",
   "Cpqtiix6lD": "允许用户创建并上传自己的技能。关闭后，创建与上传界面将被隐藏，且智能体的技能创建工具将被禁用。",
@@ -19267,7 +19267,7 @@
   "0SgXrOfJMF": "为什么此工具需要再次批准",
   "+ECLUKvcWn": "忽略连接已批准工具的建议",
   "+OiyRgcyfz": "思考操作",
-  "0Cc9oG2J04": "允许聊天",
+  "0Cc9oG2J04": "允许 Chat",
   "0PG1bWgzss": "为此对话允许",
   "0haB5WcsIi": "开启侧边对话",
   "+mGfGdhe8o": "我可以在此处使用 {name}，但当前对话已将其禁用。",
@@ -19389,5 +19389,10 @@
   "ixtGCgZEvQ": "检查保留设置",
   "zDDpp+AoVJ": "已将会话记录视图切换为正常。",
   "zSfQW431rK": "已将会话记录视图切换为思考中。",
-  "ConfigRecheckIntervalMinutesSuffix": "分钟"
+  "ConfigRecheckIntervalMinutesSuffix": "分钟",
+  "5fWJP5tZx6": "允许 Code",
+  "pq8krELyA1": "允许 Cowork",
+  "xvwPM4hW6B": "与 Claude 交流探讨",
+  "OjrxTeghLB": "为 Claude 分配自主运行的任务",
+  "u5AnEeNsLa": "在环境中启动 Claude Code 会话"
 }
