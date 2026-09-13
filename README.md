@@ -206,7 +206,7 @@ claude-chinese/
 
 ## 📈 Star 增长趋势与社区生态 (Star History)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yiheng8023/claude-chinese,yiheng8023/antigravity-chinese&type=Date)](https://star-history.com/#yiheng8023/claude-chinese&yiheng8023/antigravity-chinese&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=yiheng8023/claude-chinese&type=Date)](https://star-history.com/#yiheng8023/claude-chinese&Date)
 
 ---
 
