@@ -205,6 +205,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /([a-zA-Z0-9_$]+)="查看全部"/g,
     restoreEn: '$1="View all"',
     intlKey: 'sidebarViewAll'
+  },
+  {
+    id: 'activity-token-books-mapping',
+    description: '活动热力图阅读量对比世界名著书名汉化 (Moby-Dick 等)',
+    enPattern: /name:"The Little Prince",tokens:22e3\},\{name:"Animal Farm",tokens:39e3\},\{name:"The Great Gatsby",tokens:62e3\},\{name:"Harry Potter and the Philosopher's Stone",tokens:103e3\},\{name:"The Hobbit",tokens:123e3\},\{name:"Pride and Prejudice",tokens:156e3\},\{name:"Dune",tokens:244e3\},\{name:"Moby-Dick",tokens:268e3\},\{name:"The Lord of the Rings",tokens:576e3\},\{name:"War and Peace",tokens:73e4\}/g,
+    zhSnippet: 'name:"小王子",tokens:22e3},{name:"动物庄园",tokens:39e3},{name:"了不起的盖茨比",tokens:62e3},{name:"哈利·波特与魔法石",tokens:103e3},{name:"霍比特人",tokens:123e3},{name:"傲慢与偏见",tokens:156e3},{name:"沙丘",tokens:244e3},{name:"白鲸",tokens:268e3},{name:"魔戒",tokens:576e3},{name:"战争与和平",tokens:73e4}',
+    zhPattern: /name:"白鲸",tokens:268e3/g,
+    restoreEn: 'name:"The Little Prince",tokens:22e3},{name:"Animal Farm",tokens:39e3},{name:"The Great Gatsby",tokens:62e3},{name:"Harry Potter and the Philosopher\'s Stone",tokens:103e3},{name:"The Hobbit",tokens:123e3},{name:"Pride and Prejudice",tokens:156e3},{name:"Dune",tokens:244e3},{name:"Moby-Dick",tokens:268e3},{name:"The Lord of the Rings",tokens:576e3},{name:"War and Peace",tokens:73e4}',
+    intlKey: 'activityBooks'
   }
 ];
 
