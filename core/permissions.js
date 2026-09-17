@@ -49,12 +49,17 @@ function grantPermissions(targetDir) {
     execSync(`icacls "${targetDir}" /grant:r "*S-1-5-32-544":(OI)(CI)F /t /q /c`, { stdio: 'ignore' });
   } catch (e) {}
 
-  if (canWriteDirectory(targetDir)) return true;
-
-  // 4. 若当前进程无管理员权限，自动触发 UAC 弹窗提权赋权 (Elevated PowerShell ACL)
+  // 4. 若当前进程无管理员权限，通过原生临时脚本触发 UAC 弹窗进行授权
   try {
-    const psCmd = `takeown /f '${targetDir}' /r /d y; icacls '${targetDir}' /grant:r '${username}':(OI)(CI)F /t /q /c`;
-    execSync(`powershell -NoProfile -Command "Start-Process powershell -Verb RunAs -Wait -ArgumentList '-NoProfile -Command \\"${psCmd}\\"'"`, { stdio: 'ignore' });
+    const tmpScript = path.join(require('os').tmpdir(), `claude_perm_${Date.now()}.cmd`);
+    const cmdContent = `@echo off\r\n` +
+      `takeown /f "${targetDir}" /r /d y >nul 2>&1\r\n` +
+      `icacls "${targetDir}" /grant:r "*S-1-5-32-545":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
+      `icacls "${targetDir}" /grant:r "*S-1-5-32-544":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
+      `if defined USERNAME icacls "${targetDir}" /grant:r "%USERNAME%":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
+      `del "%~f0" >nul 2>&1\r\n`;
+    fs.writeFileSync(tmpScript, cmdContent, 'utf8');
+    execSync(`powershell -NoProfile -Command "Start-Process cmd -Verb RunAs -Wait -ArgumentList '/c', '\"\"${tmpScript}\"\"'"`, { stdio: 'ignore' });
   } catch (eUac) {}
 
   return canWriteDirectory(targetDir);
