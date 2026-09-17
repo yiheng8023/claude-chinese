@@ -19897,5 +19897,15 @@
   "1QSW0lLYs6": "打开角色",
   "/fRKLacNHW": "向下移动拆分视图",
   "/kd+sKBacv": "审查者",
-  "/VkE8ILucU": "查看全部个人资料"
+  "/VkE8ILucU": "查看全部个人资料",
+  "63NOuwomJM": "默认思考强度",
+  "SBjuzIVQAJ": "默认模型（列表中的首个模型）启动时的思考强度，而非 Anthropic 官方推荐级别：low、medium、high、xhigh 或 max。",
+  "dayANLBel0": "开启后，每个新会话或任务均从默认模型启动，用户对模型和思考强度的更改将不再保存为新的默认值。",
+  "go+bdjd1f9": "模型目录元数据",
+  "sikjjWW3Tp": "使用已发布的 Claude Code 模型目录来标记和描述模型选择器中的条目，而非使用应用内置表。",
+  "7QWnJvdV6y": "模型目录 URL",
+  "a9epb+yGXN": "模型目录镜像",
+  "sFZOQNiiWa": "从此 URL（您网络内部提供 Anthropic 官方发布文件的镜像）获取模型目录及其签名文件，而非从 downloads.claude.ai 获取。",
+  "6cacFh6uvE": "最大思考强度",
+  "NsfxwZEink": "为此模型提供的最高思考强度；更高级别将被隐藏且 Claude Desktop 绝不请求。无法识别的值将限制模型为 low。"
 }
