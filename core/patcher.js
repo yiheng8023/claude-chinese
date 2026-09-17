@@ -317,15 +317,15 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (适配所有版本混淆函数名，同时劫持 short/long 的所有解构函数)
+        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (适配所有版本混淆函数名，增加 Memoization 极速缓存)
         const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
         const zFnRegex = /function\s+([a-zA-Z0-9_$]+)\(e,t\)\{return\{text:e,\.\.\.t\}\}/g;
         if (fs.existsSync(longDocsPath) && zFnRegex.test(newContent)) {
           const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
           let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
-          let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)};`;
+          let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
           newContent = newContent.replace(zFnRegex, (match, fnName) => {
-            const repl = `${header}function ${fnName}(e,t){var tr=__ZH_DOCS__[e];if(!tr&&typeof e==="string"){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}return{text:tr||e,...t}}`;
+            const repl = `${header}function ${fnName}(e,t){if(typeof e!=="string")return{text:e,...t};var tr=__ZH_CACHE__[e];if(tr===undefined){tr=__ZH_DOCS__[e];if(!tr&&e.length>10){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[e]=tr||null;}return{text:tr||e,...t}}`;
             header = '';
             return repl;
           });
@@ -378,9 +378,9 @@ function applyPatch(options = {}) {
         try { baseEn = JSON.parse(fs.readFileSync(enPath, 'utf8')); } catch (e) {}
       }
 
-      // 增量合并：官方未翻译词条保留英文作为兜底，已翻译词条精准替换
+      // 增量合并：官方未翻译词条保留英文作为兜底，已翻译词条精准替换，生产级紧凑单行格式极速减重
       const merged = Object.assign({}, baseEn, zhDict);
-      fs.writeFileSync(path.join(targetDir, 'zh-CN.json'), JSON.stringify(merged, null, 2), 'utf8');
+      fs.writeFileSync(path.join(targetDir, 'zh-CN.json'), JSON.stringify(merged), 'utf8');
     };
 
     // A. 注入 Shell 层 zh-CN.json
