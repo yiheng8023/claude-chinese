@@ -17668,7 +17668,7 @@
   "ssmKrOHndG": "并行运行多个代理——每个都拥有完整的终端、编辑器和预览——让你无需离开会话即可构建、检查和修改。",
   "sss7VKhIiE": "搜索工作区……",
   "st0obAAYGy": "监控一个主题",
-  "st9QnC8LFC": "用 Claude 创建",
+  "st9QnC8LFC": "使用 Claude 创建",
   "stDXjblxoJ": "你已安装的插件",
   "stDgCXJO7F": "未找到此 URL",
   "stJYEYsqnV": "{current} / {total}",
@@ -20022,5 +20022,15 @@
   "u4f7h0ylkl": "手动",
   "QVSekemNVC": "无需询问即可运行。",
   "ELTpMF86c1": "跳过所有批准",
-  "1fVcUS9+ze": "Claude 从不暂停，即使对于不安全的操作也是如此。"
+  "1fVcUS9+ze": "Claude 从不暂停，即使对于不安全的操作也是如此。",
+  "gcU7Ur/D71": "添加你的首批技能",
+  "w39ST2SJHc": "技能让 Claude 了解你的工作方式。",
+  "JqiOyfKupb": "上传技能",
+  "FCr2l6xvKZ": "上传技能",
+  "Ep5aBa3gJK": "添加你的首批连接器",
+  "PXiJ+nljd4": "连接器让 Claude 能够与你团队的工具和数据协同工作。",
+  "E8oPn6AIKP": "连接器让 Claude 能够与你团队的工具和数据协同工作。从目录中添加它们。",
+  "qAdOHg3yxq": "连接器让 Claude 能够与你团队的工具和数据协同工作。从目录中添加它们，或添加自定义连接器。",
+  "zLXPyIM8X/": "添加你的首批插件",
+  "PJOomHaesP": "使用 Claude 创建"
 }
