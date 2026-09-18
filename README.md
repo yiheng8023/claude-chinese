@@ -133,11 +133,12 @@ npm run test:matrix
 npm run audit
 ```
 
-- **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值。
-- **ICU 语法防火墙 (`test/test-icu.js`)**：确保所有模板变量、复数分支与技术专有名词 100% 结构对称。
-- **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 干净还原 -> 原版回退全流程，包含官方静默升级防版本回退专项断言。
+- **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值（600+ 基线词条，770+ 中文词条）。
+- **ICU 语法防火墙 (`test/test-icu.js`)**：确保全量 20,700+ 核心词条所有模板变量、复数分支与技术专有名词 100% 结构对称。
+- **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 双重安装幂等 -> 干净还原 -> 原版回退全流程，包含官方静默升级防版本回退专项断言。
 - **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
-- **事前兼容矩阵与混淆变异碰撞 (`tools/upstream-compatibility-matrix.js`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成韧性压力断言。
+- **事前兼容矩阵与混淆变异碰撞 (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成韧性压力断言。
+- **全维度本地化一致性审计 (`tools/ultimate-consistency-audit.js` / `npm run audit`)**：全面体检思考强度、审批工作流、动作动词，确保 0 HTML 标签不对称与 0 ICU 变量偏差。
 
 ---
 

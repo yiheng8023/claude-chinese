@@ -63,6 +63,7 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
   restore        还原为官方英文原版
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         自愈式启动 Claude (检测并自动补齐汉化后启动)
+  watch          启动热重载与自愈守护进程 (监听字典与版本变化)
   help           显示此帮助信息
 `);
 }
