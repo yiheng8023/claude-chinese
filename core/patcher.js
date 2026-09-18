@@ -350,18 +350,38 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (适配所有版本混淆函数名，增加 Memoization 极速缓存)
+        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (多签名自适应拓扑引擎，适配变量混淆名变异与函数语法变异)
         const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
-        const zFnRegex = /function\s+([a-zA-Z0-9_$]+)\(e,t\)\{return\{text:e,\.\.\.t\}\}/g;
-        if (fs.existsSync(longDocsPath) && zFnRegex.test(newContent)) {
+        const zFnDeclarationRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/g;
+        const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
+        const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
+
+        if (fs.existsSync(longDocsPath) && (zFnDeclarationRegex.test(newContent) || zFnArrowRegex.test(newContent) || zFnAssignRegex.test(newContent))) {
           const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
           let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
           let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
-          newContent = newContent.replace(zFnRegex, (match, fnName) => {
-            const repl = `${header}function ${fnName}(e,t){if(typeof e!=="string")return{text:e,...t};var tr=__ZH_CACHE__[e];if(tr===undefined){tr=__ZH_DOCS__[e];if(!tr&&e.length>10){for(var k in __ZH_DOCS__){if(e.indexOf(k)===0||(k.length>20&&e.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[e]=tr||null;}return{text:tr||e,...t}}`;
+
+          // 1. 标准函数声明式拓扑
+          newContent = newContent.replace(zFnDeclarationRegex, (match, fnName, a1, a2) => {
+            const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
             header = '';
             return repl;
           });
+
+          // 2. 箭头函数变异式拓扑
+          newContent = newContent.replace(zFnArrowRegex, (match, fnName, a1, a2) => {
+            const repl = `${header}${fnName}=(${a1},${a2})=>{if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
+            header = '';
+            return repl;
+          });
+
+          // 3. Object.assign 变异式拓扑
+          newContent = newContent.replace(zFnAssignRegex, (match, fnName, a1, a2) => {
+            const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return Object.assign({text:${a1}},${a2});var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return Object.assign({text:tr||${a1}},${a2})}`;
+            header = '';
+            return repl;
+          });
+
           modified = true;
         }
 

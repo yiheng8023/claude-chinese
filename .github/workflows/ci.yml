@@ -28,5 +28,11 @@ jobs:
     - name: Run Quality & Dictionary Tests
       run: npm test
 
+    - name: Run Upstream Compatibility & Mutation Fuzzing Matrix
+      run: npm run test:matrix
+
+    - name: Run Comprehensive Audit
+      run: npm run audit
+
     - name: Run Drift Detector
       run: npm run scan:drift

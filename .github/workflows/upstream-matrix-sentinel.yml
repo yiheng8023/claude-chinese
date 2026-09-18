@@ -1,0 +1,39 @@
+name: Upstream Compatibility & Pre-Release Sentinel
+
+on:
+  schedule:
+    # 每天北京时间早上 8:00 (UTC 00:00) 自动巡检
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      custom_notes:
+        description: 'Manual trigger notes / inspection tag'
+        required: false
+        default: 'Manual Sentinel Check'
+
+jobs:
+  matrix-sentinel:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Core Test Suite
+        run: npm test
+
+      - name: Run Pre-Release Compatibility Matrix & Mutation Fuzzing Harness
+        run: npm run test:matrix
+
+      - name: Run Global Terminology & ICU Consistency Audit
+        run: npm run audit
+
+      - name: Run Upstream Text Drift Detection
+        run: npm run scan:drift
