@@ -15,19 +15,19 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-
-High-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux). Built on official native i18n architectures with incremental overlay and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.58**. Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
-## 🌟 Core Features & Design Philosophy
+## 🌟 Key Features & Design Philosophy
 
-- 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Upstream unknown keys fall back to English gracefully.
-- 🕊️ **Official Chinese Detection & Graceful Yield**: Automatically detects when Anthropic officially rolls out native Chinese localization packages and yields gracefully.
-- 🧬 **Self-Healing & Drift-Resistant**: Equipped with upstream drift detectors (`npm run scan:drift`) that monitor, diff, and auto-align with upstream updates in seconds.
-- 🎯 **Full HashKey & UI Coverage**: Over 19,900+ curated translations covering Cowork canvases, approval flows, Claude Code, model selectors, and settings.
-- 🔒 **Strict ICU AST Syntax Firewall**: Absolute protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameters (`1M`, `128k`, `MCP`, `DeepSeek`), ensuring task workflows never freeze.
-- 🪟 **Least Privilege & MSIX Adaptation**: Strictly adheres to the least-privilege security principle, granting necessary write permissions solely to the current user.
+- 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
+- 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Paired with preflight mutation fuzzing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
+- 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-1 digests and patch signatures. Automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
+- 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
+- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **20,700+** curated core entries and **113 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, thinking effort dropdowns, and literature reading comparisons).
+- 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
+- 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user and avoiding hazardous global Users group ACL escalations.
 
 ---
 
@@ -38,51 +38,53 @@ graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
     subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (760+ entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (19,300+ entries)"]
-        ClaudeApp --> DynamicLayer["Dynamic Model Features"]
+        ClaudeApp --> ShellLayer["Shell Layer (770+ entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (20,000+ entries)"]
+        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (113 articles)"]
+        ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
     end
     
     subgraph Mode2 ["【Roadmap / Planned】Agent Suite & Extensions"]
-        ClaudeApp -.-> MCP["MCP Server Chinese Tooling"]
+        ClaudeApp -.-> MCP["MCP Server Chinese Protocol"]
         ClaudeApp -.-> Rules["Chinese Interaction & Code Comment Rules"]
-        ClaudeApp -.-> Switcher["1P / 3P Gateway Routing Adapter"]
+        ClaudeApp -.-> Switcher["1P Official / 3P Gateway (DeepSeek) Router"]
     end
 ```
 
-1. **Dimension A: Host UI Localization (Ready)**:
-   - Full localization of native menus, system tray, Cowork task canvas, approval dialogs, settings, and inputs.
-2. **Dimension B: Agent Extension Ecosystem (Roadmap / Planned)**:
-   - **[Planned]** MCP (Model Context Protocol) Chinese workflow integrations.
-   - **[Planned]** Adapters for gateway routers such as CC Switch and local inference endpoints.
+1. **Dimension A: Host UI Localization (Ready & Complete)**:
+   - Complete localization of native menus, system tray, Cowork task canvas, approval dialogs, settings, and interactive inputs.
+2. **Dimension B: Agent Extension Ecosystem (Roadmap & Evolution)**:
+   - **[Planned]** MCP (Model Context Protocol) Chinese workflow integrations;
+   - **[Planned]** Adapters for gateway routers such as CC Switch and custom local inference endpoints.
 
 ---
 
 ## 📋 Prerequisites
 
 1. **Supported Operating Systems**:
-   - **Windows**: Windows 10 / 11 (x64) (Supports official MSIX and standard versions)
-   - **macOS**: macOS 12+ (Apple Silicon M-series & Intel)
-   - **Linux**: Major distributions (x64 / ARM64)
-2. **Node.js Runtime**:
-   - **Node.js (>= 16.x)** with `npm` (Fully compatible with Node 18/20/22/24+).
-3. **Claude Desktop**:
-   - Official Claude Desktop client installed.
+   - **Windows**: Windows 10 / 11 (x64) (Supports official MSIX sideloaded packages and standard standalone installations)
+   - **macOS**: macOS 12+ (Apple Silicon M-series & Intel chips)
+   - **Linux**: Major distributions (Ubuntu, Debian, Fedora, Arch, etc., x64 / ARM64)
+2. **Node.js Runtime Environment**:
+   - **Node.js (>= 16.x)** with `npm` (Fully compatible with Node 18/20/22/24+ LTS releases).
+   - Run `node -v` to verify. If not installed, download the LTS release from [Node.js Official Website](https://nodejs.org/).
+3. **Claude Desktop Installed**:
+   - Ensure the official Claude Desktop client is installed on your system.
 
 ---
 
 ## 🚀 Quick Start
 
-### Method 1: One-Click Scripts (Recommended)
+### Method 1: One-Click Scripts (Recommended for Daily Use)
 
 #### Windows
-- **Install Patch**: Double-click [`install.bat`](install.bat)
-- **Self-Healing Launch**: Double-click [`launch.bat`](launch.bat)
+- **Install Patch**: Right-click and run [`install.bat`](install.bat) as Administrator
+- **Self-Healing Launch**: Double-click [`launch.bat`](launch.bat) (Auto-detects upstream updates, re-patches, and launches)
 - **Restore English**: Double-click [`uninstall.bat`](uninstall.bat)
 
 #### macOS / Linux
-- **Install Patch**: Run `./install.sh`
-- **Restore English**: Run `./uninstall.sh`
+- **Install Patch**: Run `./install.sh` in terminal
+- **Restore English**: Run `./uninstall.sh` in terminal
 
 ---
 
@@ -92,16 +94,16 @@ graph TD
 # 1. Check current client and patch status
 node cli.js status
 
-# 2. Run comprehensive pre-flight health checks
+# 2. Run comprehensive pre-flight health checks (Node version, client paths, file locks, and ACLs)
 node cli.js check
 
-# 3. One-click install (runs pre-flight, releases file locks, and mounts overlay)
+# 3. One-click install (runs pre-flight, safely releases file locks, and mounts overlay)
 node cli.js install
 
-# 4. Background watcher daemon mode (hot-reloads translations and auto-repairs on updates)
+# 4. Background watcher & hot-reload daemon (hot reloads on Ctrl+R, auto-repairs on updates)
 node cli.js watch
 
-# 5. Self-healing launch
+# 5. Self-healing launch (auto-detects version updates, repairs overlay if needed, and launches)
 node cli.js launch
 
 # 6. Run upstream drift scan
@@ -113,17 +115,98 @@ node cli.js restore
 
 ---
 
-## 🧪 Automated Testing & CI Verification
+## 🧪 Automated Testing & Quality Assurance
+
+The project introduces rigorous end-to-end automated testing, mutation fuzzing, and a cross-platform CI pipeline (Windows / macOS / Ubuntu):
 
 ```bash
-# Run all 4 automated test suites
+# Run all core automated test suites (aggregating 4 core suites)
 npm test
+
+# Run preflight upstream compatibility matrix and AST mutation fuzzing tests
+npm run test:matrix
+
+# Run comprehensive localization consistency and ICU terminology audit
+npm run audit
 ```
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax and coverage.
-- **ICU Syntax Firewall (`test/test-icu.js`)**: Protects placeholders, variables, and technical terms.
-- **Lifecycle & Atomic Rollback (`test/test-restore-cycle.js`)**: Tests isolated install -> restore -> double-install lifecycle in sandbox fixtures.
-- **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Tests 0-argument path discovery and multi-platform layouts.
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (600+ baseline keys, 770+ Chinese keys).
+- **ICU Syntax Firewall (`test/test-icu.js`)**: Structural validation and technical term protection across all **20,700+** core entries, ensuring 100% placeholder symmetry.
+- **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
+- **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
+- **Preflight Compatibility Matrix & Mutation Fuzzing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting patch resilience before upstream releases reach users.
+- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, 0 HTML tag discrepancies, and 0 ICU variable mismatches.
+
+---
+
+## 🔄 Self-Evolving Pipeline
+
+```mermaid
+flowchart LR
+    A[Upstream Release Update] -->|Diff Extraction| B[Drift Detector scan:drift]
+    B -->|Incremental Keys Detected| C[AI Incremental Translation & ICU Audit]
+    C -->|Verified Dictionaries| D[Dual-Layer Smart Injection Engine]
+    D -->|Self-Healing Mount| E[Claude Desktop Rendered in Perfect Chinese]
+```
+
+---
+
+## 📁 Repository Structure
+
+```text
+claude-chinese/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
+│       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
+├── dict/                             # Core Chinese dictionaries
+│   ├── zh-CN.json                    # Shell layer translation dictionary (770+ entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (20,000+ entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (113 articles)
+│   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
+├── core/                             # Core injection & architecture engine
+│   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing
+│   ├── msix-detector.js              # MSIX container detector & cross-platform layout resolver
+│   ├── permissions.js                # Windows ACL security permissions and elevation utility
+│   └── preflight.js                  # Comprehensive environment health checker (Node/Client/Locks)
+├── test/                             # Automated regression test suites
+│   ├── verify-dict.js                # Dictionary syntax and integrity assertions
+│   ├── test-icu.js                   # 20,700+ entries ICU placeholder and terminology protection
+│   ├── test-restore-cycle.js         # Install/restore lifecycle & silent update anti-downgrade assertions
+│   └── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
+├── tools/                            # Automation engineering and compatibility toolchains
+│   ├── upstream-compatibility-matrix.js # Preflight multi-version compatibility matrix & mutation fuzzer
+│   ├── drift-detector.js             # Upstream text diff extraction & drift detector (scan:drift)
+│   ├── comprehensive-audit.js        # Full-dimension localization quality & technical enum audit (audit)
+│   ├── ultimate-consistency-audit.js # Global terminology, ICU variables & HTML symmetry deep audit
+│   └── compile-zh-dict.js            # Baseline incremental merge & dictionary compilation tool
+├── docs/assets/sponsoring/           # Sponsorship & community assets
+├── cli.js                            # Cross-platform CLI lifecycle entry point
+├── install.bat / install.sh          # One-click installation scripts
+├── launch.bat                        # Self-healing launcher script
+├── uninstall.bat / uninstall.sh      # One-click restore scripts
+├── package.json                      # Project configuration & npm scripts
+├── LICENSE                           # MIT License
+└── README.md / README.en.md          # Bilingual documentation
+```
+
+---
+
+## 💖 Voluntary Sponsoring & Support
+
+If the Claude Chinese Localization Toolkit has benefited your work and daily development, and you would like to support ongoing maintenance, documentation improvements, automated testing, and version updates, voluntary donations of any amount are deeply appreciated. Sponsorship is entirely voluntary and does not constitute any service-level agreement.
+
+- **RMB Sponsorship**: Scan the WeChat Pay or Alipay QR codes below.
+- **Cross-Border / Other Currencies**: Use our **[PayPal Sponsoring Link](https://www.paypal.com/ncp/payment/LNTF8KXGJXMZY)**. Accepted currencies, payment methods, and exchange rates are subject to PayPal's checkout page.
+
+Please verify the payee name shown on the checkout page before confirming payment. Thank you for your support of open-source software!
+
+<table>
+  <tr>
+    <td align="center"><strong>WeChat Pay (RMB)</strong><br><img src="docs/assets/sponsoring/wechat-pay.png" alt="WeChat Pay Donation QR Code" width="260"></td>
+    <td align="center"><strong>Alipay (RMB)</strong><br><img src="docs/assets/sponsoring/alipay.png" alt="Alipay Donation QR Code" width="260"></td>
+  </tr>
+</table>
 
 ---
 
