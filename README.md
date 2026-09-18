@@ -156,28 +156,39 @@ flowchart LR
 
 ```text
 claude-chinese/
-├── dict/                     # 汉化词库目录
-│   ├── zh-CN.json            # 核心 Shell 壳层汉化词典 (550+ 词条)
-│   ├── ion-zh-CN.json        # 网页端核心 UI 词典 (18,900+ 词条)
-│   └── dynamic-zh-CN.json    # 动态特性与占位符词典
-├── core/                     # 注入核心模块
-│   ├── patcher.js            # 补丁注入、JS 白名单注册与还原核心
-│   ├── msix-detector.js      # MSIX 容器探测与跨平台路径解析
-│   └── permissions.js        # Windows ACL 权限与提权工具
-├── test/                     # 自动化全真回归测试套件
-│   ├── verify-dict.js        # 字典完整性断言
-│   ├── test-icu.js           # ICU 占位符与专有名词保护断言
-│   ├── test-restore-cycle.js # 安装与还原生命周期回归测试
-│   └── test-cross-platform-live.js # 跨平台无参系统路径探测实测
-├── tools/                    # 文本提取、差量比对与漂移检测工具链
-├── docs/assets/sponsoring/   # 赞助与支持相关资产
-├── cli.js                    # 跨平台命令行生命周期管理入口
-├── install.bat / install.sh  # 一键安装脚本
-├── launch.bat                # 自愈启动脚本
-├── uninstall.bat / uninstall.sh # 一键还原脚本
-├── package.json              # 项目配置与 npm scripts
-├── LICENSE                   # MIT 开源许可证
-└── README.md                 # 说明文档
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                    # 全平台 (Windows/macOS/Linux) CI 自动化测试流水线
+│       └── upstream-matrix-sentinel.yml # 上游事前兼容矩阵与混淆变异碰撞每日巡检哨兵
+├── dict/                             # 核心汉化词库
+│   ├── zh-CN.json                    # Shell 壳层汉化词典 (770+ 词条)
+│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (20,000+ 词条)
+│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (113 篇)
+│   └── dynamic-zh-CN.json            # 动态特性与推理占位符词典
+├── core/                             # 核心注入与架构引擎
+│   ├── patcher.js                    # 拓扑多签名长文档引擎、JS 白名单与出厂基线自愈
+│   ├── msix-detector.js              # MSIX 容器探测与跨平台多布局解析
+│   ├── permissions.js                # Windows ACL 权限安全授予与提权工具
+│   └── preflight.js                  # 前置环境全维健康预检器 (Node/客户端/进程锁)
+├── test/                             # 自动化全真回归测试套件
+│   ├── verify-dict.js                # 字典语法与完整性断言
+│   ├── test-icu.js                   # 全量 20,700+ 词条 ICU 占位符与专有名词保护断言
+│   ├── test-restore-cycle.js         # 安装、还原生命周期与官方静默升级防降级断言
+│   └── test-cross-platform-live.js   # 跨平台无参系统路径探测与沙盒注入实测
+├── tools/                            # 自动化工程与事前兼容工具链
+│   ├── upstream-compatibility-matrix.js # 上游多版本事前兼容矩阵与混淆变异碰撞测试引擎
+│   ├── drift-detector.js             # 上游版本文本差量提取与漂移检测器 (scan:drift)
+│   ├── comprehensive-audit.js        # 全维度本地化质量与技术枚举保护审计 (audit)
+│   ├── ultimate-consistency-audit.js # 全局术语、ICU 变量与 HTML 对称性深度体检
+│   └── compile-zh-dict.js            # 官方原版基准增量合并与编译工具
+├── docs/assets/sponsoring/           # 赞助与社区资产
+├── cli.js                            # 跨平台生命周期命令行管理入口
+├── install.bat / install.sh          # 一键安装脚本
+├── launch.bat                        # 自愈启动脚本
+├── uninstall.bat / uninstall.sh      # 一键还原脚本
+├── package.json                      # 项目配置与 npm scripts
+├── LICENSE                           # MIT 开源许可证
+└── README.md / README.en.md          # 中英双语说明文档
 ```
 
 ---
