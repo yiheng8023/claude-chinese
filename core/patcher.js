@@ -214,6 +214,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /name:"白鲸",tokens:268e3/g,
     restoreEn: 'name:"The Little Prince",tokens:22e3},{name:"Animal Farm",tokens:39e3},{name:"The Great Gatsby",tokens:62e3},{name:"Harry Potter and the Philosopher\'s Stone",tokens:103e3},{name:"The Hobbit",tokens:123e3},{name:"Pride and Prejudice",tokens:156e3},{name:"Dune",tokens:244e3},{name:"Moby-Dick",tokens:268e3},{name:"The Lord of the Rings",tokens:576e3},{name:"War and Peace",tokens:73e4}',
     intlKey: 'activityBooks'
+  },
+  {
+    id: 'thinking-effort-options-mapping',
+    description: '第三方推理配置默认思考强度下拉选项 (low/medium/high/xhigh/max ➔ 低/中/高/极高/最大)',
+    enPattern: /return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?\1,disabled:/g,
+    zhSnippet: 'var _em={"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"};return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??_em[$1]??$1,disabled:',
+    zhPattern: /var _em=\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\};return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?_em\[\1\]\?\?\1,disabled:/g,
+    restoreEn: 'return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??$1,disabled:',
+    intlKey: 'effortOptionsMap'
   }
 ];
 
