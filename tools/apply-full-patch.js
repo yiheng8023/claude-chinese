@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { grantPermissions } = require('../core/permissions');
+const { safeTest } = require('../core/patcher');
 
 function runFullPatch() {
   const info = getClaudeInstallation();
@@ -35,7 +36,7 @@ function runFullPatch() {
     let content = fs.readFileSync(fullPath, 'utf8');
 
     if (content.includes('"en-US"') && !content.includes('"zh-CN"')) {
-      if (regexAdd.test(content)) {
+      if (safeTest(regexAdd, content)) {
         content = content.replace(regexAdd, (match) => {
           return match.slice(0, -1) + ',"zh-CN"]';
         });

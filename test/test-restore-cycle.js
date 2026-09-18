@@ -219,6 +219,26 @@ try {
   }
   console.log('   ✅ sanitizeEnUS 成功保护官方全新 en-US.json，陈旧 en-US 备份已安全清理！');
 
+  // 7. 【终极防御】验证长文档三签名拦截器与 UI 正则在连续跨 Bundle 匹配下的 safeTest 无状态健壮性
+  console.log('\n7. 【终极防御】验证长文档多签名拦截器与 UI 正则 safeTest 无状态多次复用...');
+  const { safeTest } = require('../core/patcher');
+  const dummyReg = /test-token-([0-9]+)/g;
+  const str1 = 'header test-token-123 footer';
+  const str2 = 'header test-token-456 footer';
+
+  // 连续对带有 /g 的正则做两次 safeTest，确保第二次绝不因 lastIndex 偏移而返回 false
+  const r1 = safeTest(dummyReg, str1);
+  const r2 = safeTest(dummyReg, str2);
+  if (!r1 || !r2) {
+    console.error('❌ 致命错误: safeTest 未能清除 global RegExp 的 lastIndex 状态！');
+    process.exit(1);
+  }
+  if (dummyReg.lastIndex !== 0) {
+    console.error('❌ 错误: safeTest 退出后未能将 lastIndex 重置为 0！');
+    process.exit(1);
+  }
+  console.log('   ✅ safeTest 成功保障连续多次匹配状态完全隔离，lastIndex 归零守卫有效！');
+
   console.log('\n🎉 生命周期、出厂基线原子回滚与官方静默更新自愈防降级 100% 全部验证通过！');
 } finally {
   // 清理临时 Mock 目录

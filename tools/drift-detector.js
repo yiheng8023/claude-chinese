@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const { getClaudeInstallation } = require('../core/msix-detector');
-const { JS_LITERAL_PATCHES } = require('../core/patcher');
+const { JS_LITERAL_PATCHES, safeTest } = require('../core/patcher');
 
 function runDriftDetection(customEnPath = null) {
   let targetEnPath = customEnPath;
@@ -64,8 +64,8 @@ function runDriftDetection(customEnPath = null) {
       }
 
       for (const patch of (JS_LITERAL_PATCHES || [])) {
-        const matchesEn = patch.enPattern ? patch.enPattern.test(allJsContent) : false;
-        const matchesZh = patch.zhPattern ? patch.zhPattern.test(allJsContent) : false;
+        const matchesEn = patch.enPattern ? safeTest(patch.enPattern, allJsContent) : false;
+        const matchesZh = patch.zhPattern ? safeTest(patch.zhPattern, allJsContent) : false;
         
         let status = 'DRIFTED';
         if (matchesZh) {

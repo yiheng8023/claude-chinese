@@ -371,7 +371,7 @@ function applyPatch(options = {}) {
         const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
         const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
 
-        if (fs.existsSync(longDocsPath) && (zFnDeclarationRegex.test(newContent) || zFnArrowRegex.test(newContent) || zFnAssignRegex.test(newContent))) {
+        if (fs.existsSync(longDocsPath) && (safeTest(zFnDeclarationRegex, newContent) || safeTest(zFnArrowRegex, newContent) || safeTest(zFnAssignRegex, newContent))) {
           const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
           let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
           let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
