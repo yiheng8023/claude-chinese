@@ -5,8 +5,10 @@ const fs = require('fs');
 const path = require('path');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
-
 const { execSync } = require('child_process');
+const crypto = require('crypto');
+
+const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
 
 function isClaudeRunning() {
   const platform = process.platform;
@@ -283,9 +285,6 @@ function applyPatch(options = {}) {
       patchHits[p.id] = 0;
     }
 
-    const crypto = require('crypto');
-    const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
-
     const metaPath = path.join(resDir, '.claude_chinese_meta.json');
     let existingMeta = {};
     if (fs.existsSync(metaPath)) {
@@ -300,8 +299,33 @@ function applyPatch(options = {}) {
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
         const bakPath = `${fullPath}.orig.bak`;
-        const content = fs.existsSync(bakPath) ? fs.readFileSync(bakPath, 'utf8') : fs.readFileSync(fullPath, 'utf8');
-        const currentHash = getHash(content);
+        const current = fs.readFileSync(fullPath, 'utf8');
+        const currentHash = getHash(current);
+
+        let content = current;
+
+        if (fs.existsSync(bakPath)) {
+          const bak = fs.readFileSync(bakPath, 'utf8');
+          const bakHash = getHash(bak);
+
+          // 核心防御：判断当前 fullPath 是否处于已被我们打过补丁的状态
+          const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
+                               current.includes(',"zh-CN"]') ||
+                               current.includes('var __ZH_DOCS__=') ||
+                               JS_LITERAL_PATCHES.some(p => p.zhPattern.test(current));
+
+          if (currentHash !== bakHash && !isOurPatched) {
+            // 官方已静默更新该文件（内容变动且不含我们的汉化特征）
+            // 必须立即刷新备份基线为官方最新原版，丢弃陈旧备份，杜绝跨版本降级！
+            fs.copyFileSync(fullPath, bakPath);
+            content = current;
+          } else {
+            // 同版本正常重入（走纯净备份基线，实现幂等热重载）
+            content = bak;
+          }
+        }
+
+        const baselineHash = getHash(content);
 
         let newContent = content;
         let modified = false;
@@ -346,7 +370,7 @@ function applyPatch(options = {}) {
             fs.copyFileSync(fullPath, bakPath);
           }
           fileManifest[file] = {
-            originalHash: currentHash,
+            originalHash: baselineHash,
             patchedHash: getHash(newContent)
           };
 
@@ -481,13 +505,21 @@ function restorePatch(options = {}) {
   }
 
   try {
+    // 0. 优先读取现有元数据清单，用于判定文件是否确为补丁版本
+    const metaFile = path.join(resDir, '.claude_chinese_meta.json');
+    let existingMeta = {};
+    if (fs.existsSync(metaFile)) {
+      try { existingMeta = JSON.parse(fs.readFileSync(metaFile, 'utf8')) || {}; } catch (e) {}
+    }
+    const fileManifest = existingMeta.files || {};
+
     // 1. 增量挂载纯净清理：仅移除注入的中文文件与元数据，绝对不触碰官方原版 en-US.json
     const filesToDelete = [
       path.join(resDir, 'zh-CN.json'),
       path.join(i18nDir, 'zh-CN.json'),
       path.join(i18nDir, 'zh-CN.overrides.json'),
       path.join(dynDir, 'zh-CN.json'),
-      path.join(resDir, '.claude_chinese_meta.json')
+      metaFile
     ];
 
     for (const f of filesToDelete) {
@@ -504,8 +536,18 @@ function restorePatch(options = {}) {
         const bakPath = `${fullPath}.orig.bak`;
 
         if (fs.existsSync(bakPath)) {
-          // 物理级 100% 纯净出厂覆盖还原
-          fs.copyFileSync(bakPath, fullPath);
+          const current = fs.readFileSync(fullPath, 'utf8');
+          const currentHash = getHash(current);
+
+          const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
+                               current.includes(',"zh-CN"]') ||
+                               current.includes('var __ZH_DOCS__=') ||
+                               JS_LITERAL_PATCHES.some(p => p.zhPattern.test(current));
+
+          // 核心防御：仅当当前文件确为补丁文件时才还原；若官方已静默更新，严禁将旧 bak 覆盖新版！
+          if (isOurPatched) {
+            fs.copyFileSync(bakPath, fullPath);
+          }
           fs.unlinkSync(bakPath);
         } else {
           // 兜底：正则清理

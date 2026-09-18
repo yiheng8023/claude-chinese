@@ -134,7 +134,56 @@ try {
   }
   console.log('   ✅ 上游升级版本 B 多 Bundle 注入、重复注入与还原 100% 精准恢复为版本 B！');
 
-  console.log('\n🎉 生命周期与出厂基线原子回滚 100% 全部验证通过！');
+  // 5. 【P1 终极防御】模拟在“未执行 restore、磁盘存留旧版 .orig.bak”时，官方后台静默推送版本 C
+  console.log('\n5. 【P1 专项验证】模拟留存旧 .orig.bak 时，官方后台静默热更新为版本 C...');
+  // 5.1 先在当前状态打上补丁，生成版本 B 的 .orig.bak
+  applyPatch({ customPath: mockDir });
+  if (!fs.existsSync(`${langJsPath}.orig.bak`)) {
+    console.error('❌ 错误: 注入后未找到 .orig.bak！');
+    process.exit(1);
+  }
+
+  // 5.2 模拟官方静默更新为版本 C（直接覆写 bundle，磁盘上留下版本 B 的 .orig.bak）
+  const origLangJsC = 'const xu=["en-US","ja-JP"]; const featureC=true;';
+  const origWorktreeJsC = 'label:"Inside project (.claude/worktrees)"; label:"Custom..."; const wc=true;';
+  fs.writeFileSync(langJsPath, origLangJsC, 'utf8');
+  fs.writeFileSync(worktreeJsPath, origWorktreeJsC, 'utf8');
+
+  // 5.3 触发守护进程或再次安装 applyPatch
+  applyPatch({ customPath: mockDir });
+
+  // 5.4 验证：打补丁后的内容必须基于版本 C，绝不能被旧的 bak (版本 B) 覆盖降级！
+  const patchedLangC = fs.readFileSync(langJsPath, 'utf8');
+  if (!patchedLangC.includes('featureC=true') || !patchedLangC.includes('"zh-CN"')) {
+    console.error('❌ 致命错误: applyPatch 从陈旧 .orig.bak 读取了旧版本，将官方新版本 C 降级了！');
+    process.exit(1);
+  }
+
+  // 验证：.orig.bak 必须已被自动刷新为版本 C 的纯净出厂内容
+  const updatedBakC = fs.readFileSync(`${langJsPath}.orig.bak`, 'utf8');
+  if (updatedBakC !== origLangJsC) {
+    console.error('❌ 致命错误: .orig.bak 基线未被自动刷新为官方新版本 C！');
+    process.exit(1);
+  }
+  console.log('   ✅ applyPatch 成功识别官方静默升级，自动刷新备份基线，0 版本回退！');
+
+  // 5.5 验证 restorePatch 防御：如果官方推送了版本 D（纯净原版），restorePatch 绝不能用旧 bak 覆盖官方新版
+  const origLangJsD = 'const xu=["en-US","ja-JP"]; const featureD=true;';
+  fs.writeFileSync(langJsPath, origLangJsD, 'utf8'); // 模拟官方直接更新为 D
+  restorePatch({ customPath: mockDir });
+
+  const currentAfterRestoreD = fs.readFileSync(langJsPath, 'utf8');
+  if (currentAfterRestoreD !== origLangJsD) {
+    console.error('❌ 致命错误: restorePatch 用旧 .orig.bak 覆盖了官方更新后的版本 D！');
+    process.exit(1);
+  }
+  if (fs.existsSync(`${langJsPath}.orig.bak`)) {
+    console.error('❌ 错误: restorePatch 未清除陈旧的 .orig.bak！');
+    process.exit(1);
+  }
+  console.log('   ✅ restorePatch 成功保护官方更新版本 D，绝不降级覆盖，陈旧备份安全清理！');
+
+  console.log('\n🎉 生命周期、出厂基线原子回滚与官方静默更新自愈防降级 100% 全部验证通过！');
 } finally {
   // 清理临时 Mock 目录
   if (mockDir && fs.existsSync(mockDir)) {

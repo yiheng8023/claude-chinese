@@ -260,21 +260,52 @@ function handleWatch() {
     const delay = isUpstreamChange ? 800 : 300;
 
     debounceTimer = setTimeout(() => {
-      // 官方更新场景：检查文件是否写入完成 (连续检测 mtime/size 稳定)
+      // 官方更新场景：多轮连续静稳窗口检测 (连续 3 次检查，每次间隔 600ms，要求至少 1.8 秒全静默)
       if (isUpstreamChange && info.resourcesPath) {
-        const enFile = path.join(info.resourcesPath, 'en-US.json');
-        let initialSize = -1;
-        try { if (fs.existsSync(enFile)) initialSize = fs.statSync(enFile).size; } catch (e) {}
+        let stableRounds = 0;
+        const requiredRounds = 3;
+        let lastSnapshot = '';
 
-        stabilityCheckTimer = setTimeout(() => {
-          let currentSize = -1;
-          try { if (fs.existsSync(enFile)) currentSize = fs.statSync(enFile).size; } catch (e) {}
-          if (initialSize !== currentSize && currentSize !== -1) {
-            console.log('⏳ 官方更新器仍在写入文件，等待下一个静稳窗口...');
-            return triggerHotReload(reason, true);
+        const getSnapshot = () => {
+          let snap = '';
+          const targets = [
+            path.join(info.resourcesPath, 'en-US.json'),
+            path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json'),
+            path.join(info.resourcesPath, 'package.json')
+          ];
+          for (const t of targets) {
+            try {
+              if (fs.existsSync(t)) {
+                const s = fs.statSync(t);
+                snap += `${t}:${s.size}:${s.mtimeMs};`;
+              }
+            } catch (e) {}
           }
-          executePatch(reason);
-        }, 500);
+          return snap;
+        };
+
+        lastSnapshot = getSnapshot();
+
+        const checkStability = () => {
+          stabilityCheckTimer = setTimeout(() => {
+            const currentSnapshot = getSnapshot();
+            if (currentSnapshot !== lastSnapshot) {
+              lastSnapshot = currentSnapshot;
+              stableRounds = 0;
+              console.log('⏳ 官方更新器仍在写入文件，持续监测静稳窗口...');
+              checkStability();
+            } else {
+              stableRounds++;
+              if (stableRounds < requiredRounds) {
+                checkStability();
+              } else {
+                executePatch(reason);
+              }
+            }
+          }, 600);
+        };
+
+        checkStability();
       } else {
         executePatch(reason);
       }
@@ -316,14 +347,40 @@ function handleWatch() {
     }
   }
 
-  // 监听客户端 resources 目录变更 (官方升级自愈)
+  // 监听客户端 resources 目录变更 (官方升级自愈，支持 recursive 与全子目录深度监听)
   const resDir = info.resourcesPath;
   if (fs.existsSync(resDir)) {
-    fs.watch(resDir, (eventType, filename) => {
-      if (filename && (filename.includes('en-US.json') || filename.includes('package.json'))) {
+    const handleUpstreamChange = (filename) => {
+      if (!filename) return;
+      // 忽略我们自己的物理备份与元数据，防止自循环触发
+      if (filename.endsWith('.orig.bak') || filename.endsWith('.claude_chinese_meta.json') || filename.includes('zh-CN')) return;
+      if (filename.endsWith('.json') || filename.endsWith('.js')) {
         triggerHotReload(`官方资源变动 (${filename})`, true);
       }
-    });
+    };
+
+    try {
+      fs.watch(resDir, { recursive: true }, (eventType, filename) => {
+        handleUpstreamChange(filename);
+      });
+    } catch (e) {
+      // 跨平台降级：针对不支持 recursive 的系统，主动遍历子目录建立监听
+      const subDirs = [
+        resDir,
+        path.join(resDir, 'ion-dist'),
+        path.join(resDir, 'ion-dist', 'i18n'),
+        path.join(resDir, 'ion-dist', 'assets', 'v1')
+      ];
+      for (const d of subDirs) {
+        if (fs.existsSync(d)) {
+          try {
+            fs.watch(d, (eventType, filename) => {
+              handleUpstreamChange(filename);
+            });
+          } catch (err) {}
+        }
+      }
+    }
   }
 }
 
