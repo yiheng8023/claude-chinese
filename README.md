@@ -23,10 +23,11 @@
 ## 🌟 核心特性与设计哲学
 
 - 🛡️ **可逆式增量挂载与纯净兜底 (Incremental Overlay & Fallback)**：基于官方原版 `en-US` 进行增量合并，**绝不粗暴覆盖原版英文字典**。当官方更新引入全新词条时自动回退英文，彻底拆除“更新即白屏”的隐患。
+- 🧬 **拓扑多签名引擎与事前混淆变异矩阵 (Topology Invariants & Mutation Matrix)**：创新引入参数名无关的拓扑反向引用与声明式/箭头/Object.assign 三签名自适应拦截器，搭配事前混淆变异碰撞测试工具（`npm run test:matrix`）与云端事前哨兵 CI，在上游发版前完成兼容性闭环验证。
+- 🔄 **双重状态感知出厂基线与版本防回退 (Dual-State Pristine Baseline & Anti-Downgrade)**：基于 SHA-1 清单与注入特征双判据。官方静默发版更新时自动刷新备份基准，还原时自动熔断拦截，彻底消除了陈旧备份覆盖官方更新导致的版本回退隐患。
 - 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言与原生 JS 白名单自动嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位。
-- 🧬 **自愈与抗漂移 (Self-Healing & Drift-Resistant)**：内置版本漂移检测引擎 (`npm run scan:drift`)，官方发版更新后秒级检测新增与废弃词条，彻底终结更新后满世界找新补丁的痛点。
-- 🎯 **全量 HashKey 界面覆盖**：覆盖全量 19,900+ 核心词条（包含完整的 Cowork 协同画布、权限审批流、Claude Code 模式、模型规格选择器与设置面板）。
-- 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与规格参数（如 `1M`, `128k`, `MCP`, `DeepSeek` 等），确保任务流执行永不卡死。
+- 🎯 **全量 HashKey 界面与长篇折叠文档覆盖**：覆盖全量 20,700+ 核心词条与 113 篇全景折叠长文档（包含 Cowork 协同画布、权限审批流、Claude Code 模式、思考强度下拉与名著阅读对比）。
+- 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与底层配置枚举（如 `allow`, `ask`, `low`, `high`, `/loop` 等），确保任务流与配置执行永不卡死。
 - 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，杜绝全局 Users 组高危赋权。
 
 ---
@@ -123,12 +124,19 @@ node cli.js restore
 ```bash
 # 运行全套自动化测试套件（聚合 4 大核心测试套件）
 npm test
+
+# 运行事前上游兼容矩阵与混淆变异碰撞模糊测试
+npm run test:matrix
+
+# 运行全维度本地化一致性与 ICU 专有名词审计
+npm run audit
 ```
 
 - **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值。
 - **ICU 语法防火墙 (`test/test-icu.js`)**：确保所有模板变量、复数分支与技术专有名词 100% 结构对称。
-- **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 干净还原 -> 原版回退全流程。
+- **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 干净还原 -> 原版回退全流程，包含官方静默升级防版本回退专项断言。
 - **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
+- **事前兼容矩阵与混淆变异碰撞 (`tools/upstream-compatibility-matrix.js`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成韧性压力断言。
 
 ---
 
