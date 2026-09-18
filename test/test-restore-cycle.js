@@ -183,6 +183,42 @@ try {
   }
   console.log('   ✅ restorePatch 成功保护官方更新版本 D，绝不降级覆盖，陈旧备份安全清理！');
 
+  // 6. 【CL-04 专项验证】确立官方当前 en-US.json 权威基线，消除陈旧 en-US.backup.json 覆盖风险
+  console.log('\n6. 【CL-04 专项验证】官方更新 en-US.json 且留存旧 en-US.backup.json 防降级断言...');
+  const enUsPath = path.join(mockRes, 'en-US.json');
+  const enUsBakPath = path.join(mockRes, 'en-US.backup.json');
+
+  // 6.1 构造陈旧的 en-US.backup.json
+  const legacyBakContent = JSON.stringify({ "key": "Old legacy baseline", "deprecatedKey": "Old" });
+  fs.writeFileSync(enUsBakPath, legacyBakContent, 'utf8');
+
+  // 6.2 构造官方最新版本推送的 en-US.json (包含全新键值且未被污染)
+  const officialNewEnContent = JSON.stringify({ "key": "New pristine baseline", "newUpstreamKey": "Fresh from Anthropic" });
+  fs.writeFileSync(enUsPath, officialNewEnContent, 'utf8');
+
+  // 6.3 执行 applyPatch
+  applyPatch({ customPath: mockDir });
+
+  // 6.4 断言：新生成的 zh-CN.json 必须基于官方最新 en-US.json，包含 newUpstreamKey
+  const generatedZh = JSON.parse(fs.readFileSync(path.join(mockRes, 'zh-CN.json'), 'utf8'));
+  if (generatedZh.newUpstreamKey !== 'Fresh from Anthropic') {
+    console.error('❌ 致命错误: applyPatch 增量字典合并未能采纳官方最新 en-US，错误回退至陈旧备份！');
+    process.exit(1);
+  }
+  console.log('   ✅ applyPatch 成功确立官方最新 en-US 为绝对权威基准，增量字典继承最新词条！');
+
+  // 6.5 断言：官方原生未污染的 en-US.json 必须 100% 保持不变，陈旧备份被安全清理
+  const finalEnUs = fs.readFileSync(enUsPath, 'utf8');
+  if (finalEnUs !== officialNewEnContent) {
+    console.error('❌ 致命错误: sanitizeEnUS 用旧备份覆盖了官方全新 en-US.json！');
+    process.exit(1);
+  }
+  if (fs.existsSync(enUsBakPath)) {
+    console.error('❌ 错误: sanitizeEnUS 未清理陈旧的 en-US.backup.json！');
+    process.exit(1);
+  }
+  console.log('   ✅ sanitizeEnUS 成功保护官方全新 en-US.json，陈旧 en-US 备份已安全清理！');
+
   console.log('\n🎉 生命周期、出厂基线原子回滚与官方静默更新自愈防降级 100% 全部验证通过！');
 } finally {
   // 清理临时 Mock 目录

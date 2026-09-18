@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { applyPatch, restorePatch, JS_LITERAL_PATCHES } = require('../core/patcher');
+const { applyPatch, restorePatch, JS_LITERAL_PATCHES, safeTest } = require('../core/patcher');
 const { getClaudeInstallation } = require('../core/msix-detector');
 
 function runCompatibilityMatrix(options = {}) {
@@ -26,7 +26,9 @@ function runCompatibilityMatrix(options = {}) {
   const resDir = info.resourcesPath;
 
   if (!resDir || !fs.existsSync(resDir)) {
-    console.log('⚠️ 未检测到已安装的客户端资源目录，使用基础 Mock 模式执行测试。');
+    console.log('🧪 [MODE: SYNTHETIC_MOCK] 未检测到本地真实安装客户端，进入合成仿真模式执行拓扑抗混淆变异测试。\n');
+  } else {
+    console.log('📡 [MODE: REAL_UPSTREAM] 检测到本地真实安装客户端，执行真实上游版本拓扑匹配扫描。\n');
   }
 
   // 1. 测试真实或沙盒环境中的 JS 硬编码补丁抗混淆拓扑命中
@@ -47,10 +49,10 @@ function runCompatibilityMatrix(options = {}) {
   for (const patch of JS_LITERAL_PATCHES) {
     let status = 'UNKNOWN';
     if (allJs) {
-      if (patch.zhPattern && patch.zhPattern.test(allJs)) {
+      if (patch.zhPattern && safeTest(patch.zhPattern, allJs)) {
         status = 'ACTIVE_PATCHED';
         activeHits++;
-      } else if (patch.enPattern && patch.enPattern.test(allJs)) {
+      } else if (patch.enPattern && safeTest(patch.enPattern, allJs)) {
         status = 'ACTIVE_READY';
         activeHits++;
       } else if (patch.intlKey) {
@@ -86,7 +88,7 @@ function runCompatibilityMatrix(options = {}) {
   if (allJs) {
     const zFnMultiRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/;
     const hasHeader = allJs.includes('var __ZH_DOCS__=');
-    if (hasHeader || zFnMultiRegex.test(allJs)) {
+    if (hasHeader || safeTest(zFnMultiRegex, allJs)) {
       zFnDetected = true;
       console.log('  ✅ 成功检测到长文档拦截锚点注入/可用状态！');
     } else {
@@ -94,8 +96,8 @@ function runCompatibilityMatrix(options = {}) {
     }
   }
 
-  // 3. 混淆变异碰撞模糊测试 (Mutation Fuzzing Harness)
-  console.log('\n【阶段 3】抽象语法树与代码混淆变异碰撞测试 (Mutation Fuzzing Harness)');
+  // 3. 代码拓扑结构匹配与多签名变异测试
+  console.log('\n【阶段 3】代码拓扑结构匹配与多签名变异测试 (Code Topology & Multi-Signature Mutation Test)');
   const mockSandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-fuzzing-'));
   try {
     const fuzzedMockRes = path.join(mockSandbox, 'resources');

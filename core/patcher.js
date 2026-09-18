@@ -10,6 +10,21 @@ const crypto = require('crypto');
 
 const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
 
+/**
+ * 消除带 /g 标志的 RegExp 在 .test() 时 lastIndex 状态遗留污染的统一守卫
+ */
+function safeTest(pattern, text) {
+  if (!pattern || typeof text !== 'string') return false;
+  if (pattern.global) {
+    pattern.lastIndex = 0;
+  }
+  const result = pattern.test(text);
+  if (pattern.global) {
+    pattern.lastIndex = 0;
+  }
+  return result;
+}
+
 function isClaudeRunning() {
   const platform = process.platform;
   try {
@@ -312,7 +327,7 @@ function applyPatch(options = {}) {
           const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
                                current.includes(',"zh-CN"]') ||
                                current.includes('var __ZH_DOCS__=') ||
-                               JS_LITERAL_PATCHES.some(p => p.zhPattern.test(current));
+                               JS_LITERAL_PATCHES.some(p => safeTest(p.zhPattern, current));
 
           if (currentHash !== bakHash && !isOurPatched) {
             // 官方已静默更新该文件（内容变动且不含我们的汉化特征）
@@ -331,7 +346,7 @@ function applyPatch(options = {}) {
         let modified = false;
 
         if (newContent.includes('"en-US"') && !newContent.includes('"zh-CN"')) {
-          if (regexAdd.test(newContent)) {
+          if (safeTest(regexAdd, newContent)) {
             newContent = newContent.replace(regexAdd, (match) => {
               return match.slice(0, -1) + ',"zh-CN"]';
             });
@@ -341,11 +356,11 @@ function applyPatch(options = {}) {
 
         // 结构化硬编码补丁注入与命中统计
         for (const patch of JS_LITERAL_PATCHES) {
-          if (patch.enPattern.test(newContent)) {
+          if (safeTest(patch.enPattern, newContent)) {
             newContent = newContent.replace(patch.enPattern, patch.zhSnippet);
             patchHits[patch.id]++;
             modified = true;
-          } else if (patch.zhPattern.test(newContent)) {
+          } else if (safeTest(patch.zhPattern, newContent)) {
             patchHits[patch.id]++;
           }
         }
@@ -418,17 +433,36 @@ function applyPatch(options = {}) {
     const ionZh = fs.existsSync(ionZhPath) ? JSON.parse(fs.readFileSync(ionZhPath, 'utf8')) : {};
     const dynZh = fs.existsSync(dynZhPath) ? JSON.parse(fs.readFileSync(dynZhPath, 'utf8')) : {};
 
+    // 辅助函数：检测 en-US 是否为纯净官方未污染版本
+    const isEnUsClean = (content) => {
+      if (!content) return false;
+      return !content.includes('实际大小') && !content.includes('新对话') && !content.includes('团队 (Team)');
+    };
+
     // 辅助函数：基于官方当前 en-US.json 进行增量合并，生成目标 zh-CN.json
     const createIncrementalZh = (targetDir, zhDict) => {
       const enPath = path.join(targetDir, 'en-US.json');
       const bakPath = path.join(targetDir, 'en-US.backup.json');
       let baseEn = {};
 
-      // 优先从纯净备份或当前官方 en-US 读取基底
-      if (fs.existsSync(bakPath)) {
-        try { baseEn = JSON.parse(fs.readFileSync(bakPath, 'utf8')); } catch (e) {}
-      } else if (fs.existsSync(enPath)) {
-        try { baseEn = JSON.parse(fs.readFileSync(enPath, 'utf8')); } catch (e) {}
+      // 确立当前未污染的官方 en-US.json 为绝对第一权威基线 (消除陈旧备份覆盖风险)
+      if (fs.existsSync(enPath)) {
+        try {
+          const content = fs.readFileSync(enPath, 'utf8');
+          if (isEnUsClean(content)) {
+            baseEn = JSON.parse(content);
+          }
+        } catch (e) {}
+      }
+
+      // 仅当当前 en-US 缺失或被历史中文污染时，才回退从纯净备份读取基底
+      if (Object.keys(baseEn).length === 0 && fs.existsSync(bakPath)) {
+        try {
+          const bakContent = fs.readFileSync(bakPath, 'utf8');
+          if (isEnUsClean(bakContent)) {
+            baseEn = JSON.parse(bakContent);
+          }
+        } catch (e) {}
       }
 
       // 增量合并：官方未翻译词条保留英文作为兜底，已翻译词条精准替换，生产级紧凑单行格式极速减重
@@ -450,19 +484,40 @@ function applyPatch(options = {}) {
       createIncrementalZh(dynDir, dynZh);
     }
 
-    // 5. 如果历史遗留的 en-US 曾被覆盖为中文，还原为纯净英文基线
+    // 5. 官方 en-US 权威保护与防旧备份覆盖降级熔断
     const sanitizeEnUS = (targetDir, fallbackBase) => {
       const enPath = path.join(targetDir, 'en-US.json');
       const bakPath = path.join(targetDir, 'en-US.backup.json');
 
-      if (fs.existsSync(bakPath)) {
-        fs.copyFileSync(bakPath, enPath);
-      } else if (fs.existsSync(enPath)) {
-        const content = fs.readFileSync(enPath, 'utf8');
-        if (content.includes('实际大小') || content.includes('新对话') || content.includes('团队 (Team)')) {
-          if (fallbackBase && fs.existsSync(fallbackBase)) {
-            fs.copyFileSync(fallbackBase, enPath);
+      if (!fs.existsSync(enPath)) {
+        if (fs.existsSync(bakPath)) {
+          fs.copyFileSync(bakPath, enPath);
+        } else if (fallbackBase && fs.existsSync(fallbackBase)) {
+          fs.copyFileSync(fallbackBase, enPath);
+        }
+        return;
+      }
+
+      const content = fs.readFileSync(enPath, 'utf8');
+      const isPolluted = !isEnUsClean(content);
+
+      if (isPolluted) {
+        // 当前 en-US 确实被污染，尝试从纯净旧备份或 fallbackBase 恢复
+        if (fs.existsSync(bakPath)) {
+          const bakContent = fs.readFileSync(bakPath, 'utf8');
+          if (isEnUsClean(bakContent)) {
+            fs.copyFileSync(bakPath, enPath);
+            return;
           }
+        }
+        if (fallbackBase && fs.existsSync(fallbackBase)) {
+          fs.copyFileSync(fallbackBase, enPath);
+        }
+      } else {
+        // 核心安全原则：当前 en-US 100% 为官方未污染纯净版，确立其绝对权威！
+        // 绝不允许旧备份覆盖当前新版；若存在陈旧备份，安全清理以消除潜在降级风险！
+        if (fs.existsSync(bakPath)) {
+          try { fs.unlinkSync(bakPath); } catch (e) {}
         }
       }
     };
@@ -562,7 +617,7 @@ function restorePatch(options = {}) {
           const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
                                current.includes(',"zh-CN"]') ||
                                current.includes('var __ZH_DOCS__=') ||
-                               JS_LITERAL_PATCHES.some(p => p.zhPattern.test(current));
+                               JS_LITERAL_PATCHES.some(p => safeTest(p.zhPattern, current));
 
           // 核心防御：仅当当前文件确为补丁文件时才还原；若官方已静默更新，严禁将旧 bak 覆盖新版！
           if (isOurPatched) {
@@ -578,7 +633,7 @@ function restorePatch(options = {}) {
             modified = true;
           }
           for (const patch of JS_LITERAL_PATCHES) {
-            if (patch.zhPattern.test(content)) {
+            if (safeTest(patch.zhPattern, content)) {
               content = content.replace(patch.zhPattern, patch.restoreEn);
               modified = true;
             }
@@ -604,5 +659,6 @@ module.exports = {
   restorePatch,
   isClaudeRunning,
   closeClaude,
-  JS_LITERAL_PATCHES
+  JS_LITERAL_PATCHES,
+  safeTest
 };
