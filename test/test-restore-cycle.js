@@ -3,6 +3,7 @@
  */
 const { applyPatch, restorePatch } = require('../core/patcher');
 const { getClaudeInstallation } = require('../core/msix-detector');
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -237,7 +238,13 @@ try {
     console.error('❌ 错误: safeTest 退出后未能将 lastIndex 重置为 0！');
     process.exit(1);
   }
-  console.log('   ✅ safeTest 成功保障连续多次匹配状态完全隔离，lastIndex 归零守卫有效！');
+  // 8. 【自杀防御】验证 isProtectedEnvironment 与 closeClaude 进程安全拦截
+  console.log('\n8. 【自杀防御】验证 isProtectedEnvironment 与 closeClaude 进程安全拦截...');
+  const { isProtectedEnvironment, closeClaude } = require('../core/patcher');
+  assert.strictEqual(isProtectedEnvironment(), true, '在测试环境中 isProtectedEnvironment 应准确返回 true');
+  const killResult = closeClaude();
+  assert.strictEqual(killResult, false, '在受保护环境中 closeClaude 必须拒绝执行 taskkill 并返回 false');
+  console.log('   ✅ isProtectedEnvironment 与 closeClaude 成功拦截进程强杀，保障会话安全！');
 
   console.log('\n🎉 生命周期、出厂基线原子回滚与官方静默更新自愈防降级 100% 全部验证通过！');
 } finally {

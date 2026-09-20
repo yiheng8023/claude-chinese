@@ -40,7 +40,25 @@ function isClaudeRunning() {
   }
 }
 
+function isProtectedEnvironment() {
+  return Boolean(
+    process.env.ANTIGRAVITY_AGENT ||
+    process.env.ANTIGRAVITY_CONVERSATION_ID ||
+    process.env.ANTIGRAVITY_AGENTAPI_EXE ||
+    process.env.CLAUDE_CODE ||
+    process.env.ANTHROPIC_AGENT ||
+    process.env.CLAUDE_AGENT ||
+    process.env.AGY_NO_KILL === '1' ||
+    process.env.CLAUDE_NO_KILL === '1' ||
+    process.env.NODE_ENV === 'test'
+  );
+}
+
 function closeClaude() {
+  if (isProtectedEnvironment()) {
+    console.log('🛡️ [安全保护拦截] 检测到当前运行于智能体会话或受保护环境中，已严正拦截强杀宿主进程，防止会话与客户端崩溃！');
+    return false;
+  }
   const platform = process.platform;
   try {
     if (platform === 'win32') {
@@ -659,6 +677,7 @@ module.exports = {
   restorePatch,
   isClaudeRunning,
   closeClaude,
+  isProtectedEnvironment,
   JS_LITERAL_PATCHES,
   safeTest
 };

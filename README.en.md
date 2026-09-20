@@ -15,13 +15,14 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.60**. Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.61**. Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
 ## 🌟 Key Features & Design Philosophy
 
 - 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
+- 🛑 **Agent Suicide Prevention Safety Gate**: Built-in `isProtectedEnvironment()` probe guards against accidental kills when executed inside agent sessions, automated CLI pipelines, or protected environments, preventing crashes of the parent workflow.
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
