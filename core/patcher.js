@@ -42,14 +42,13 @@ function isClaudeRunning() {
 
 function isProtectedEnvironment() {
   return Boolean(
-    process.env.ANTIGRAVITY_AGENT ||
-    process.env.ANTIGRAVITY_CONVERSATION_ID ||
-    process.env.ANTIGRAVITY_AGENTAPI_EXE ||
     process.env.CLAUDE_CODE ||
     process.env.ANTHROPIC_AGENT ||
     process.env.CLAUDE_AGENT ||
-    process.env.AGY_NO_KILL === '1' ||
     process.env.CLAUDE_NO_KILL === '1' ||
+    process.env.AGENT_ENVIRONMENT ||
+    process.env.CI ||
+    process.env.CONTINUOUS_INTEGRATION ||
     process.env.NODE_ENV === 'test'
   );
 }

@@ -243,10 +243,10 @@ try {
   const { isProtectedEnvironment, closeClaude } = require('../core/patcher');
 
   const savedAgentEnv = {
-    ANTIGRAVITY_AGENT: process.env.ANTIGRAVITY_AGENT,
     CLAUDE_CODE: process.env.CLAUDE_CODE,
     CLAUDE_NO_KILL: process.env.CLAUDE_NO_KILL,
-    ANTHROPIC_AGENT: process.env.ANTHROPIC_AGENT
+    ANTHROPIC_AGENT: process.env.ANTHROPIC_AGENT,
+    CLAUDE_AGENT: process.env.CLAUDE_AGENT
   };
 
   try {
