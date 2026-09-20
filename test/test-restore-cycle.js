@@ -241,9 +241,32 @@ try {
   // 8. 【自杀防御】验证 isProtectedEnvironment 与 closeClaude 进程安全拦截
   console.log('\n8. 【自杀防御】验证 isProtectedEnvironment 与 closeClaude 进程安全拦截...');
   const { isProtectedEnvironment, closeClaude } = require('../core/patcher');
-  assert.strictEqual(isProtectedEnvironment(), true, '在测试环境中 isProtectedEnvironment 应准确返回 true');
-  const killResult = closeClaude();
-  assert.strictEqual(killResult, false, '在受保护环境中 closeClaude 必须拒绝执行 taskkill 并返回 false');
+
+  const savedAgentEnv = {
+    ANTIGRAVITY_AGENT: process.env.ANTIGRAVITY_AGENT,
+    CLAUDE_CODE: process.env.CLAUDE_CODE,
+    CLAUDE_NO_KILL: process.env.CLAUDE_NO_KILL,
+    ANTHROPIC_AGENT: process.env.ANTHROPIC_AGENT
+  };
+
+  try {
+    // 场景 A: 模拟智能体/受保护会话环境
+    process.env.CLAUDE_CODE = '1';
+    assert.strictEqual(isProtectedEnvironment(), true, '在 CLAUDE_CODE=1 环境下 isProtectedEnvironment 应准确返回 true');
+    const killResult = closeClaude();
+    assert.strictEqual(killResult, false, '在受保护环境中 closeClaude 必须拒绝执行 taskkill 并返回 false');
+
+    // 场景 B: 模拟显式 NO_KILL 守卫标志
+    delete process.env.CLAUDE_CODE;
+    process.env.CLAUDE_NO_KILL = '1';
+    assert.strictEqual(isProtectedEnvironment(), true, '在 CLAUDE_NO_KILL=1 环境下 isProtectedEnvironment 应准确返回 true');
+    assert.strictEqual(closeClaude(), false, '在 CLAUDE_NO_KILL=1 状态下 closeClaude 必须拒绝强杀');
+  } finally {
+    for (const [k, v] of Object.entries(savedAgentEnv)) {
+      if (v !== undefined) process.env[k] = v;
+      else delete process.env[k];
+    }
+  }
   console.log('   ✅ isProtectedEnvironment 与 closeClaude 成功拦截进程强杀，保障会话安全！');
 
   console.log('\n🎉 生命周期、出厂基线原子回滚与官方静默更新自愈防降级 100% 全部验证通过！');
