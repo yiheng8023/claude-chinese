@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.61**. Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.62**. Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -26,7 +26,7 @@ A high-performance, reversible Chinese localization toolkit designed for Anthrop
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
-- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **20,700+** curated core entries and **113 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, thinking effort dropdowns, and literature reading comparisons).
+- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **20,800+** curated core entries and **113 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, thinking effort dropdowns, and literature reading comparisons).
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
 - 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user and avoiding hazardous global Users group ACL escalations.
 
@@ -161,7 +161,7 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (770+ entries)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (820+ entries)
 │   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (20,000+ entries)
 │   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (113 articles)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
@@ -172,7 +172,7 @@ claude-chinese/
 │   └── preflight.js                  # Comprehensive environment health checker (Node/Client/Locks)
 ├── test/                             # Automated regression test suites
 │   ├── verify-dict.js                # Dictionary syntax and integrity assertions
-│   ├── test-icu.js                   # 20,700+ entries ICU placeholder and terminology protection
+│   ├── test-icu.js                   # 20,800+ entries ICU placeholder and terminology protection
 │   ├── test-restore-cycle.js         # Install/restore lifecycle & silent update anti-downgrade assertions
 │   └── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
 ├── tools/                            # Automation engineering and compatibility toolchains
