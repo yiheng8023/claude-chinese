@@ -216,10 +216,10 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'submenu-output-style-label-mapping',
     description: '会话右上角与各级子菜单输出风格项名称汉化',
-    enPattern: /children:([a-zA-Z0-9_$]+)\.label\},([a-zA-Z0-9_$]+)\)\)\}\),([a-zA-Z0-9_$]+)&&[a-zA-Z0-9_$]+\([a-zA-Z0-9_$]+,\{children:\[/g,
-    zhSnippet: 'children:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($1.label)},$2))}),$3&&i(r,{children:[',
-    zhPattern: /children:\(function\(l\)\{var m=\{"default":"默认"/g,
-    restoreEn: 'children:$1.label},$2))}),$3&&i(r,{children:[',
+    enPattern: /([a-zA-Z0-9_$]+)\.map\(\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.Item,\{checked:\2\.checked,checkedRole:"radio",onClick:\(\)=>\{([a-zA-Z0-9_$]+)\(\),\2\.onSelect\(\)\},children:\2\.label\},\3\)\)/g,
+    zhSnippet: '$1.map(($2,$3)=>$4($5.Item,{checked:$2.checked,checkedRole:"radio",onClick:()=>{$6(),$2.onSelect()},children:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($2.label)},$3))',
+    zhPattern: /([a-zA-Z0-9_$]+)\.map\(\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.Item,\{checked:\2\.checked,checkedRole:"radio",onClick:\(\)=>\{([a-zA-Z0-9_$]+)\(\),\2\.onSelect\(\)\},children:\(function\(l\)\{var m=\{"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"\};return m\[l\]\|\|l;\}\)\(\2\.label\)\},\3\)\)/g,
+    restoreEn: '$1.map(($2,$3)=>$4($5.Item,{checked:$2.checked,checkedRole:"radio",onClick:()=>{$6(),$2.onSelect()},children:$2.label},$3))',
     intlKey: 'subOutStyleMap'
   },
   {
