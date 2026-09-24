@@ -16,7 +16,7 @@
 </p>
 
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.66**，全面适配官方最新版 **v2.7032.0.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.67**，全面适配官方最新版 **v2.9939.2.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
 
@@ -27,9 +27,9 @@
 - 🧬 **拓扑多签名引擎与事前混淆变异矩阵 (Topology Invariants & Mutation Matrix)**：创新引入参数名无关的拓扑反向引用与声明式/箭头/Object.assign 三签名自适应拦截器，全库配备 `safeTest` 正则无状态守卫，杜绝长文档与 UI 补丁跨文件正则状态污染；搭配事前混淆变异碰撞测试工具（`npm run test:matrix`）与云端事前哨兵 CI，在上游发版前完成兼容性闭环验证。
 - 🔄 **双重状态感知出厂基线与版本防回退 (Dual-State Pristine Baseline & Anti-Downgrade)**：基于 SHA-256 清单与注入特征双判据。确立官方当前未污染 `en-US` 为绝对权威；官方静默发版更新时自动刷新备份基准，还原时自动熔断拦截，彻底消除了陈旧备份覆盖官方更新导致的版本回退隐患。
 - 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言与原生 JS 白名单自动嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位。
-- 🎯 **全量 HashKey 界面与长篇折叠文档覆盖**：覆盖全量 21,200+ 核心词条与 125 篇全景折叠长文档（包含 Cowork 协同画布、权限审批流、Claude Code 模式、思考强度下拉与名著阅读对比）。
+- 🎯 **全量 HashKey 界面与长篇折叠文档覆盖**：覆盖全量 28,000+ 核心词条与 129 篇全景折叠长文档（包含 Cowork 协同画布、权限审批流、Claude Code 模式、例行任务 Routines、设计系统、嵌套会话与思考强度/输出风格下拉）。
 - 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与底层配置枚举（如 `allow`, `ask`, `low`, `high`, `/loop` 等），确保任务流与配置执行永不卡死。
-- 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，杜绝全局 Users 组高危赋权。
+- 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，单次递归赋权杜绝重复 UAC 弹窗与全局 Users 组高危赋权。
 
 ---
 
@@ -42,9 +42,9 @@ graph TD
     User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
     
     subgraph Mode1 ["【已上线】客户端宿主 UI 汉化 (Host UI Localization)"]
-        ClaudeApp --> ShellLayer["Shell 壳层 (820+ 词条)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (20,400+ 词条)"]
-        ClaudeApp --> LongDocsLayer["长篇折叠深度文档 (125 篇)"]
+        ClaudeApp --> ShellLayer["Shell 壳层 (870+ 词条)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (27,100+ 词条)"]
+        ClaudeApp --> LongDocsLayer["长篇折叠深度文档 (129 篇)"]
         ClaudeApp --> DynamicLayer["Dynamic 动态特性与推理占位符"]
     end
     
@@ -134,8 +134,8 @@ npm run test:matrix
 npm run audit
 ```
 
-- **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值（700+ 基线词条，820+ 中文词条）。
-- **ICU 语法防火墙 (`test/test-icu.js`)**：确保全量 21,200+ 核心词条所有模板变量、复数分支与技术专有名词 100% 结构对称。
+- **核心字典完整性 (`test/verify-dict.js`)**：验证基础字典结构无缺失、无空值（730+ 基线词条，870+ 中文词条）。
+- **ICU 语法防火墙 (`test/test-icu.js`)**：确保全量 28,000+ 核心词条所有模板变量、复数分支与技术专有名词 100% 结构对称。
 - **生命周期还原闭环 (`test/test-restore-cycle.js`)**：验证真实安装 -> 状态判定 -> 双重安装幂等 -> 干净还原 -> 原版回退全流程，包含官方静默升级防版本回退专项断言。
 - **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
 - **事前兼容矩阵与代码拓扑变异测试 (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成代码拓扑韧性压力断言。
@@ -164,9 +164,9 @@ claude-chinese/
 │       ├── ci.yml                    # 全平台 (Windows/macOS/Linux) CI 自动化测试流水线
 │       └── upstream-matrix-sentinel.yml # 上游事前兼容矩阵与混淆变异碰撞每日巡检哨兵
 ├── dict/                             # 核心汉化词库
-│   ├── zh-CN.json                    # Shell 壳层汉化词典 (820+ 词条)
-│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (20,400+ 词条)
-│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (125 篇)
+│   ├── zh-CN.json                    # Shell 壳层汉化词典 (870+ 词条)
+│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (27,100+ 词条)
+│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (129 篇)
 │   └── dynamic-zh-CN.json            # 动态特性与推理占位符词典
 ├── core/                             # 核心注入与架构引擎
 │   ├── patcher.js                    # 拓扑多签名长文档引擎、JS 白名单与出厂基线自愈
@@ -175,7 +175,7 @@ claude-chinese/
 │   └── preflight.js                  # 前置环境全维健康预检器 (Node/客户端/进程锁)
 ├── test/                             # 自动化全真回归测试套件
 │   ├── verify-dict.js                # 字典语法与完整性断言
-│   ├── test-icu.js                   # 全量 21,200+ 词条 ICU 占位符与专有名词保护断言
+│   ├── test-icu.js                   # 全量 28,000+ 词条 ICU 占位符与专有名词保护断言
 │   ├── test-restore-cycle.js         # 安装、还原生命周期与官方静默升级防降级断言
 │   └── test-cross-platform-live.js   # 跨平台无参系统路径探测与沙盒注入实测
 ├── tools/                            # 自动化工程与事前兼容工具链

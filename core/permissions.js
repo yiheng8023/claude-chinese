@@ -53,17 +53,24 @@ function grantPermissions(targetDir) {
   if (canWriteDirectory(targetDir)) return true;
 
   // 4. 若当前进程无管理员权限，通过原生临时脚本在后台静默触发 UAC 授权 (Hidden 窗口绝不外露)
+  const tmpScript = path.join(require('os').tmpdir(), `claude_perm_${Date.now()}.cmd`);
   try {
-    const tmpScript = path.join(require('os').tmpdir(), `claude_perm_${Date.now()}.cmd`);
     const cmdContent = `@echo off\r\n` +
+      `takeown /f "${targetDir}" /a /r /d y >nul 2>&1\r\n` +
       `takeown /f "${targetDir}" /r /d y >nul 2>&1\r\n` +
       `icacls "${targetDir}" /grant:r "*S-1-5-32-545":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
       `icacls "${targetDir}" /grant:r "*S-1-5-32-544":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
       `if defined USERNAME icacls "${targetDir}" /grant:r "%USERNAME%":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
       `del "%~f0" >nul 2>&1\r\n`;
     fs.writeFileSync(tmpScript, cmdContent, 'utf8');
-    execSync(`powershell -NoProfile -Command "Start-Process cmd -WindowStyle Hidden -Verb RunAs -Wait -ArgumentList '/c', '\"\"${tmpScript}\"\"'"`, { stdio: 'ignore' });
-  } catch (eUac) {}
+    execSync(`powershell -NoProfile -Command "Start-Process -FilePath '${tmpScript}' -WindowStyle Hidden -Verb RunAs -Wait"`, { stdio: 'ignore' });
+  } catch (eUac) {
+    // 忽略沙箱拦截或用户取消 UAC
+  } finally {
+    if (fs.existsSync(tmpScript)) {
+      try { fs.unlinkSync(tmpScript); } catch (_) {}
+    }
+  }
 
   return canWriteDirectory(targetDir);
 }

@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.66** (fully adapting official latest release **v2.7032.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.67** (fully adapting official latest release **v2.9939.2.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -26,9 +26,9 @@ A high-performance, reversible Chinese localization toolkit designed for Anthrop
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
-- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **21,200+** curated core entries and **125 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, thinking effort dropdowns, and literature reading comparisons).
+- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **28,000+** curated core entries and **129 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns).
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
-- 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user and avoiding hazardous global Users group ACL escalations.
+- 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user via single-pass recursive ACLs to avoid repeated UAC prompts and hazardous global Users group escalations.
 
 ---
 
@@ -41,9 +41,9 @@ graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
     subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (820+ entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (20,400+ entries)"]
-        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (125 articles)"]
+        ClaudeApp --> ShellLayer["Shell Layer (870+ entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (27,100+ entries)"]
+        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (129 articles)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
     end
     
@@ -133,8 +133,8 @@ npm run test:matrix
 npm run audit
 ```
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (700+ baseline keys, 820+ Chinese keys).
-- **ICU Syntax Firewall (`test/test-icu.js`)**: Structural validation and technical term protection across all **21,200+** core entries, ensuring 100% placeholder symmetry.
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (730+ baseline keys, 870+ Chinese keys).
+- **ICU Syntax Firewall (`test/test-icu.js`)**: Structural validation and technical term protection across all **28,000+** core entries, ensuring 100% placeholder symmetry.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
 - **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience before upstream releases reach users.
@@ -163,9 +163,9 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (820+ entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (20,400+ entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (125 articles)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (870+ entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (27,100+ entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (129 articles)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing
@@ -174,7 +174,7 @@ claude-chinese/
 │   └── preflight.js                  # Comprehensive environment health checker (Node/Client/Locks)
 ├── test/                             # Automated regression test suites
 │   ├── verify-dict.js                # Dictionary syntax and integrity assertions
-│   ├── test-icu.js                   # 21,200+ entries ICU placeholder and terminology protection
+│   ├── test-icu.js                   # 28,000+ entries ICU placeholder and terminology protection
 │   ├── test-restore-cycle.js         # Install/restore lifecycle & silent update anti-downgrade assertions
 │   └── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
 ├── tools/                            # Automation engineering and compatibility toolchains

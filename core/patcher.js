@@ -225,10 +225,10 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'session-async-output-style-mapping',
     description: '会话右上角动态异步输出风格项构造函数 (items 列表) 名称汉化',
-    enPattern: /items:\[\.\.\.\(([a-zA-Z0-9_$]+)\?\?\[\]\)\.map\(([a-zA-Z0-9_$]+)=>\({\s*label:\2\.label,\s*checked:\2\.checked,\s*onSelect:\2\.onSelect\s*}\)\)/g,
-    zhSnippet: 'items:[...($1??[]).map($2=>({label:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($2.label),checked:$2.checked,onSelect:$2.onSelect}))',
-    zhPattern: /var m=\{"default":"默认","Concise":"简洁","Explanatory":"详尽"/g,
-    restoreEn: 'items:[...($1??[]).map($2=>({label:$2.label,checked:$2.checked,onSelect:$2.onSelect}))',
+    enPattern: /function ([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{if\(\2!=="default"\)return \2;let ([a-zA-Z0-9_$]+)=\3\.formatMessage\(\{defaultMessage:"Default",id:"7Aqe2\/LqFL"\}\);/g,
+    zhSnippet: 'function $1($2,$3,$4){var _osm={"Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};if($2!=="default")return _osm[$2]||$2;let $5=$3.formatMessage({defaultMessage:"Default",id:"7Aqe2/LqFL"});',
+    zhPattern: /function ([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{var _osm=\{"Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"\};if\(\2!=="default"\)return _osm\[\2\]\|\|\2;let ([a-zA-Z0-9_$]+)=\3\.formatMessage\(\{defaultMessage:"Default",id:"7Aqe2\/LqFL"\}\);/g,
+    restoreEn: 'function $1($2,$3,$4){if($2!=="default")return $2;let $5=$3.formatMessage({defaultMessage:"Default",id:"7Aqe2/LqFL"});',
     intlKey: 'sessionAsyncOutStyleMap'
   },
   {
@@ -292,15 +292,9 @@ function applyPatch(options = {}) {
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
 
-  // 3. 检查并提权
-  if (!canWriteDirectory(resDir)) {
-    if (info.installPath) {
-      grantPermissions(info.installPath);
-    }
+  // 3. 检查并提权（单次递归赋权 resDir 即可覆盖所有子目录，杜绝连续多次 UAC 弹窗）
+  if (!canWriteDirectory(resDir) || (fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir))) {
     grantPermissions(resDir);
-    grantPermissions(path.join(resDir, 'ion-dist'));
-    grantPermissions(assetsDir);
-    grantPermissions(i18nDir);
     if (!canWriteDirectory(resDir)) {
       return {
         success: false,
@@ -590,10 +584,8 @@ function restorePatch(options = {}) {
   const dynDir = path.join(i18nDir, 'dynamic');
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
 
-  if (!canWriteDirectory(resDir)) {
+  if (!canWriteDirectory(resDir) || (fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir))) {
     grantPermissions(resDir);
-    grantPermissions(path.join(resDir, 'ion-dist'));
-    grantPermissions(assetsDir);
   }
 
   try {
