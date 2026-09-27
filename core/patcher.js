@@ -257,6 +257,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /var _em=\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\};return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?_em\[\1\]\?\?\1,disabled:/g,
     restoreEn: 'return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??$1,disabled:',
     intlKey: 'effortOptionsMap'
+  },
+  {
+    id: 'language-picker-zh-cn-display',
+    description: '语言选择弹窗 zh-CN 原生标签 (中文（简体）)、灰色英文副标题 (Chinese (Simplified)) 及首位排序映射',
+    enPattern: /(?<!"zh-CN":\{name:"Chinese \(Simplified\)",localName:"[^"]+"\},)"zh-Hans":\{name:"Chinese \(Simplified\)",localName:"(\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\}/g,
+    zhSnippet: '"zh-CN":{name:"Chinese (Simplified)",localName:"$1"},"zh-Hans":{name:"Chinese (Simplified)",localName:"$1"}',
+    zhPattern: /"zh-CN":\{name:"Chinese \(Simplified\)",localName:"(\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\},"zh-Hans":\{name:"Chinese \(Simplified\)",localName:"\1"\}/g,
+    restoreEn: '"zh-Hans":{name:"Chinese (Simplified)",localName:"$1"}',
+    intlKey: 'langPickerZhCnDisplay'
   }
 ];
 

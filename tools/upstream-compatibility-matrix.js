@@ -122,6 +122,10 @@ function runCompatibilityMatrix(options = {}) {
     const mutatedEffortJs = 'return{value:x1,label:fn(x2,cfg.meta.optionLabels?.[x1])??x1,disabled:false}';
     fs.writeFileSync(path.join(fuzzedAssets, 'mutated-effort.js'), mutatedEffortJs, 'utf8');
 
+    // 变异场景 5: 语言选择器 zh-Hans 字典映射 (补齐 zh-CN 原生标签、副标题与 C 首字母排序)
+    const mutatedLangPickerJs = 'var I={"en-US":{name:"English (United States)",localName:"English (United States)"},"zh-Hans":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"}};';
+    fs.writeFileSync(path.join(fuzzedAssets, 'mutated-lang-picker.js'), mutatedLangPickerJs, 'utf8');
+
     // 写入基础 en-US.json
     fs.writeFileSync(path.join(fuzzedI18n, 'en-US.json'), '{}', 'utf8');
 
@@ -133,25 +137,29 @@ function runCompatibilityMatrix(options = {}) {
       const patchedLong2 = fs.readFileSync(path.join(fuzzedAssets, 'mutated-long-arrow.js'), 'utf8');
       const patchedLong3 = fs.readFileSync(path.join(fuzzedAssets, 'mutated-long-assign.js'), 'utf8');
       const patchedEffort = fs.readFileSync(path.join(fuzzedAssets, 'mutated-effort.js'), 'utf8');
+      const patchedLangPicker = fs.readFileSync(path.join(fuzzedAssets, 'mutated-lang-picker.js'), 'utf8');
 
       const fuzz1Passed = patchedLong1.includes('__ZH_DOCS__') && patchedLong1.includes('function _aBc(_x9,_y9)');
       const fuzz2Passed = patchedLong2.includes('__ZH_DOCS__') && patchedLong2.includes('_fnArrow=(_arg1,_arg2)=>');
       const fuzz3Passed = patchedLong3.includes('__ZH_DOCS__') && patchedLong3.includes('function _fnAssign(_p1,_p2)');
       const effortFuzzPassed = patchedEffort.includes('_em');
+      const langPickerFuzzPassed = patchedLangPicker.includes('"zh-CN":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"}');
 
       console.log(`  ${fuzz1Passed ? '✅' : '❌'} 长文档声明式变异抗混淆拓扑命中: ${fuzz1Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${fuzz2Passed ? '✅' : '❌'} 长文档箭头函数变异抗混淆拓扑命中: ${fuzz2Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${fuzz3Passed ? '✅' : '❌'} 长文档 Object.assign 降级抗混淆拓扑命中: ${fuzz3Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${effortFuzzPassed ? '✅' : '❌'} 思考强度变量重命名抗混淆拓扑命中: ${effortFuzzPassed ? 'PASS' : 'FAIL'}`);
+      console.log(`  ${langPickerFuzzPassed ? '✅' : '❌'} 语言选择器 zh-CN 标签/副标题/首位排序映射命中: ${langPickerFuzzPassed ? 'PASS' : 'FAIL'}`);
 
       report.mutationFuzzing = {
         declarationFuzz: fuzz1Passed,
         arrowFunctionFuzz: fuzz2Passed,
         assignFuzz: fuzz3Passed,
-        effortFuzz: effortFuzzPassed
+        effortFuzz: effortFuzzPassed,
+        langPickerFuzz: langPickerFuzzPassed
       };
 
-      if (!fuzz1Passed || !fuzz2Passed || !fuzz3Passed || !effortFuzzPassed) {
+      if (!fuzz1Passed || !fuzz2Passed || !fuzz3Passed || !effortFuzzPassed || !langPickerFuzzPassed) {
         report.allPassed = false;
       }
     } else {
