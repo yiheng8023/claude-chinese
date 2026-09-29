@@ -266,6 +266,15 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /"zh-CN":\{name:"Chinese \(Simplified\)",localName:"(\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\},"zh-Hans":\{name:"Chinese \(Simplified\)",localName:"\1"\}/g,
     restoreEn: '"zh-Hans":{name:"Chinese (Simplified)",localName:"$1"}',
     intlKey: 'langPickerZhCnDisplay'
+  },
+  {
+    id: 'builtin-cowork-skills-zh-description',
+    description: '内置技能列表 (consolidate-memory/context/explain-usage/schedule/setup-claude) 前端中文简介无损映射',
+    enPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)(?!\.map\()/g,
+    zhSnippet: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork").map($2=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录"};var _d=$2.description&&$2.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$2.name];return _d?{...$2,description:_d}:$2})',
+    zhPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)\.map\(\2=>\{var _sm=\{"consolidate-memory":"[^"]+",[^}]+\};var _d=\2\.description&&\2\.description\.includes\("not available"\)\?"[^"]+":_sm\[\2\.name\];return _d\?\{\.\.\.\2,description:_d\}:\2\}\)/g,
+    restoreEn: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork")',
+    intlKey: 'builtinCoworkSkillsZhDesc'
   }
 ];
 
