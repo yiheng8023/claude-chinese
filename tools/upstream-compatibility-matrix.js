@@ -42,6 +42,9 @@ function runCompatibilityMatrix(options = {}) {
     }
   }
 
+  const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
+  const ionZh = fs.existsSync(ionZhPath) ? JSON.parse(fs.readFileSync(ionZhPath, 'utf8')) : {};
+
   let activeHits = 0;
   let standardizedCount = 0;
   let missingCount = 0;
@@ -55,7 +58,7 @@ function runCompatibilityMatrix(options = {}) {
       } else if (patch.enPattern && safeTest(patch.enPattern, allJs)) {
         status = 'ACTIVE_READY';
         activeHits++;
-      } else if (patch.intlKey) {
+      } else if (patch.intlKey && ionZh[patch.intlKey]) {
         status = 'UPSTREAM_STANDARDIZED';
         standardizedCount++;
       } else {
@@ -64,7 +67,7 @@ function runCompatibilityMatrix(options = {}) {
         report.allPassed = false;
       }
     } else {
-      status = patch.intlKey ? 'UPSTREAM_STANDARDIZED' : 'ACTIVE_SYNTHETIC';
+      status = (patch.intlKey && ionZh[patch.intlKey]) ? 'UPSTREAM_STANDARDIZED' : 'ACTIVE_SYNTHETIC';
       activeHits++;
     }
 
@@ -127,7 +130,7 @@ function runCompatibilityMatrix(options = {}) {
     fs.writeFileSync(path.join(fuzzedAssets, 'mutated-lang-picker.js'), mutatedLangPickerJs, 'utf8');
 
     // 变异场景 6: 内置技能列表 getSupportedCommands 过滤链混淆变量名
-    const mutatedBuiltinSkillsJs = 'async()=>_bridge9?.getSupportedCommands?(await _bridge9.getSupportedCommands()).filter(_item7=>_item7.scope==="cowork"):[]';
+    const mutatedBuiltinSkillsJs = 'async()=>_bridge9?.getSupportedCommands?(await _bridge9.getSupportedCommands()).filter(_item7=>_item7.scope==="cowork"):[];var _plg=_p9.skills.map(_s8=>({name:_s8.name,description:_s8.description,argumentHint:_s8.argumentHint,pluginName:_p9.name}));function _apiMap(_k3){return{skillId:_k3.id,skillName:_k3.name,skillDescription:_k3.description,creatorType:_k3.creator_type,updatedAt:_k3.updated_at}}';
     fs.writeFileSync(path.join(fuzzedAssets, 'mutated-builtin-skills.js'), mutatedBuiltinSkillsJs, 'utf8');
 
     // 写入基础 en-US.json
@@ -149,14 +152,14 @@ function runCompatibilityMatrix(options = {}) {
       const fuzz3Passed = patchedLong3.includes('__ZH_DOCS__') && patchedLong3.includes('function _fnAssign(_p1,_p2)');
       const effortFuzzPassed = patchedEffort.includes('_em');
       const langPickerFuzzPassed = patchedLangPicker.includes('"zh-CN":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"}');
-      const builtinSkillsFuzzPassed = patchedBuiltinSkills.includes('"consolidate-memory"') && patchedBuiltinSkills.includes('_sm[_item7.name]');
+      const builtinSkillsFuzzPassed = patchedBuiltinSkills.includes('"consolidate-memory"') && patchedBuiltinSkills.includes('_sm[_item7.name]') && patchedBuiltinSkills.includes('_sm[_s8.name]') && patchedBuiltinSkills.includes('_k3.creator_type==="anthropic"&&_sm[_k3.name]');
 
       console.log(`  ${fuzz1Passed ? '✅' : '❌'} 长文档声明式变异抗混淆拓扑命中: ${fuzz1Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${fuzz2Passed ? '✅' : '❌'} 长文档箭头函数变异抗混淆拓扑命中: ${fuzz2Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${fuzz3Passed ? '✅' : '❌'} 长文档 Object.assign 降级抗混淆拓扑命中: ${fuzz3Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${effortFuzzPassed ? '✅' : '❌'} 思考强度变量重命名抗混淆拓扑命中: ${effortFuzzPassed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${langPickerFuzzPassed ? '✅' : '❌'} 语言选择器 zh-CN 标签/副标题/首位排序映射命中: ${langPickerFuzzPassed ? 'PASS' : 'FAIL'}`);
-      console.log(`  ${builtinSkillsFuzzPassed ? '✅' : '❌'} 内置技能中文简介前端无损映射抗混淆命中: ${builtinSkillsFuzzPassed ? 'PASS' : 'FAIL'}`);
+      console.log(`  ${builtinSkillsFuzzPassed ? '✅' : '❌'} 内置技能(cowork/plugin/api 三通道)中文简介前端无损映射命中: ${builtinSkillsFuzzPassed ? 'PASS' : 'FAIL'}`);
 
       report.mutationFuzzing = {
         declarationFuzz: fuzz1Passed,

@@ -63,7 +63,7 @@ function grantPermissions(targetDir) {
       `if defined USERNAME icacls "${targetDir}" /grant:r "%USERNAME%":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
       `del "%~f0" >nul 2>&1\r\n`;
     fs.writeFileSync(tmpScript, cmdContent, 'utf8');
-    execSync(`powershell -NoProfile -Command "Start-Process -FilePath '${tmpScript}' -WindowStyle Hidden -Verb RunAs -Wait"`, { stdio: 'ignore' });
+    execSync(`powershell -NoProfile -Command "Start-Process cmd.exe -ArgumentList '/c', '\\"${tmpScript}\\"' -WindowStyle Hidden -Verb RunAs -Wait"`, { stdio: 'ignore' });
   } catch (eUac) {
     // 忽略沙箱拦截或用户取消 UAC
   } finally {

@@ -261,20 +261,38 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'language-picker-zh-cn-display',
     description: '语言选择弹窗 zh-CN 原生标签 (中文（简体）)、灰色英文副标题 (Chinese (Simplified)) 及首位排序映射',
-    enPattern: /(?<!"zh-CN":\{name:"Chinese \(Simplified\)",localName:"[^"]+"\},)"zh-Hans":\{name:"Chinese \(Simplified\)",localName:"(\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\}/g,
-    zhSnippet: '"zh-CN":{name:"Chinese (Simplified)",localName:"$1"},"zh-Hans":{name:"Chinese (Simplified)",localName:"$1"}',
-    zhPattern: /"zh-CN":\{name:"Chinese \(Simplified\)",localName:"(\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\},"zh-Hans":\{name:"Chinese \(Simplified\)",localName:"\1"\}/g,
-    restoreEn: '"zh-Hans":{name:"Chinese (Simplified)",localName:"$1"}',
-    intlKey: 'langPickerZhCnDisplay'
+    enPattern: /(?<!"zh-CN":\{name:"Chinese \(Simplified\)",localName:"[^"]+"\},)"en-US":\{name:"English \(United States\)",localName:"English \(United States\)"\}/g,
+    zhSnippet: '"zh-CN":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"},"en-US":{name:"English (United States)",localName:"English (United States)"}',
+    zhPattern: /"zh-CN":\{name:"Chinese \(Simplified\)",localName:"(?:\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\},"en-US":\{name:"English \(United States\)",localName:"English \(United States\)"\}/g,
+    restoreEn: '"en-US":{name:"English (United States)",localName:"English (United States)"}',
+    intlKey: null
   },
   {
     id: 'builtin-cowork-skills-zh-description',
-    description: '内置技能列表 (consolidate-memory/context/explain-usage/schedule/setup-claude) 前端中文简介无损映射',
+    description: '内置技能列表 (consolidate-memory/context/explain-usage/schedule/setup-claude/docx/pdf/pptx/xlsx/frontend-design) 前端中文简介无损映射',
     enPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)(?!\.map\()/g,
-    zhSnippet: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork").map($2=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录"};var _d=$2.description&&$2.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$2.name];return _d?{...$2,description:_d}:$2})',
+    zhSnippet: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork").map($2=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};var _d=$2.description&&$2.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$2.name];return _d?{...$2,description:_d}:$2})',
     zhPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)\.map\(\2=>\{var _sm=\{"consolidate-memory":"[^"]+",[^}]+\};var _d=\2\.description&&\2\.description\.includes\("not available"\)\?"[^"]+":_sm\[\2\.name\];return _d\?\{\.\.\.\2,description:_d\}:\2\}\)/g,
     restoreEn: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork")',
-    intlKey: 'builtinCoworkSkillsZhDesc'
+    intlKey: null
+  },
+  {
+    id: 'builtin-plugin-skills-zh-description',
+    description: '内置打包插件技能 (docx/frontend-design/pdf/pdf-reading/pptx/xlsx) 前端中文简介无损映射',
+    enPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\(\{name:\2\.name,description:\2\.description,argumentHint:\2\.argumentHint,/g,
+    zhSnippet: '$1.skills.map($2=>{var _sm={"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};return{name:$2.name,description:_sm[$2.name]||$2.description,argumentHint:$2.argumentHint,',
+    zhPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\{var _sm=\{"docx":"[^"]+",[^}]+\};return\{name:\2\.name,description:_sm\[\2\.name\]\|\|\2\.description,argumentHint:\2\.argumentHint,/g,
+    restoreEn: '$1.skills.map($2=>({name:$2.name,description:$2.description,argumentHint:$2.argumentHint,',
+    intlKey: null
+  },
+  {
+    id: 'builtin-api-skills-zh-description',
+    description: '官方云端/组织内置技能列表 (creator_type=anthropic) 前端中文简介无损映射',
+    enPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\1\.description,creatorType:\1\.creator_type,/g,
+    zhSnippet: 'var _sm={"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};return{skillId:$1.id,skillName:$1.name,skillDescription:($1.creator_type==="anthropic"&&_sm[$1.name])||$1.description,creatorType:$1.creator_type,',
+    zhPattern: /var _sm=\{"docx":"[^"]+",[^}]+\};return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\(\1\.creator_type==="anthropic"&&_sm\[\1\.name\]\)\|\|\1\.description,creatorType:\1\.creator_type,/g,
+    restoreEn: 'return{skillId:$1.id,skillName:$1.name,skillDescription:$1.description,creatorType:$1.creator_type,',
+    intlKey: null
   }
 ];
 
