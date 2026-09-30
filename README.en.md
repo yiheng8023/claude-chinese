@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.70** (fully adapting official latest release **v2.16120.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.71** (fully adapting official latest release **v2.16120.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -23,6 +23,7 @@ A high-performance, reversible Chinese localization toolkit designed for Anthrop
 
 - 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
 - 🛑 **Agent Suicide Prevention Safety Gate**: Built-in `isProtectedEnvironment()` probe guards against accidental kills when executed inside agent sessions, automated CLI pipelines, or protected environments, preventing crashes of the parent workflow.
+- 🛡️ **AST Syntax Firewall & Black-Screen Crash Prevention**: Built-in real-time Node.js ESM AST integrity self-audit asserts that every modified JS bundle possesses valid closure and syntax before hitting disk, completely eliminating corrupt syntax that triggers black or blank screen crashes.
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
@@ -123,8 +124,11 @@ node cli.js restore
 The project introduces rigorous end-to-end automated testing, mutation fuzzing, and a cross-platform CI pipeline (Windows / macOS / Ubuntu):
 
 ```bash
-# Run all core automated test suites (aggregating 4 core suites)
+# Run all core automated test suites (aggregating 5 core suites)
 npm test
+
+# Run AST syntax integrity and crash prevention test
+npm run test:ast
 
 # Run preflight upstream compatibility matrix and code topology mutation tests
 npm run test:matrix
@@ -137,6 +141,7 @@ npm run audit
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Structural validation and technical term protection across all **31,000+** core entries, ensuring 100% placeholder symmetry.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
+- **AST Syntax Firewall & Black-Screen Crash Prevention (`test/test-ast-syntax.js`)**: Enforces strict Node.js ESM AST integrity checks across real and sandboxed JS bundles, preventing syntax errors from reaching production.
 - **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience before upstream releases reach users.
 - **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, 0 HTML tag discrepancies, and 0 ICU variable mismatches.
 
@@ -176,7 +181,8 @@ claude-chinese/
 │   ├── verify-dict.js                # Dictionary syntax and integrity assertions
 │   ├── test-icu.js                   # 31,000+ entries ICU placeholder and terminology protection
 │   ├── test-restore-cycle.js         # Install/restore lifecycle & silent update anti-downgrade assertions
-│   └── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
+│   ├── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
+│   └── test-ast-syntax.js            # AST syntax integrity and crash prevention assertions
 ├── tools/                            # Automation engineering and compatibility toolchains
 │   ├── upstream-compatibility-matrix.js # Preflight multi-version compatibility matrix & mutation fuzzer
 │   ├── drift-detector.js             # Upstream text diff extraction & drift detector (scan:drift)

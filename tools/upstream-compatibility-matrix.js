@@ -122,7 +122,7 @@ function runCompatibilityMatrix(options = {}) {
     fs.writeFileSync(path.join(fuzzedAssets, 'mutated-long-assign.js'), mutatedLongJs3, 'utf8');
 
     // 变异场景 4: 思考强度下拉三元表达式混淆变量名
-    const mutatedEffortJs = 'return{value:x1,label:fn(x2,cfg.meta.optionLabels?.[x1])??x1,disabled:false}';
+    const mutatedEffortJs = 'function _getEffort(x1,x2,cfg,fn){return{value:x1,label:fn(x2,cfg.meta.optionLabels?.[x1])??x1,disabled:false}}';
     fs.writeFileSync(path.join(fuzzedAssets, 'mutated-effort.js'), mutatedEffortJs, 'utf8');
 
     // 变异场景 5: 语言选择器 zh-Hans 字典映射 (补齐 zh-CN 原生标签、副标题与 C 首字母排序)
@@ -150,9 +150,9 @@ function runCompatibilityMatrix(options = {}) {
       const fuzz1Passed = patchedLong1.includes('__ZH_DOCS__') && patchedLong1.includes('function _aBc(_x9,_y9)');
       const fuzz2Passed = patchedLong2.includes('__ZH_DOCS__') && patchedLong2.includes('_fnArrow=(_arg1,_arg2)=>');
       const fuzz3Passed = patchedLong3.includes('__ZH_DOCS__') && patchedLong3.includes('function _fnAssign(_p1,_p2)');
-      const effortFuzzPassed = patchedEffort.includes('_em');
+      const effortFuzzPassed = patchedEffort.includes('"low":"低"');
       const langPickerFuzzPassed = patchedLangPicker.includes('"zh-CN":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"}');
-      const builtinSkillsFuzzPassed = patchedBuiltinSkills.includes('"consolidate-memory"') && patchedBuiltinSkills.includes('_sm[_item7.name]') && patchedBuiltinSkills.includes('_sm[_s8.name]') && patchedBuiltinSkills.includes('_k3.creator_type==="anthropic"&&_sm[_k3.name]');
+      const builtinSkillsFuzzPassed = patchedBuiltinSkills.includes('"consolidate-memory"') && patchedBuiltinSkills.includes('_sm[_item7.name]') && patchedBuiltinSkills.includes('[_s8.name]') && patchedBuiltinSkills.includes('_k3.creator_type==="anthropic"') && patchedBuiltinSkills.includes('[_k3.name]');
 
       console.log(`  ${fuzz1Passed ? '✅' : '❌'} 长文档声明式变异抗混淆拓扑命中: ${fuzz1Passed ? 'PASS' : 'FAIL'}`);
       console.log(`  ${fuzz2Passed ? '✅' : '❌'} 长文档箭头函数变异抗混淆拓扑命中: ${fuzz2Passed ? 'PASS' : 'FAIL'}`);

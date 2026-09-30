@@ -3,12 +3,31 @@
  */
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
 const { execSync } = require('child_process');
 const crypto = require('crypto');
 
 const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
+
+/**
+ * ESM AST 语法完整性快速自检 (保证注入后的 JS 文件语法绝对合法，杜绝客户端黑屏崩溃)
+ */
+function validateJsSyntax(code) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-syntax-check-'));
+  try {
+    fs.writeFileSync(path.join(tmp, 'package.json'), JSON.stringify({ type: 'module' }));
+    const testFile = path.join(tmp, 'check.js');
+    fs.writeFileSync(testFile, code);
+    execSync(`node --check "${testFile}"`, { stdio: 'pipe' });
+    return { valid: true };
+  } catch (err) {
+    return { valid: false, error: err.stderr ? err.stderr.toString().trim() : err.message };
+  } finally {
+    try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (e) {}
+  }
+}
 
 /**
  * 消除带 /g 标志的 RegExp 在 .test() 时 lastIndex 状态遗留污染的统一守卫
@@ -253,8 +272,8 @@ const JS_LITERAL_PATCHES = [
     id: 'thinking-effort-options-mapping',
     description: '第三方推理配置默认思考强度下拉选项 (low/medium/high/xhigh/max ➔ 低/中/高/极高/最大)',
     enPattern: /return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?\1,disabled:/g,
-    zhSnippet: 'var _em={"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"};return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??_em[$1]??$1,disabled:',
-    zhPattern: /var _em=\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\};return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?_em\[\1\]\?\?\1,disabled:/g,
+    zhSnippet: 'return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??({"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"}[$1])??$1,disabled:',
+    zhPattern: /(?:var _em=\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\};)?return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?(?:_em\[\1\]|\(\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\}\[\1\]\))\?\?\1,disabled:/g,
     restoreEn: 'return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??$1,disabled:',
     intlKey: 'effortOptionsMap'
   },
@@ -280,8 +299,8 @@ const JS_LITERAL_PATCHES = [
     id: 'builtin-plugin-skills-zh-description',
     description: '内置打包插件技能 (docx/frontend-design/pdf/pdf-reading/pptx/xlsx) 前端中文简介无损映射',
     enPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\(\{name:\2\.name,description:\2\.description,argumentHint:\2\.argumentHint,/g,
-    zhSnippet: '$1.skills.map($2=>{var _sm={"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};return{name:$2.name,description:_sm[$2.name]||$2.description,argumentHint:$2.argumentHint,',
-    zhPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\{var _sm=\{"docx":"[^"]+",[^}]+\};return\{name:\2\.name,description:_sm\[\2\.name\]\|\|\2\.description,argumentHint:\2\.argumentHint,/g,
+    zhSnippet: '$1.skills.map($2=>({name:$2.name,description:({"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"}[$2.name]||$2.description),argumentHint:$2.argumentHint,',
+    zhPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\(\{name:\2\.name,description:\(\{"docx":"[^"]+",[^}]+\}\[\2\.name\]\|\|\2\.description\),argumentHint:\2\.argumentHint,/g,
     restoreEn: '$1.skills.map($2=>({name:$2.name,description:$2.description,argumentHint:$2.argumentHint,',
     intlKey: null
   },
@@ -289,8 +308,8 @@ const JS_LITERAL_PATCHES = [
     id: 'builtin-api-skills-zh-description',
     description: '官方云端/组织内置技能列表 (creator_type=anthropic) 前端中文简介无损映射',
     enPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\1\.description,creatorType:\1\.creator_type,/g,
-    zhSnippet: 'var _sm={"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};return{skillId:$1.id,skillName:$1.name,skillDescription:($1.creator_type==="anthropic"&&_sm[$1.name])||$1.description,creatorType:$1.creator_type,',
-    zhPattern: /var _sm=\{"docx":"[^"]+",[^}]+\};return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\(\1\.creator_type==="anthropic"&&_sm\[\1\.name\]\)\|\|\1\.description,creatorType:\1\.creator_type,/g,
+    zhSnippet: 'return{skillId:$1.id,skillName:$1.name,skillDescription:($1.creator_type==="anthropic"&&{"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"}[$1.name])||$1.description,creatorType:$1.creator_type,',
+    zhPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\(\1\.creator_type==="anthropic"&&\{"docx":"[^"]+",[^}]+\}\[\1\.name\]\)\|\|\1\.description,creatorType:\1\.creator_type,/g,
     restoreEn: 'return{skillId:$1.id,skillName:$1.name,skillDescription:$1.description,creatorType:$1.creator_type,',
     intlKey: null
   }
@@ -448,6 +467,17 @@ function applyPatch(options = {}) {
         }
 
         if (modified && newContent !== content) {
+          // 核心安全防御：AST 语法自检防火墙 (防止破坏 JS 语法导致客户端黑屏崩溃)
+          const syntaxCheck = validateJsSyntax(newContent);
+          if (!syntaxCheck.valid) {
+            console.error(`❌ [AST 语法防火墙拦截] 补丁导致 ${file} 出现语法错误，已安全拒绝写入！`);
+            console.error(syntaxCheck.error);
+            return {
+              success: false,
+              error: `补丁注入后检测到语法错误 (${file}): ${syntaxCheck.error}。为防止客户端黑屏，已终止注入并保持原版。`
+            };
+          }
+
           if (!fs.existsSync(bakPath)) {
             fs.copyFileSync(fullPath, bakPath);
           }

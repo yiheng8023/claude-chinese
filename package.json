@@ -1,6 +1,6 @@
 {
   "name": "claude-chinese",
-  "version": "1.2.70",
+  "version": "1.2.71",
   "description": "Claude 桌面客户端高性能、可逆式、自愈型中文汉化工具包 (Self-Healing Chinese Localization Toolkit for Claude Desktop)",
   "main": "cli.js",
   "engines": {
@@ -10,9 +10,10 @@
     "claude-cn": "./cli.js"
   },
   "scripts": {
-    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js",
+    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js && node test/test-ast-syntax.js",
     "test:dict": "node test/verify-dict.js",
     "test:icu": "node test/test-icu.js",
+    "test:ast": "node test/test-ast-syntax.js",
     "test:matrix": "node tools/upstream-compatibility-matrix.js",
     "audit": "node tools/comprehensive-audit.js && node tools/ultimate-consistency-audit.js",
     "scan:drift": "node tools/drift-detector.js",
