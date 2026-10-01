@@ -133,6 +133,41 @@ for (const [k, zhVal] of Object.entries(ionZh)) {
   }
 }
 
+// 6. 检查 Fork 与 Branch 概念隔离与全域一致性
+console.log('\n【一致性检查 6】Fork (分叉) 与 Branch (分支) 概念隔离一致性');
+let forkErrors = 0;
+for (const [k, zhVal] of Object.entries(ionZh)) {
+  const enVal = ionEn[k];
+  if (!enVal || typeof zhVal !== 'string') continue;
+
+  // 1. 英文为 Fork 动作/派生，中文绝对严禁出现“分支”
+  if (/\bfork/i.test(enVal)) {
+    if (zhVal.includes('分支')) {
+      console.log(`  ⚠️ [Fork 误用分支] [${k}] EN: "${enVal}" -> ZH: "${zhVal}" (必须统一为“分叉”)`);
+      forkErrors++;
+      issues.push({ key: k, type: 'fork_branch_confusion', en: enVal, zh: zhVal });
+    }
+  }
+
+  // 2. 检查会话核心单字/短语动作词
+  if (enVal === 'Fork' && zhVal !== '分叉') {
+    console.log(`  ⚠️ [动作词不规范] [${k}] Fork 实际为 "${zhVal}" (期望: "分叉")`);
+    forkErrors++;
+    issues.push({ key: k, type: 'fork_verb_mismatch', en: enVal, zh: zhVal });
+  }
+  if (enVal === 'Forking…' && zhVal !== '正在分叉…') {
+    console.log(`  ⚠️ [动作词不规范] [${k}] Forking… 实际为 "${zhVal}" (期望: "正在分叉…")`);
+    forkErrors++;
+    issues.push({ key: k, type: 'fork_verb_mismatch', en: enVal, zh: zhVal });
+  }
+  if (enVal === 'Fork from here' && zhVal !== '从此处分叉') {
+    console.log(`  ⚠️ [动作词不规范] [${k}] Fork from here 实际为 "${zhVal}" (期望: "从此处分叉")`);
+    forkErrors++;
+    issues.push({ key: k, type: 'fork_verb_mismatch', en: enVal, zh: zhVal });
+  }
+}
+
 console.log('\n====================================================');
-console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU 错误: ${icuErrors}, HTML 标签错误: ${tagErrors})`);
+console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch 混淆: ${forkErrors})`);
 console.log('====================================================');
+
