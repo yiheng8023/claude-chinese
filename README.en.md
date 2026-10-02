@@ -145,7 +145,7 @@ npm run audit
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
 - **AST Syntax Firewall & Black-Screen Crash Prevention (`test/test-ast-syntax.js`)**: Enforces strict Node.js ESM AST integrity checks across real and sandboxed JS bundles, preventing syntax errors from reaching production.
 - **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience before upstream releases reach users.
-- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, Fork vs Branch disambiguation, and Diff vs Change semantic consistency, guaranteeing 0 HTML tag discrepancies, 0 ICU variable mismatches, and 0 terminology conflicts.
+- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, Fork vs Branch disambiguation, Diff vs Change isolation, and native state machine enum integrity (8 dedicated suites), guaranteeing 0 HTML tag discrepancies, 0 ICU variable mismatches, and 0 terminology conflicts.
 
 ---
 

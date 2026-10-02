@@ -22,4 +22,4 @@
 
 #### 3. 动态 Bundle 感知与 AST 语法防火墙升级
 - **动态探测 Rolls/Vite Bundle Hash**：测试套件与注入逻辑彻底告别写死老版本文件名，自适应上游多 Bundle 变异，100% 通过 Node.js 严格 ESM AST 语法检查；
-- **事前兼容矩阵与全维体检**：`npm test` 5 大套件全部 PASS，`npm run test:matrix` 12 项活跃补丁 100% 命中，7 大一致性检查全部 0 缺陷通过。
+- **事前兼容矩阵与全维体检**：`npm test` 5 大套件全部 PASS，`npm run test:matrix` 12 项活跃补丁 100% 命中，8 大一致性检查全部 0 缺陷通过。

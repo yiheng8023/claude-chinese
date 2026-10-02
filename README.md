@@ -146,7 +146,7 @@ npm run audit
 - **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
 - **AST 语法防火墙与黑屏拦截 (`test/test-ast-syntax.js`)**：对真实或沙盒注入后的所有 JS Bundle 进行严密 Node.js ESM AST 语法完整性断言，杜绝任何语法逃逸与黑屏死屏。
 - **事前兼容矩阵与代码拓扑变异测试 (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成代码拓扑韧性压力断言。
-- **全维度本地化一致性审计 (`tools/ultimate-consistency-audit.js` / `npm run audit`)**：全面体检思考强度、审批工作流、动作动词、Fork(分叉)与Branch(分支)隔离、以及 Diff(差异)与Change(变更)概念隔离与术语一致性，确保 0 HTML 标签不对称、0 ICU 变量偏差与 0 术语冲突。
+- **全维度本地化一致性审计 (`tools/ultimate-consistency-audit.js` / `npm run audit`)**：全面体检思考强度、审批工作流、动作动词、Fork(分叉)与Branch(分支)隔离、Diff(差异)与Change(变更)隔离、以及原生状态机动作词与状态枚举完整性（8 大专项体检），确保 0 HTML 标签不对称、0 ICU 变量偏差与 0 术语冲突。
 
 ---
 

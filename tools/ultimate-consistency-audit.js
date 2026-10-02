@@ -190,7 +190,35 @@ for (const [k, zhVal] of Object.entries(ionZh)) {
   }
 }
 
+// 8. 检查原生状态机动作词与状态枚举完整性 (State Machine Enum Integrity)
+console.log('\n【一致性检查 8】原生状态机动作词与状态枚举完整性');
+let stateMachineErrors = 0;
+const STATE_MACHINE_KEYS = [
+  '5DvVdHWYeP', 'WSaR3s9y+0', 'HQcXlU4DEE', 'UXI5kx9c08', 'WCIAidgueo',
+  'gKeZD/jxpC', 'MTgdhQxTPQ', 'JIsnwRlH0D', 'sjdp6mtP7Y', '9GA6hZ6RkN',
+  'RIbw6nN4dR', '+B6q99cXCl', '7ZK71R9n1B', '5iGwHk/pKZ', '5KajyzHSXj',
+  'nxxRes7Qf3', 'V/QOi0yNF0', 'Lsex8QeaTL', 'YBctaBAMh/', '6LJ9la6t+4',
+  'WcmN0GCOgd', 'RxYks1LFQg', 'YQEir3q/V5', 'IwRaId+4hv', 'kbCx2ZYlvk',
+  'ZgCKHNUoS+', 'gAR0atqpRn', 'sciEMhbXbm', 'Jdgq0BVjao',
+  'MVQTRBWYud', 'cPnivFkT6E', 'tTVI3GQeyu', '14+jcDS33B', 'wT63jkA9qK',
+  'y5DX5NCmrm', 'MM7OHMBA9j', '242T21lCRb', '8XsqEcZQPV', 'ZdOS6uyq8n',
+  '4+310Bnuvz', 'HNOICFXsf+', '8HFdOJrw5u', 'XDtMLEgWf6', 'ncpruch8SM',
+  'zuMUqU9v6W', 'u/hJEKf1tL', '9j5ma+F5F5', 'cv9VNYMHXY', 'LVG1dX6B8u',
+  'WSkLyhVgSu', 'X9Z2S33opa', 'tEIdSD1dER', 'ze8mOEi4wo', '0AQGELjf8F',
+  'QE4MKdaawu'
+];
+
+for (const k of STATE_MACHINE_KEYS) {
+  const zh = ionZh[k];
+  if (!zh || typeof zh !== 'string' || !zh.trim()) {
+    console.log(`  ⚠️ [状态机枚举缺失] 键 [${k}] 在 ion-zh-CN.json 中未定义或为空！`);
+    stateMachineErrors++;
+    issues.push({ key: k, type: 'state_machine_missing', en: ionEn[k] || '' });
+  }
+}
+
 console.log('\n====================================================');
-console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch: ${forkErrors}, Diff/Change: ${diffErrors})`);
+console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch: ${forkErrors}, Diff/Change: ${diffErrors}, 状态机枚举: ${stateMachineErrors})`);
 console.log('====================================================');
+
 
