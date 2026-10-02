@@ -15,7 +15,10 @@
   - 在 `dict/long-docs-zh-CN.json` 中全景收录展开详情长段落，深入解释 Connector 图标代理、MCP Apps iframe 域名、离线拼写词典与网络出口限制规则；
 - **模型推理强度选项徽标双层闭环汉化 (Recommended ➔ 推荐)**：
   - **Tier 1 - 原生动态 i18n 命名空间扩展**：在字典层收录官方 `secret:1rudtf6` 与 `dynamic:Recommended` 动态键，打通官方 `X(str, t)` 翻译管线；
-  - **Tier 2 - AST / 运行时补丁硬核兜底**：在 `core/patcher.js` 中新增滑块刻度与二级菜单徽标双重拦截规则，彻底根治滑块下方与选项列表中的英文残留。
+  - **Tier 2 - AST / 运行时补丁硬核兜底**：在 `core/patcher.js` 中新增滑块刻度与二级菜单徽标双重拦截规则，彻底根治滑块下方与选项列表中的英文残留；
+- **全量收录官方源码 27 种原生状态机进行态 (捕获 15 项深层漏译)**：
+  - 源码级遍历 `c3d503148-d3_VyblI.js` 状态路由表，彻底补齐官方更新遗漏的 15 项进行中状态词条；
+  - 涵盖：`正在创建文件` (`WSaR3s9y+0`)、`正在查找文件` (`gKeZD/jxpC`)、`正在搜索历史对话` (`MTgdhQxTPQ`)、`正在搜索项目知识库` (`JIsnwRlH0D`)、`正在添加记忆` (`9GA6hZ6RkN`)、`正在运行代码` (`7ZK71R9n1B`)、`正在分享文件` (`5iGwHk/pKZ`)、`正在读取页面` (`nxxRes7Qf3`)、`正在运行智能体` (`Lsex8QeaTL`)、`正在更新计划` (`6LJ9la6t+4`)、`正在提议计划` (`RxYks1LFQg`)、`正在编辑笔记本` (`YQEir3q/V5`)、`正在加载工具` (`ZgCKHNUoS+`)、`正在运行终端` (`sciEMhbXbm`)、`正在停止命令` (`Jdgq0BVjao`)，实现原生状态机 100% 穷尽闭环。
 
 #### 3. 动态 Bundle 感知与 AST 语法防火墙升级
 - **动态探测 Rolls/Vite Bundle Hash**：测试套件与注入逻辑彻底告别写死老版本文件名，自适应上游多 Bundle 变异，100% 通过 Node.js 严格 ESM AST 语法检查；
