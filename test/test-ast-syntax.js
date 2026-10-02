@@ -28,7 +28,16 @@ try {
   if (info.resourcesPath && fs.existsSync(info.resourcesPath)) {
     console.log('📡 [MODE: REAL_CLIENT_BUNDLE] 检测到本地真实安装，拷贝真实 JS Bundle 执行真实 AST 语法扫描...\n');
     const realAssets = path.join(info.resourcesPath, 'ion-dist', 'assets', 'v1');
-    const targetFiles = ['shared-5-xlIFiuS_.js', 'shared-13-DG4pYUEQ.js', 'c5e558aae-DNGm5L2q.js'];
+    const allFiles = fs.readdirSync(realAssets).filter(f => f.endsWith('.js') && !f.endsWith('.bak'));
+    const targetFiles = [
+      allFiles.find(f => f.startsWith('shared-5-')),
+      allFiles.find(f => f.startsWith('shared-13-')),
+      allFiles.find(f => {
+        try {
+          return fs.readFileSync(path.join(realAssets, f), 'utf8').includes('["en-US"');
+        } catch (e) { return false; }
+      })
+    ].filter(Boolean);
 
     for (const f of targetFiles) {
       const realFile = path.join(realAssets, f);

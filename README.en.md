@@ -15,12 +15,13 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.72** (fully adapting official latest release **v2.16120.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.73** (fully adapting official latest release **v2.19675.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
 ## 🌟 Key Features & Design Philosophy
 
+- ⚖️ **Strict Diff vs Change Semantic Isolation**: Thoroughly resolves the self-contradictory industry bug where `Diff` was erroneously translated as "变更" (leading to UI dissonance where tabs said "变更" while child buttons said "折叠差异 / 差异视图"). Strictly standardizes `Diff` as state comparison "**差异**" (e.g., inline diff, diff view, file diffs) and `Change` as dynamic actions or modification sets "**变更 / 更改**" (e.g., file changes, accept changes). Permanently enforced via automated CI audit gates (`npm run audit` Check 7).
 - 🌿 **Strict Branch vs Fork Semantic Separation**: Complete disambiguation between version control `Branch` and session cloning `Fork`. Context menu actions are strictly normalized to `分叉` (Fork, Shortcut F), with prompts aligned to `从此处分叉` (Fork from here) and `分叉会话` (Fork session). This eliminates mental model confusion where users mistook session forks for git branch operations, backed by automated consistency audit gates (`npm run audit`).
 - 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
 - 🛑 **Agent Suicide Prevention Safety Gate**: Built-in `isProtectedEnvironment()` probe guards against accidental kills when executed inside agent sessions, automated CLI pipelines, or protected environments, preventing crashes of the parent workflow.
@@ -28,7 +29,7 @@ A high-performance, reversible Chinese localization toolkit designed for Anthrop
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
-- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **31,000+** curated core entries and **137 full-length foldable deep documentation guides** (covering Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns, lossless frontend Chinese descriptions for all 11 official built-in skills, and first-slot `中文（简体） / Chinese (Simplified)` native display in the language picker modal).
+- 🎯 **Full HashKey & Deep Long Foldable Documents Coverage**: Over **31,000+** curated core entries and **138 full-length foldable deep documentation guides** (covering nonessential network services guide, fast file search & filters, Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns, lossless frontend Chinese descriptions for all 11 official built-in skills, and first-slot `中文（简体） / Chinese (Simplified)` native display in the language picker modal).
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
 - 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user via single-pass recursive ACLs to avoid repeated UAC prompts and hazardous global Users group escalations.
 
@@ -45,7 +46,7 @@ graph TD
     subgraph Mode1 ["【Released】Host UI Localization"]
         ClaudeApp --> ShellLayer["Shell Layer (880+ entries)"]
         ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,000+ entries)"]
-        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (137 articles)"]
+        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (138 articles)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
     end
     
@@ -144,7 +145,7 @@ npm run audit
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
 - **AST Syntax Firewall & Black-Screen Crash Prevention (`test/test-ast-syntax.js`)**: Enforces strict Node.js ESM AST integrity checks across real and sandboxed JS bundles, preventing syntax errors from reaching production.
 - **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience before upstream releases reach users.
-- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, 0 HTML tag discrepancies, and 0 ICU variable mismatches.
+- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, Fork vs Branch disambiguation, and Diff vs Change semantic consistency, guaranteeing 0 HTML tag discrepancies, 0 ICU variable mismatches, and 0 terminology conflicts.
 
 ---
 
@@ -171,7 +172,7 @@ claude-chinese/
 ├── dict/                             # Core Chinese dictionaries
 │   ├── zh-CN.json                    # Shell layer translation dictionary (880+ entries)
 │   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (30,000+ entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (137 articles)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (138 articles)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing

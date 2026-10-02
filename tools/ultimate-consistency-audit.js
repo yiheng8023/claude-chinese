@@ -167,7 +167,30 @@ for (const [k, zhVal] of Object.entries(ionZh)) {
   }
 }
 
+// 7. 检查 Diff (差异) 与 Change (变更) 概念隔离与术语一致性
+console.log('\n【一致性检查 7】Diff (差异) 与 Change (变更) 概念隔离一致性');
+let diffErrors = 0;
+for (const [k, zhVal] of Object.entries(ionZh)) {
+  const enVal = ionEn[k];
+  if (!enVal || typeof zhVal !== 'string') continue;
+
+  // 英文单独出现 diff 或 diff view，中文严禁混淆为“变更”
+  if (/\bdiffs?\b/i.test(enVal)) {
+    if (zhVal.includes('变更') || (zhVal.includes('更改') && !/\bchanges?\b/i.test(enVal))) {
+      console.log(`  ⚠️ [Diff 误用变更] [${k}] EN: "${enVal}" -> ZH: "${zhVal}" (Diff 必须统一为“差异”)`);
+      diffErrors++;
+      issues.push({ key: k, type: 'diff_change_confusion', en: enVal, zh: zhVal });
+    }
+  }
+
+  if ((enVal === 'Diff' || enVal === 'diff') && !zhVal.includes('差异')) {
+    console.log(`  ⚠️ [Diff 名词不规范] [${k}] Diff 实际为 "${zhVal}" (期望包含: "差异")`);
+    diffErrors++;
+    issues.push({ key: k, type: 'diff_noun_mismatch', en: enVal, zh: zhVal });
+  }
+}
+
 console.log('\n====================================================');
-console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch 混淆: ${forkErrors})`);
+console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch: ${forkErrors}, Diff/Change: ${diffErrors})`);
 console.log('====================================================');
 

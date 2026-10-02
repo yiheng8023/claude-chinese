@@ -16,12 +16,13 @@
 </p>
 
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.72**，全面适配官方最新版 **v2.16120.0.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.73**，全面适配官方最新版 **v2.19675.0.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
 
 ## 🌟 核心特性与设计哲学
 
+- ⚖️ **代码差异 (Diff) 与文件变更 (Change) 严格语义隔离与自相矛盾根治 (Strict Diff vs Change Semantic Isolation)**：针对 AI 客户端中普遍存在的将 `Diff` 机械误译为“变更”导致 Tab 叫“变更”、按钮叫“折叠差异/差异视图”的自相矛盾通病，建立坚不可摧的术语界限——`Diff` 100% 标准化为状态对比“**差异**”（如内联差异、差异视图、文件差异），`Change` 标准化为行为或实体集合“**变更/更改**”（如文件变更、接受更改），并在 `npm run audit` 中设立【一致性检查 7】自动化门禁，彻底终结术语精神分裂。
 - 🌿 **Git 分支 (Branch) 与会话分叉 (Fork) 严格语义隔离与出版级大一统 (Strict Branch vs Fork Semantic Separation)**：对全生态中涉及版本控制 `Branch`（分支）与会话状态深拷贝克隆 `Fork`（分叉）的术语进行彻底的楚河汉界隔离。右键上下文菜单动作统一定为 `分叉`（快捷键 F），状态与提示统一定为 `从此处分叉`、`分叉会话`、`分叉自`，彻底根除了将对话分裂误叫为“创建分支”引发的 Git 仓库心智模型混乱与界面割裂；配套自动化一致性审计门禁（`npm run audit`），确保全站术语 100% 纯净闭环。
 - 🛡️ **可逆式增量挂载与纯净兜底 (Incremental Overlay & Fallback)**：基于官方原版 `en-US` 进行增量合并，**绝不粗暴覆盖原版英文字典**。当官方更新引入全新词条时自动回退英文，彻底拆除“更新即白屏”的隐患。
 - 🛑 **智能体会话自杀防御门禁 (Suicide Prevention Gate)**：内置 `isProtectedEnvironment()` 环境感知守卫，检测到当前运行于 Agent 会话、CLI 自动化或受保护环境中，严密拦截 `taskkill` 强杀宿主操作，彻底杜绝宿主与父级任务同归于尽。
@@ -29,7 +30,7 @@
 - 🧬 **拓扑多签名引擎与事前混淆变异矩阵 (Topology Invariants & Mutation Matrix)**：创新引入参数名无关的拓扑反向引用与声明式/箭头/Object.assign 三签名自适应拦截器，全库配备 `safeTest` 正则无状态守卫，杜绝长文档与 UI 补丁跨文件正则状态污染；搭配事前混淆变异碰撞测试工具（`npm run test:matrix`）与云端事前哨兵 CI，在上游发版前完成兼容性闭环验证。
 - 🔄 **双重状态感知出厂基线与版本防回退 (Dual-State Pristine Baseline & Anti-Downgrade)**：基于 SHA-256 清单与注入特征双判据。确立官方当前未污染 `en-US` 为绝对权威；官方静默发版更新时自动刷新备份基准，还原时自动熔断拦截，彻底消除了陈旧备份覆盖官方更新导致的版本回退隐患。
 - 🕊️ **官方中文自动检测与优雅让位 (Graceful Yield)**：内置官方多语言与原生 JS 白名单自动嗅探，当 Anthropic 官方未来原生支持中文时，工具包将秒级识别并自动优雅让位。
-- 🎯 **全量 HashKey 界面与长篇折叠文档覆盖**：覆盖全量 31,000+ 核心词条与 137 篇全景折叠长文档（包含 Cowork 协同画布、权限审批流、Claude Code 模式、例行任务 Routines、设计系统、嵌套会话、思考强度/输出风格下拉、11 项官方内置技能前端无损中文简介，以及语言选择弹窗 `中文（简体） / Chinese (Simplified)` 双行原生展示与左上角第 1 顺位置顶）。
+- 🎯 **全量 HashKey 界面与长篇折叠文档覆盖**：覆盖全量 31,000+ 核心词条与 **138 篇**全景折叠长文档（包含“阻止非必要服务”深层网络长文档、文件快速搜索与过滤、Cowork 协同画布、权限审批流、Claude Code 模式、例行任务 Routines、设计系统、嵌套会话、思考强度/输出风格下拉、11 项官方内置技能前端无损中文简介，以及语言选择弹窗 `中文（简体） / Chinese (Simplified)` 双行原生展示与左上角第 1 顺位置顶）。
 - 🔒 **严格的 ICU 语法与 AST 变量防火墙**：严格防护 `{count, plural...}`, `{apps}`, `{folderName}` 等变量插值与底层配置枚举（如 `allow`, `ask`, `low`, `high`, `/loop` 等），确保任务流与配置执行永不卡死。
 - 🪟 **最小特权原则与 MSIX 专属适配**：严格遵循安全边界，仅对当前用户赋予必要文件修改权限，单次递归赋权杜绝重复 UAC 弹窗与全局 Users 组高危赋权。
 
@@ -46,7 +47,7 @@ graph TD
     subgraph Mode1 ["【已上线】客户端宿主 UI 汉化 (Host UI Localization)"]
         ClaudeApp --> ShellLayer["Shell 壳层 (880+ 词条)"]
         ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,000+ 词条)"]
-        ClaudeApp --> LongDocsLayer["长篇折叠深度文档 (137 篇)"]
+        ClaudeApp --> LongDocsLayer["长篇折叠深度文档 (138 篇)"]
         ClaudeApp --> DynamicLayer["Dynamic 动态特性与推理占位符"]
     end
     
@@ -145,7 +146,7 @@ npm run audit
 - **跨平台宿主无参探测与沙盒实测 (`test/test-cross-platform-live.js`)**：在真实 Ubuntu / macOS / Windows runner 上验证 0 参数路径探测与跨平台布局注入。
 - **AST 语法防火墙与黑屏拦截 (`test/test-ast-syntax.js`)**：对真实或沙盒注入后的所有 JS Bundle 进行严密 Node.js ESM AST 语法完整性断言，杜绝任何语法逃逸与黑屏死屏。
 - **事前兼容矩阵与代码拓扑变异测试 (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**：模拟打包混淆变异（变量置换、箭头函数、Object.assign 降级），在代码发布前完成代码拓扑韧性压力断言。
-- **全维度本地化一致性审计 (`tools/ultimate-consistency-audit.js` / `npm run audit`)**：全面体检思考强度、审批工作流、动作动词，确保 0 HTML 标签不对称与 0 ICU 变量偏差。
+- **全维度本地化一致性审计 (`tools/ultimate-consistency-audit.js` / `npm run audit`)**：全面体检思考强度、审批工作流、动作动词、Fork(分叉)与Branch(分支)隔离、以及 Diff(差异)与Change(变更)概念隔离与术语一致性，确保 0 HTML 标签不对称、0 ICU 变量偏差与 0 术语冲突。
 
 ---
 
@@ -172,7 +173,7 @@ claude-chinese/
 ├── dict/                             # 核心汉化词库
 │   ├── zh-CN.json                    # Shell 壳层汉化词典 (880+ 词条)
 │   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (30,000+ 词条)
-│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (137 篇)
+│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (138 篇)
 │   └── dynamic-zh-CN.json            # 动态特性与推理占位符词典
 ├── core/                             # 核心注入与架构引擎
 │   ├── patcher.js                    # 拓扑多签名长文档引擎、JS 白名单与出厂基线自愈
