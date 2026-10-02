@@ -30001,5 +30001,13 @@
   "zzp3aYxskJ": "无法开始该聊天。你可以重试。",
   "7SsASzR5xq": "过滤，或输入 ? 在文件中搜索",
   "Htfjk3on72": "前往文件或搜索",
-  "iwXupWG0F3": "Connector 图标、产物预览与 MCP Apps iframe，以及 Linux 拼写检查词典。Connector 小组件将回退至纯文本；Linux 上拼写检查将关闭。"
+  "iwXupWG0F3": "Connector 图标、产物预览与 MCP Apps iframe，以及 Linux 拼写检查词典。Connector 小组件将回退至纯文本；Linux 上拼写检查将关闭。",
+  "secret:1rudtf6": "推荐",
+  "dynamic:Recommended": "推荐",
+  "Recommended": "推荐",
+  "1rudtf6": "推荐",
+  "secret:1lgb6vs": "默认",
+  "dynamic:Default": "默认",
+  "secret:1hw6rjg": "高额用量",
+  "dynamic:High usage": "高额用量"
 }

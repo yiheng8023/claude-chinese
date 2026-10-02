@@ -312,6 +312,24 @@ const JS_LITERAL_PATCHES = [
     zhPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\(\1\.creator_type==="anthropic"&&\{"docx":"[^"]+",[^}]+\}\[\1\.name\]\)\|\|\1\.description,creatorType:\1\.creator_type,/g,
     restoreEn: 'return{skillId:$1.id,skillName:$1.name,skillDescription:$1.description,creatorType:$1.creator_type,',
     intlKey: null
+  },
+  {
+    id: 'effort-slider-recommended-badge',
+    description: '模型推理强度滑块刻度 Recommended 徽标汉化 (Recommended ➔ 推荐)',
+    enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.findIndex\(([a-zA-Z0-9_$]+)=>\3\.badge\?\.message&&\3\.badge\.variant!=="warning"\),([a-zA-Z0-9_$]+)=\2\[\1\]\?\.badge\?\.message/g,
+    zhSnippet: '$1=$2.findIndex($3=>$3.badge?.message&&$3.badge.variant!=="warning"),$4=(function(m){return m==="Recommended"?"推荐":m})($2[$1]?.badge?.message)',
+    zhPattern: /\(function\(m\)\{return m==="Recommended"\?"推荐":m\}\)\(([a-zA-Z0-9_$]+)\[([a-zA-Z0-9_$]+)\]\?\.badge\?\.message\)/g,
+    restoreEn: '$1=$2.findIndex($3=>$3.badge?.message&&$3.badge.variant!=="warning"),$4=$2[$1]?.badge?.message',
+    intlKey: null
+  },
+  {
+    id: 'effort-menu-recommended-badge',
+    description: '模型推理强度二级菜单 Recommended 徽标汉化 (Recommended ➔ 推荐)',
+    enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.badge\?\.message\?\2\.badge:void 0,([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\(\2\)/g,
+    zhSnippet: '$1=$2.badge?.message?{...$2.badge,message:$2.badge.message==="Recommended"?"推荐":$2.badge.message}:void 0,$3=$4($2)',
+    zhPattern: /\{(?:\.\.\.[a-zA-Z0-9_$]+\.badge,)?message:[a-zA-Z0-9_$]+\.badge\.message==="Recommended"\?"推荐":[a-zA-Z0-9_$]+\.badge\.message\}/g,
+    restoreEn: '$1=$2.badge?.message?$2.badge:void 0,$3=$4($2)',
+    intlKey: null
   }
 ];
 
