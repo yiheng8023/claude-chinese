@@ -1,8 +1,18 @@
+# Dependencies & Logs
 node_modules/
-.DS_Store
 *.tmp
 *.log
-dict/multilang-ref.json
-dict/en_all.json
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/
+
+# Internal analysis artifacts & temporary dumps
 dict/batch*.json
-tools/drift-report.json
+dict/*_all.json
+dict/multilang-ref.json
+tools/*.json
+tools/*.txt
