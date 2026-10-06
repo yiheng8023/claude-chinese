@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.73** (fully adapting official latest release **v2.19675.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.74** (fully adapting official latest release **v2.19675.1.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -44,8 +44,8 @@ graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
     subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (880+ entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,000+ entries)"]
+        ClaudeApp --> ShellLayer["Shell Layer (899 entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,100+ entries)"]
         ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (138 articles)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
     end

@@ -16,7 +16,7 @@
 </p>
 
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.73**，全面适配官方最新版 **v2.19675.0.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.74**，全面适配官方最新版 **v2.19675.1.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
 
@@ -45,8 +45,8 @@ graph TD
     User((开发者 / 用户)) --> ClaudeApp[Claude Desktop 客户端]
     
     subgraph Mode1 ["【已上线】客户端宿主 UI 汉化 (Host UI Localization)"]
-        ClaudeApp --> ShellLayer["Shell 壳层 (880+ 词条)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,000+ 词条)"]
+        ClaudeApp --> ShellLayer["Shell 壳层 (899 词条)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,100+ 词条)"]
         ClaudeApp --> LongDocsLayer["长篇折叠深度文档 (138 篇)"]
         ClaudeApp --> DynamicLayer["Dynamic 动态特性与推理占位符"]
     end

@@ -881,5 +881,21 @@
   "TXJIPdHjgn": "由于无法读取其安装记录，无法验证此扩展。",
   "YR/orXKSe9": "在 Claude Code 中打开",
   "ZzJBZ6BMOe": "无法验证扩展安装权限。请检查您是否已连接到互联网。",
-  "nxIxZKz5hC": "贵组织的策略已禁用未打包或未注册的扩展。"
+  "nxIxZKz5hC": "贵组织的策略已禁用未打包或未注册的扩展。",
+  "+n5D2xZZFm": "将为此计算机开启 Remote Control。",
+  "7jWoL6f3Kl": "Claude 处于打开状态时，您其他设备上的会话可以按照您的批准设置，在您的 Remote Control 列表中的文件夹内读取和编辑文件以及运行命令。这些会话读取或运行的内容会发送给 Anthropic。您可以随时在设置中关闭此功能。",
+  "8M0NdU+pKJ": "{count, plural, one {由 Claude Code 自动列出的其他 # 个文件夹将从该列表中移除；} other {由 Claude Code 自动列出的其他 # 个文件夹将从该列表中移除；}}您自行添加的文件夹会保留。您可以在设置中重新添加文件夹。",
+  "ImJHPVqkfz": "从您的手机或 claude.ai 启动的会话可以按照您的审批设置，在此文件夹中读取和编辑文件以及运行命令。此电脑上的 Claude Code 也会将此文件夹视为受信任文件夹。",
+  "UC4ufyu6D6": "允许",
+  "Ur9IgNnVXB": "允许",
+  "VmfBJuPPlH": "取消",
+  "aZynSqBUGv": "{count, plural, one {无法从快速输入附加文件；将发送不含该文件的消息。} other {无法从快速输入附加 # 个文件；将发送不含这些文件的消息。}}",
+  "cQEzKX5AfQ": "Claude Code",
+  "jMRk/qAVDT": "{count, plural, one {无法从快速输入附加文件，因此未发送任何内容。请检查该文件是否仍在原位置，且为小于 {maxFileMb} MB 的文件。} other {无法从快速输入附加 # 个文件，因此未发送任何内容。请检查这些文件是否仍在原位置，且每个都是小于 {maxFileMb} MB 的文件。}}",
+  "jO7VoK4TtU": "新建侧边对话",
+  "kae00Hq579": "更新 Claude 以在此电脑上使用此模型。",
+  "lgdk9O3SjM": "此电脑上的 Claude Code 也会将此文件夹视为受信任文件夹。",
+  "sVuKeGaV54": "要通过您的手机和 claude.ai 使用此文件夹吗？",
+  "uc60dif05B": "允许云端会话无需询问即可在这台电脑上运行命令？",
+  "x9PJxSK6R7": "在自动模式下，来自您云端会话的命令将在这台电脑上运行，不会每次都询问您。您在这台电脑上的拒绝规则和钩子仍然适用。您之后可以在设置 › Claude Code 中更改此项。"
 }
