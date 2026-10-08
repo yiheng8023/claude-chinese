@@ -100,69 +100,85 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'worktrees-location-default',
     description: 'Claude Code 工作树默认位置下拉选项',
+    enGuard: 'worktrees',
+    zhGuard: 'worktrees',
     enPattern: /label:\s*["']Inside project \(\.claude\/worktrees\)["']/g,
     zhSnippet: 'label:"项目目录内 (.claude/worktrees)"',
     zhPattern: /label:\s*["']项目目录内 \(\.claude\/worktrees\)["']/g,
-    restoreEn: 'label:"Inside project (.claude/worktrees)"'
-  ,
-    intlKey: 'eI3zYFFnpz'},
+    restoreEn: 'label:"Inside project (.claude/worktrees)"',
+    intlKey: 'eI3zYFFnpz'
+  },
   {
     id: 'worktrees-location-custom',
     description: 'Claude Code 工作树自定义位置下拉选项',
+    enGuard: 'Custom...',
+    zhGuard: '自定义...',
     enPattern: /label:\s*["']Custom\.\.\.["']/g,
     zhSnippet: 'label:"自定义..."',
     zhPattern: /label:\s*["']自定义\.\.\.["']/g,
-    restoreEn: 'label:"Custom..."'
-  ,
-    intlKey: 'lKjjJ7PIFW'},
+    restoreEn: 'label:"Custom..."',
+    intlKey: 'lKjjJ7PIFW'
+  },
   {
     id: 'sidebar-toggle-tooltip',
     description: '侧边栏收起/展开按钮提示词',
+    enGuard: 'Expand sidebar',
+    zhGuard: '收起侧边栏',
     enPattern: /content:([a-zA-Z0-9_$]+)\?"Expand sidebar":"Collapse sidebar"/g,
     zhSnippet: 'content:$1?"展开侧边栏":"收起侧边栏"',
     zhPattern: /content:([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
-    restoreEn: 'content:$1?"Expand sidebar":"Collapse sidebar"'
-  ,
-    intlKey: 'eOJ4QUCTXl'},
+    restoreEn: 'content:$1?"Expand sidebar":"Collapse sidebar"',
+    intlKey: 'eOJ4QUCTXl'
+  },
   {
     id: 'sidebar-toggle-aria',
     description: '侧边栏收起/展开无障碍标签',
+    enGuard: 'Expand sidebar',
+    zhGuard: '收起侧边栏',
     enPattern: /"aria-label":([a-zA-Z0-9_$]+)\?"Expand sidebar":"Collapse sidebar"/g,
     zhSnippet: '"aria-label":$1?"展开侧边栏":"收起侧边栏"',
     zhPattern: /"aria-label":([a-zA-Z0-9_$]+)\?"展开侧边栏":"收起侧边栏"/g,
-    restoreEn: '"aria-label":$1?"Expand sidebar":"Collapse sidebar"'
-  ,
-    intlKey: '+G35mRWa75'},
+    restoreEn: '"aria-label":$1?"Expand sidebar":"Collapse sidebar"',
+    intlKey: '+G35mRWa75'
+  },
   {
     id: 'sidebar-search-tooltip',
     description: '侧边栏搜索按钮提示词',
+    enGuard: 'content:"Search"',
+    zhGuard: 'content:"搜索"',
     enPattern: /content:"Search",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
     zhSnippet: 'content:"搜索",shortcut:$1,side:"bottom"',
     zhPattern: /content:"搜索",shortcut:([a-zA-Z0-9_$]+),side:"bottom"/g,
-    restoreEn: 'content:"Search",shortcut:$1,side:"bottom"'
-  ,
-    intlKey: 'xmcVZ0BU63'},
+    restoreEn: 'content:"Search",shortcut:$1,side:"bottom"',
+    intlKey: 'xmcVZ0BU63'
+  },
   {
     id: 'filter-status-label',
     description: 'Code 模式侧边栏过滤菜单 Status 标签',
+    enGuard: 'label:"Status"',
+    zhGuard: 'label:"状态"',
     enPattern: /label:"Status",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),active:"active"!==/g,
     zhSnippet: 'label:"状态",options:$1,value:$2,onChange:$3,active:"active"!==',
     zhPattern: /label:"状态",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),active:"active"!==/g,
-    restoreEn: 'label:"Status",options:$1,value:$2,onChange:$3,active:"active"!=='
-  ,
-    intlKey: 'ku+mDU6MeW'},
+    restoreEn: 'label:"Status",options:$1,value:$2,onChange:$3,active:"active"!==',
+    intlKey: 'ku+mDU6MeW'
+  },
   {
     id: 'filter-last-activity-label',
     description: 'Code 模式侧边栏过滤菜单 Last activity 标签',
+    enGuard: 'label:"Last activity"',
+    zhGuard: 'label:"最近活动"',
     enPattern: /label:"Last activity",options:([a-zA-Z0-9_$]+),value:String\(([a-zA-Z0-9_$]+)\)/g,
     zhSnippet: 'label:"最近活动",options:$1,value:String($2)',
     zhPattern: /label:"最近活动",options:([a-zA-Z0-9_$]+),value:String\(([a-zA-Z0-9_$]+)\)/g,
-    restoreEn: 'label:"Last activity",options:$1,value:String($2)'
-  ,
-    intlKey: 'FgG7d+eCOU'},
+    restoreEn: 'label:"Last activity",options:$1,value:String($2)',
+    intlKey: 'FgG7d+eCOU'
+  },
   {
     id: 'filter-show-empty-folders',
     description: '侧边栏过滤菜单显示空文件夹选项',
+    enGuard: 'Show empty folders',
+    zhGuard: '显示空文件夹',
     enPattern: /children:"Show empty folders"/g,
     zhSnippet: 'children:"显示空文件夹"',
     zhPattern: /children:"显示空文件夹"/g,
@@ -172,6 +188,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'filter-clear-filters',
     description: '侧边栏过滤菜单清除过滤器按钮',
+    enGuard: 'Clear filters',
+    zhGuard: '清除过滤器',
     enPattern: /children:"Clear filters"/g,
     zhSnippet: 'children:"清除过滤器"',
     zhPattern: /children:"清除过滤器"/g,
@@ -181,42 +199,52 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'filter-options-yM',
     description: '侧边栏过滤状态选项 (活跃/已归档/全部)',
+    enGuard: '"Active"',
+    zhGuard: '"活跃"',
     enPattern: /\[\["active","Active"\],\["archived","Archived"\],\["all","All"\]\]/g,
     zhSnippet: '[["active","活跃"],["archived","已归档"],["all","全部"]]',
     zhPattern: /\[\["active","活跃"\],\["archived","已归档"\],\["all","全部"\]\]/g,
-    restoreEn: '[["active","Active"],["archived","Archived"],["all","All"]]'
-  ,
-    intlKey: 'zQvVDJ+j59'},
+    restoreEn: '[["active","Active"],["archived","Archived"],["all","All"]]',
+    intlKey: 'zQvVDJ+j59'
+  },
   {
     id: 'filter-options-wM',
     description: '侧边栏排序选项 (按字母/创建时间/最近)',
+    enGuard: '"Alphabetically"',
+    zhGuard: '"按字母顺序"',
     enPattern: /\[\["alpha","Alphabetically"\],\["created","Created time"\],\["recency","Recency"\]\]/g,
     zhSnippet: '[["alpha","按字母顺序"],["created","创建时间"],["recency","最近"]]',
     zhPattern: /\[\["alpha","按字母顺序"\],\["created","创建时间"\],\["recency","最近"\]\]/g,
-    restoreEn: '[["alpha","Alphabetically"],["created","Created time"],["recency","Recency"]]'
-  ,
-    intlKey: 'Yjk5Ow/k5f'},
+    restoreEn: '[["alpha","Alphabetically"],["created","Created time"],["recency","Recency"]]',
+    intlKey: 'Yjk5Ow/k5f'
+  },
   {
     id: 'filter-options-group-by-code',
     description: 'Code 模式侧边栏分组选项 (日期/文件夹/状态/自定义/无)',
+    enGuard: 'group-by-code',
+    zhGuard: 'group-by-code',
     enPattern: /return\[\["date","Date"\],\.\.\."code"===([a-zA-Z0-9_$]+)\?\[\["project","Folder"\]\]:\[\],\.\.\."code"===\1&&([a-zA-Z0-9_$]+)\?\[\["state","State"\]\]:\[\],\.\.\."code"===\1\?\[\["custom","Custom groups"\]\]:\[\],\["none","None"\]\]/g,
     zhSnippet: 'return[["date","日期"],..."code"===$1?[["project","文件夹"]]:[],..."code"===$1&&$2?[["state","状态"]]:[],..."code"===$1?[["custom","自定义分组"]]:[],["none","无"]]',
     zhPattern: /return\[\["date","日期"\],\.\.\."code"===([a-zA-Z0-9_$]+)\?\[\["project","文件夹"\]\]:\[\],\.\.\."code"===\1&&([a-zA-Z0-9_$]+)\?\[\["state","状态"\]\]:\[\],\.\.\."code"===\1\?\[\["custom","自定义分组"\]\]:\[\],\["none","无"\]\]/g,
-    restoreEn: 'return[["date","Date"],..."code"===$1?[["project","Folder"]]:[],..."code"===$1&&$2?[["state","State"]]:[],..."code"===$1?[["custom","Custom groups"]]:[],["none","None"]]'
-  ,
-    intlKey: 'QkJXbQOXt/'},
+    restoreEn: 'return[["date","Date"],..."code"===$1?[["project","Folder"]]:[],..."code"===$1&&$2?[["state","State"]]:[],..."code"===$1?[["custom","Custom groups"]]:[],["none","None"]]',
+    intlKey: 'QkJXbQOXt/'
+  },
   {
     id: 'filter-group-by-label-fallback',
     description: '侧边栏过滤菜单 Group by 回退标签',
+    enGuard: 'label:"Group by"',
+    zhGuard: 'label:"分组依据"',
     enPattern: /label:"Group by",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),separatorBefore:"none"/g,
     zhSnippet: 'label:"分组依据",options:$1,value:$2,onChange:$3,separatorBefore:"none"',
     zhPattern: /label:"分组依据",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+),separatorBefore:"none"/g,
-    restoreEn: 'label:"Group by",options:$1,value:$2,onChange:$3,separatorBefore:"none"'
-  ,
-    intlKey: 'HWWSQ/N0ve'},
+    restoreEn: 'label:"Group by",options:$1,value:$2,onChange:$3,separatorBefore:"none"',
+    intlKey: 'HWWSQ/N0ve'
+  },
   {
     id: 'filter-sort-by-label-fallback',
     description: '侧边栏过滤菜单 Sort by 回退标签',
+    enGuard: 'label:"Sort by"',
+    zhGuard: 'label:"排序方式"',
     enPattern: /label:"Sort by",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
     zhSnippet: 'label:"排序方式",options:$1,value:$2,onChange:$3',
     zhPattern: /label:"排序方式",options:([a-zA-Z0-9_$]+),value:([a-zA-Z0-9_$]+),onChange:([a-zA-Z0-9_$]+)/g,
@@ -226,6 +254,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'output-style-labels-mapping',
     description: 'Code 模式输出风格下拉选项 (简洁/详尽/启发/主动)',
+    enGuard: 'builtIns',
+    zhGuard: 'zhLabels=',
     enPattern: /for\(let ([a-zA-Z0-9_$]+) of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\2\?\.customs\?\?\[\]\]\)\{let ([a-zA-Z0-9_$]+)=\1\.toLowerCase\(\);\1\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(\3\)\|\|\(\4\.add\(\3\),([a-zA-Z0-9_$]+)\.push\(\{value:\1,label:\1\}\)\)\}/g,
     zhSnippet: 'for(let $1 of[...$2?.builtIns??[],...$2?.customs??[]]){let $3=$1.toLowerCase();if($1.length!==0&&!$4.has($3)){$4.add($3);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[$3]||$1;$5.push({value:$1,label:lbl})}}',
     zhPattern: /zhLabels=\{"default":"默认","concise":"简洁"/g,
@@ -235,6 +265,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'submenu-output-style-label-mapping',
     description: '会话右上角与各级子菜单输出风格项名称汉化',
+    enGuard: 'checkedRole:"radio"',
+    zhGuard: 'checkedRole:"radio"',
     enPattern: /([a-zA-Z0-9_$]+)\.map\(\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.Item,\{checked:\2\.checked,checkedRole:"radio",onClick:\(\)=>\{([a-zA-Z0-9_$]+)\(\),\2\.onSelect\(\)\},children:\2\.label\},\3\)\)/g,
     zhSnippet: '$1.map(($2,$3)=>$4($5.Item,{checked:$2.checked,checkedRole:"radio",onClick:()=>{$6(),$2.onSelect()},children:(function(l){var m={"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};return m[l]||l;})($2.label)},$3))',
     zhPattern: /([a-zA-Z0-9_$]+)\.map\(\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+)\.Item,\{checked:\2\.checked,checkedRole:"radio",onClick:\(\)=>\{([a-zA-Z0-9_$]+)\(\),\2\.onSelect\(\)\},children:\(function\(l\)\{var m=\{"default":"默认","Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"\};return m\[l\]\|\|l;\}\)\(\2\.label\)\},\3\)\)/g,
@@ -244,6 +276,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'session-async-output-style-mapping',
     description: '会话右上角动态异步输出风格项构造函数 (items 列表) 名称汉化',
+    enGuard: '7Aqe2/LqFL',
+    zhGuard: '7Aqe2/LqFL',
     enPattern: /function ([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{if\(\2!=="default"\)return \2;let ([a-zA-Z0-9_$]+)=\3\.formatMessage\(\{defaultMessage:"Default",id:"7Aqe2\/LqFL"\}\);/g,
     zhSnippet: 'function $1($2,$3,$4){var _osm={"Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"};if($2!=="default")return _osm[$2]||$2;let $5=$3.formatMessage({defaultMessage:"Default",id:"7Aqe2/LqFL"});',
     zhPattern: /function ([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{var _osm=\{"Concise":"简洁","Explanatory":"详尽","Learning":"启发","Proactive":"主动"\};if\(\2!=="default"\)return _osm\[\2\]\|\|\2;let ([a-zA-Z0-9_$]+)=\3\.formatMessage\(\{defaultMessage:"Default",id:"7Aqe2\/LqFL"\}\);/g,
@@ -253,6 +287,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'sidebar-view-all-tooltip',
     description: '侧边栏跳转详情悬浮提示词 (View all ➔ 查看全部)',
+    enGuard: '="View all"',
+    zhGuard: '="查看全部"',
     enPattern: /([a-zA-Z0-9_$]+)="View all"/g,
     zhSnippet: '$1="查看全部"',
     zhPattern: /([a-zA-Z0-9_$]+)="查看全部"/g,
@@ -262,6 +298,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'activity-token-books-mapping',
     description: '活动热力图阅读量对比世界名著书名汉化 (Moby-Dick 等)',
+    enGuard: 'Moby-Dick',
+    zhGuard: '白鲸',
     enPattern: /name:"The Little Prince",tokens:22e3\},\{name:"Animal Farm",tokens:39e3\},\{name:"The Great Gatsby",tokens:62e3\},\{name:"Harry Potter and the Philosopher's Stone",tokens:103e3\},\{name:"The Hobbit",tokens:123e3\},\{name:"Pride and Prejudice",tokens:156e3\},\{name:"Dune",tokens:244e3\},\{name:"Moby-Dick",tokens:268e3\},\{name:"The Lord of the Rings",tokens:576e3\},\{name:"War and Peace",tokens:73e4\}/g,
     zhSnippet: 'name:"小王子",tokens:22e3},{name:"动物庄园",tokens:39e3},{name:"了不起的盖茨比",tokens:62e3},{name:"哈利·波特与魔法石",tokens:103e3},{name:"霍比特人",tokens:123e3},{name:"傲慢与偏见",tokens:156e3},{name:"沙丘",tokens:244e3},{name:"白鲸",tokens:268e3},{name:"魔戒",tokens:576e3},{name:"战争与和平",tokens:73e4}',
     zhPattern: /name:"白鲸",tokens:268e3/g,
@@ -271,6 +309,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'thinking-effort-options-mapping',
     description: '第三方推理配置默认思考强度下拉选项 (low/medium/high/xhigh/max ➔ 低/中/高/极高/最大)',
+    enGuard: 'optionLabels',
+    zhGuard: 'optionLabels',
     enPattern: /return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?\1,disabled:/g,
     zhSnippet: 'return{value:$1,label:$2($3,$4.meta.optionLabels?.[$1])??({"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"}[$1])??$1,disabled:',
     zhPattern: /(?:var _em=\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\};)?return\{value:([a-zA-Z0-9_$]+),label:([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\.meta\.optionLabels\?\.\[\1\]\)\?\?(?:_em\[\1\]|\(\{"low":"低","medium":"中","high":"高","xhigh":"极高","max":"最大"\}\[\1\]\))\?\?\1,disabled:/g,
@@ -280,6 +320,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'language-picker-zh-cn-display',
     description: '语言选择弹窗 zh-CN 原生标签 (中文（简体）)、灰色英文副标题 (Chinese (Simplified)) 及首位排序映射',
+    enGuard: 'English (United States)',
+    zhGuard: 'zh-CN',
     enPattern: /(?<!"zh-CN":\{name:"Chinese \(Simplified\)",localName:"[^"]+"\},)"en-US":\{name:"English \(United States\)",localName:"English \(United States\)"\}/g,
     zhSnippet: '"zh-CN":{name:"Chinese (Simplified)",localName:"\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09"},"en-US":{name:"English (United States)",localName:"English (United States)"}',
     zhPattern: /"zh-CN":\{name:"Chinese \(Simplified\)",localName:"(?:\\u4E2D\\u6587\\uFF08\\u7B80\\u4F53\\uFF09|中文（简体）)"\},"en-US":\{name:"English \(United States\)",localName:"English \(United States\)"\}/g,
@@ -289,6 +331,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'builtin-cowork-skills-zh-description',
     description: '内置技能列表 (consolidate-memory/context/explain-usage/schedule/setup-claude/docx/pdf/pptx/xlsx/frontend-design) 前端中文简介无损映射',
+    enGuard: 'getSupportedCommands',
+    zhGuard: 'getSupportedCommands',
     enPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)(?!\.map\()/g,
     zhSnippet: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork").map($2=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};var _d=$2.description&&$2.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$2.name];return _d?{...$2,description:_d}:$2})',
     zhPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)\.map\(\2=>\{var _sm=\{"consolidate-memory":"[^"]+",[^}]+\};var _d=\2\.description&&\2\.description\.includes\("not available"\)\?"[^"]+":_sm\[\2\.name\];return _d\?\{\.\.\.\2,description:_d\}:\2\}\)/g,
@@ -298,6 +342,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'builtin-plugin-skills-zh-description',
     description: '内置打包插件技能 (docx/frontend-design/pdf/pdf-reading/pptx/xlsx) 前端中文简介无损映射',
+    enGuard: '.skills.map',
+    zhGuard: '.skills.map',
     enPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\(\{name:\2\.name,description:\2\.description,argumentHint:\2\.argumentHint,/g,
     zhSnippet: '$1.skills.map($2=>({name:$2.name,description:({"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"}[$2.name]||$2.description),argumentHint:$2.argumentHint,',
     zhPattern: /([a-zA-Z0-9_$]+)\.skills\.map\(([a-zA-Z0-9_$]+)=>\(\{name:\2\.name,description:\(\{"docx":"[^"]+",[^}]+\}\[\2\.name\]\|\|\2\.description\),argumentHint:\2\.argumentHint,/g,
@@ -307,6 +353,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'builtin-api-skills-zh-description',
     description: '官方云端/组织内置技能列表 (creator_type=anthropic) 前端中文简介无损映射',
+    enGuard: 'creator_type',
+    zhGuard: 'creator_type',
     enPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\1\.description,creatorType:\1\.creator_type,/g,
     zhSnippet: 'return{skillId:$1.id,skillName:$1.name,skillDescription:($1.creator_type==="anthropic"&&{"docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"}[$1.name])||$1.description,creatorType:$1.creator_type,',
     zhPattern: /return\{skillId:([a-zA-Z0-9_$]+)\.id,skillName:\1\.name,skillDescription:\(\1\.creator_type==="anthropic"&&\{"docx":"[^"]+",[^}]+\}\[\1\.name\]\)\|\|\1\.description,creatorType:\1\.creator_type,/g,
@@ -316,6 +364,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'effort-slider-recommended-badge',
     description: '模型推理强度滑块刻度 Recommended 徽标汉化 (Recommended ➔ 推荐)',
+    enGuard: 'variant!=="warning"',
+    zhGuard: 'm==="Recommended"?"推荐"',
     enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.findIndex\(([a-zA-Z0-9_$]+)=>\3\.badge\?\.message&&\3\.badge\.variant!=="warning"\),([a-zA-Z0-9_$]+)=\2\[\1\]\?\.badge\?\.message/g,
     zhSnippet: '$1=$2.findIndex($3=>$3.badge?.message&&$3.badge.variant!=="warning"),$4=(function(m){return m==="Recommended"?"推荐":m})($2[$1]?.badge?.message)',
     zhPattern: /\(function\(m\)\{return m==="Recommended"\?"推荐":m\}\)\(([a-zA-Z0-9_$]+)\[([a-zA-Z0-9_$]+)\]\?\.badge\?\.message\)/g,
@@ -325,6 +375,8 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'effort-menu-recommended-badge',
     description: '模型推理强度二级菜单 Recommended 徽标汉化 (Recommended ➔ 推荐)',
+    enGuard: 'badge?.message',
+    zhGuard: 'message==="Recommended"?"推荐"',
     enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.badge\?\.message\?\2\.badge:void 0,([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\(\2\)/g,
     zhSnippet: '$1=$2.badge?.message?{...$2.badge,message:$2.badge.message==="Recommended"?"推荐":$2.badge.message}:void 0,$3=$4($2)',
     zhPattern: /\{(?:\.\.\.[a-zA-Z0-9_$]+\.badge,)?message:[a-zA-Z0-9_$]+\.badge\.message==="Recommended"\?"推荐":[a-zA-Z0-9_$]+\.badge\.message\}/g,
@@ -394,12 +446,22 @@ function applyPatch(options = {}) {
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
       const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
+      const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
+      const hasLongDocsFile = fs.existsSync(longDocsPath);
+      const zFnDeclarationRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/g;
+      const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
+      const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
 
       for (const file of jsFiles) {
         const fullPath = path.join(assetsDir, file);
         const bakPath = `${fullPath}.orig.bak`;
         const current = fs.readFileSync(fullPath, 'utf8');
-        const currentHash = getHash(current);
+
+        let currentHash = null;
+        const getCurrentHash = () => {
+          if (currentHash === null) currentHash = getHash(current);
+          return currentHash;
+        };
 
         let content = current;
 
@@ -408,12 +470,16 @@ function applyPatch(options = {}) {
           const bakHash = getHash(bak);
 
           // 核心防御：判断当前 fullPath 是否处于已被我们打过补丁的状态
-          const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
+          const isOurPatched = (fileManifest[file] && getCurrentHash() === fileManifest[file].patchedHash) ||
                                current.includes(',"zh-CN"]') ||
                                current.includes('var __ZH_DOCS__=') ||
-                               JS_LITERAL_PATCHES.some(p => safeTest(p.zhPattern, current));
+                               JS_LITERAL_PATCHES.some(p => {
+                                 const guard = p.zhGuard || p.enGuard;
+                                 if (guard && !current.includes(guard)) return false;
+                                 return safeTest(p.zhPattern, current);
+                               });
 
-          if (currentHash !== bakHash && !isOurPatched) {
+          if (getCurrentHash() !== bakHash && !isOurPatched) {
             // 官方已静默更新该文件（内容变动且不含我们的汉化特征）
             // 必须立即刷新备份基线为官方最新原版，丢弃陈旧备份，杜绝跨版本降级！
             fs.copyFileSync(fullPath, bakPath);
@@ -423,8 +489,6 @@ function applyPatch(options = {}) {
             content = bak;
           }
         }
-
-        const baselineHash = getHash(content);
 
         let newContent = content;
         let modified = false;
@@ -438,24 +502,25 @@ function applyPatch(options = {}) {
           }
         }
 
-        // 结构化硬编码补丁注入与命中统计
+        // 结构化硬编码补丁注入与命中统计（采用静态特征子串 Fast Substring Guard 预剪枝，消除 99% 无谓正则回溯）
         for (const patch of JS_LITERAL_PATCHES) {
-          if (safeTest(patch.enPattern, newContent)) {
+          const hasEnGuard = !patch.enGuard || newContent.includes(patch.enGuard);
+          const hasZhGuard = !patch.zhGuard || newContent.includes(patch.zhGuard);
+          if (!hasEnGuard && !hasZhGuard) {
+            continue;
+          }
+
+          if (hasEnGuard && safeTest(patch.enPattern, newContent)) {
             newContent = newContent.replace(patch.enPattern, patch.zhSnippet);
             patchHits[patch.id]++;
             modified = true;
-          } else if (safeTest(patch.zhPattern, newContent)) {
+          } else if (hasZhGuard && safeTest(patch.zhPattern, newContent)) {
             patchHits[patch.id]++;
           }
         }
 
-        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (多签名自适应拓扑引擎，适配变量混淆名变异与函数语法变异)
-        const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
-        const zFnDeclarationRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/g;
-        const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
-        const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
-
-        if (fs.existsSync(longDocsPath) && (safeTest(zFnDeclarationRegex, newContent) || safeTest(zFnArrowRegex, newContent) || safeTest(zFnAssignRegex, newContent))) {
+        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (仅当包含 'text:' 特征子串时才执行正则判定)
+        if (hasLongDocsFile && newContent.includes('text:') && (safeTest(zFnDeclarationRegex, newContent) || safeTest(zFnArrowRegex, newContent) || safeTest(zFnAssignRegex, newContent))) {
           const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
           let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
           let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
@@ -500,7 +565,7 @@ function applyPatch(options = {}) {
             fs.copyFileSync(fullPath, bakPath);
           }
           fileManifest[file] = {
-            originalHash: baselineHash,
+            originalHash: getHash(content),
             patchedHash: getHash(newContent)
           };
 
@@ -710,7 +775,11 @@ function restorePatch(options = {}) {
           const isOurPatched = (fileManifest[file] && currentHash === fileManifest[file].patchedHash) ||
                                current.includes(',"zh-CN"]') ||
                                current.includes('var __ZH_DOCS__=') ||
-                               JS_LITERAL_PATCHES.some(p => safeTest(p.zhPattern, current));
+                               JS_LITERAL_PATCHES.some(p => {
+                                 const guard = p.zhGuard || p.enGuard;
+                                 if (guard && !current.includes(guard)) return false;
+                                 return safeTest(p.zhPattern, current);
+                               });
 
           // 核心防御：仅当当前文件确为补丁文件时才还原；若官方已静默更新，严禁将旧 bak 覆盖新版！
           if (isOurPatched) {
@@ -718,15 +787,22 @@ function restorePatch(options = {}) {
           }
           fs.unlinkSync(bakPath);
         } else {
-          // 兜底：正则清理
+          // 兜底：正则清理（采用静态特征子串快速剪枝，若无任何汉化特征则极速跳过）
           let content = fs.readFileSync(fullPath, 'utf8');
+          const hasAnyZhFeature = content.includes(',"zh-CN"]') ||
+                                  content.includes('__ZH_DOCS__') ||
+                                  JS_LITERAL_PATCHES.some(p => p.zhGuard && content.includes(p.zhGuard));
+          if (!hasAnyZhFeature) {
+            continue;
+          }
+
           let modified = false;
           if (content.includes(',"zh-CN"]')) {
             content = content.replace(',"zh-CN"]', ']');
             modified = true;
           }
           for (const patch of JS_LITERAL_PATCHES) {
-            if (safeTest(patch.zhPattern, content)) {
+            if ((!patch.zhGuard || content.includes(patch.zhGuard)) && safeTest(patch.zhPattern, content)) {
               content = content.replace(patch.zhPattern, patch.restoreEn);
               modified = true;
             }

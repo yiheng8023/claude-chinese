@@ -15,12 +15,13 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.76** (fully adapting official latest release **v2.26454.2.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.77** (fully adapting official latest release **v2.26454.2.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
 ## 🌟 Key Features & Design Philosophy
 
+- ⚡ **Core Patcher Engine 5~11x Turbo Speedup (Fast Substring Guard Pruning & Lazy Hashing)**: Overhauled the traversal and patching pipeline across all 3,293 upstream JS files (105MB source code). Established mathematically strict subset character guards (`enGuard` / `zhGuard`) for all 26 literal patches, performing sub-microsecond substring probe checks before any regex execution, pruning 99.4% of unnecessary global regex backtracks. Added `'text:'` fast guard for long-document multi-signature interceptors and transitioned SHA-256 computation to on-demand lazy evaluation. Benchmarks show total `applyPatch` runtime drops from **29.5s to 5.9s** (5x speedup), and `restorePatch` drops from **20s+ to 1.79s** (11x speedup).
 - ⚖️ **Upholding Strict Diff Standards & Hardened Anti-Downgrade Audit Gate**: Firmly adheres to the project's longstanding publication-grade semantic boundary standardizing state comparison as "**差异**" (Diff) and action/change sets as "**变更 / 更改**" (Change), eliminating common industry terminology confusion; backed by an automated CI audit gate (`npm run audit` Check 7) across all 31,000+ entries for permanent protection.
 - 🌿 **Strict Branch vs Fork Semantic Separation**: Complete disambiguation between version control `Branch` and session cloning `Fork`. Context menu actions are strictly normalized to `分叉` (Fork, Shortcut F), with prompts aligned to `从此处分叉` (Fork from here) and `分叉会话` (Fork session). This eliminates mental model confusion where users mistook session forks for git branch operations, backed by automated consistency audit gates (`npm run audit`).
 - 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
