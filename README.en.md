@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.77** (fully adapting official latest release **v2.26454.2.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.78** (fully adapting official latest release **v2.31226.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -30,7 +30,7 @@ A high-performance, reversible Chinese localization toolkit designed for Anthrop
 - 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
 - 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
 - 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
-- 🎯 **Full HashKey, Dynamic Namespaces & Deep Foldable Documents Coverage**: Over **31,000+** curated core entries, **147 full-length foldable deep documentation guides**, and native dynamic i18n namespace keys (covering nonessential network services guide, fast file search & filters, dual-tier bulletproof localization for model thinking effort slider/menu `Recommended` badges, Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns, lossless frontend Chinese descriptions for all 11 official built-in skills, and first-slot `中文（简体） / Chinese (Simplified)` native display in the language picker modal).
+- 🎯 **Full HashKey, Dynamic Namespaces & Deep Foldable Documents Coverage**: Over **31,000+** curated core entries, **149 full-length foldable deep documentation guides**, and native dynamic i18n namespace keys (covering skill uploads/management, third-party MCP migration & imports, SSH remote session reconnection fixes, worktree port & site authorization alerts, nonessential network services guide, fast file search & filters, dual-tier bulletproof localization for model thinking effort slider/menu `Recommended` badges, Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns, lossless frontend Chinese descriptions for all 11 official built-in skills, and first-slot `中文（简体） / Chinese (Simplified)` native display in the language picker modal).
 - 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
 - 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user via single-pass recursive ACLs to avoid repeated UAC prompts and hazardous global Users group escalations.
 
@@ -45,9 +45,9 @@ graph TD
     User((Developer / User)) --> ClaudeApp[Claude Desktop App]
     
     subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (769 official baseline / 1,068 entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,144 entries)"]
-        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (147 articles)"]
+        ClaudeApp --> ShellLayer["Shell Layer (801 official baseline / 1,100 entries)"]
+        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,166 entries)"]
+        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (149 articles)"]
         ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
     end
     
