@@ -16,3 +16,7 @@ dict/*_all.json
 dict/multilang-ref.json
 tools/*.json
 tools/*.txt
+
+# Temporary release drafts & sync scripts
+RELEASE_NOTES_*.md
+tools/sync-*.js
