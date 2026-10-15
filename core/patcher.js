@@ -293,7 +293,7 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: '$1="查看全部"',
     zhPattern: /([a-zA-Z0-9_$]+)="查看全部"/g,
     restoreEn: '$1="View all"',
-    intlKey: 'sidebarViewAll'
+    intlKey: 'pFK6bJU0EM'
   },
   {
     id: 'activity-token-books-mapping',

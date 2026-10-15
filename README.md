@@ -16,7 +16,7 @@
 </p>
 
 
-专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.79**，全面适配官方最新版 **v2.31226.1.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
+专为 Anthropic **Claude Desktop** 桌面客户端（Windows MSIX / Win32 / macOS / Linux）打造的高性能、可逆式中文本地化工具包（当前版本 **v1.2.80**，全面适配官方最新版 **v2.37337.1.0**）。基于官方原生 i18n 架构打造增量挂载与自愈工程体系，实现全量 UI 界面汉化与版本更新自动自愈。
 
 ---
 
@@ -172,9 +172,9 @@ claude-chinese/
 │       ├── ci.yml                    # 全平台 (Windows/macOS/Linux) CI 自动化测试流水线
 │       └── upstream-matrix-sentinel.yml # 上游事前兼容矩阵与混淆变异碰撞每日巡检哨兵
 ├── dict/                             # 核心汉化词库
-│   ├── zh-CN.json                    # Shell 壳层汉化词典 (880+ 词条)
-│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (30,000+ 词条)
-│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (147 篇)
+│   ├── zh-CN.json                    # Shell 壳层汉化词典 (1,100+ 词条)
+│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (30,200+ 词条)
+│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (151 篇)
 │   └── dynamic-zh-CN.json            # 动态特性与推理占位符词典
 ├── core/                             # 核心注入与架构引擎
 │   ├── patcher.js                    # 拓扑多签名长文档引擎、JS 白名单与出厂基线自愈
