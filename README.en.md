@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.80** (fully adapting official latest release **v2.37337.1.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.81** (fully adapting official latest release **v2.42304.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
 
 ---
 
@@ -171,7 +171,7 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (1,100+ entries)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (1,140+ entries)
 │   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (30,200+ entries)
 │   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (151 articles)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary

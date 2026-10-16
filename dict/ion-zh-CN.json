@@ -16364,7 +16364,7 @@
   "WTrOy36sdu": "Chat",
   "WU2fOEXp5S": "Claude 使用你的布局、字体和模板，让每张幻灯片保持品牌一致。",
   "WU4d48B/hw": "正在拒绝来自 @{to} 的关闭请求",
-  "WUR4bhePMC": "在符合 <aupLink>Anthropic 使用规范</aupLink>的前提下，Claude 会在本账户及您关联账户的所有 Cowork 任务中记住这些指令。<learnMoreLink>了解更多</learnMoreLink>",
+  "WUR4bhePMC": "在 <aupLink>Anthropic 使用规范</aupLink> 允许的范围内，Claude 会在 Cowork 任务中针对此账户及您的任何关联账户牢记这些指令。<learnMoreLink>了解更多</learnMoreLink>",
   "WUV28A6Pf2": "保存中…",
   "WUhhX12gm9": "关闭",
   "WUpPCDbJ8g": "正在移除…",
@@ -30199,8 +30199,8 @@
   "P0gQiUc0+j": "在此计算机上用于隔离编码会话的 Git 工作树 (worktree) 的存储位置。",
   "dnMG5c8GDx": "在此计算机上用于隔离编码会话的 Git 工作树 (worktree) 的存储位置。SSH 会话则使用其远程主机上的“工作树位置”设置。",
   "zxDZnEbGiY": "当消息被标记时切换模型",
-  "eMKehO2KIl": "当安全防护规则标记某条消息时，自动切换至其他模型以继续对话。关闭时，会话将暂停。仅适用于此计算机上的本地会话。",
-  "y2YuB93nEz": "当安全防护规则标记某条消息时，自动切换至其他模型以继续对话。关闭时，会话将暂停。仅适用于此计算机上的本地会话。",
+  "eMKehO2KIl": "当安全防护规则标记某条消息时，自动切换至其他模型以继续对话。关闭时，您的对话将暂停。",
+  "y2YuB93nEz": "当安全防护规则标记某条消息时，自动切换至其他模型以继续对话。关闭时，会话将暂停。",
   "developerModeEnabledTitle": "允许开发者模式",
   "developerModeEnabledShort": "允许用户开启开发者模式。关闭时，应用的开发者工具以及安装未打包扩展的选项将不可用。",
   "WOzrNl1dg2": "Claude Desktop 未经脱敏直接发送至您收集器的内容类别。`userPrompts` 还会一并发送 Claude 的回复。留空则脱敏所有内容（默认）。",
@@ -30253,5 +30253,8 @@
   "CR3hKrmvGy": "已存储",
   "MCgwKn3oSI": "Chat 与 Cowork 统一保留期",
   "DeDIdlml6f": "{shown} 显示在此处。{setting} 当前设置为 {days, plural, other {# 天}}。请输入数值以同时设置两者。",
-  "8NIaAn3gfL": "{shown} 显示在此处。{setting} 尚未设置。请输入数值以同时设置两者。"
+  "8NIaAn3gfL": "{shown} 显示在此处。{setting} 尚未设置。请输入数值以同时设置两者。",
+  "pXnYFOsv9N": "在 <aupLink>Anthropic 使用规范</aupLink> 允许的范围内，Claude 会在对话与 Cowork 中针对此账户及您的任何关联账户牢记这些指令。<learnMoreLink>了解更多</learnMoreLink>",
+  "FFLxWUAQyW": "仅适用于此计算机上的本地会话。",
+  "JBM3SRPLTt": "限制每台设备上每个窗口中每位用户的输入和输出 Token 总量。缓存的 Token 不计入在内，因此这不会对您向提供商支付的账单设置上限。"
 }
