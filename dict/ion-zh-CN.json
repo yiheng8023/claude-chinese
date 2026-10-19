@@ -30256,5 +30256,8 @@
   "8NIaAn3gfL": "{shown} 显示在此处。{setting} 尚未设置。请输入数值以同时设置两者。",
   "pXnYFOsv9N": "在 <aupLink>Anthropic 使用规范</aupLink> 允许的范围内，Claude 会在对话与 Cowork 中针对此账户及您的任何关联账户牢记这些指令。<learnMoreLink>了解更多</learnMoreLink>",
   "FFLxWUAQyW": "仅适用于此计算机上的本地会话。",
-  "JBM3SRPLTt": "限制每台设备上每个窗口中每位用户的输入和输出 Token 总量。缓存的 Token 不计入在内，因此这不会对您向提供商支付的账单设置上限。"
+  "JBM3SRPLTt": "限制每台设备上每个窗口中每位用户的输入和输出 Token 总量。缓存的 Token 不计入在内，因此这不会对您向提供商支付的账单设置上限。",
+  "BNj0YDCyBr": "自动保存",
+  "qozOjkBoMg": "自动保存已开启",
+  "OtciwUBKg0": "您对文件所做的更改现已自动保存。如需关闭此功能，请打开此菜单并取消勾选“自动保存”。"
 }
