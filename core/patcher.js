@@ -256,10 +256,10 @@ const JS_LITERAL_PATCHES = [
     description: 'Code 模式输出风格下拉选项 (简洁/详尽/启发/主动)',
     enGuard: 'builtIns',
     zhGuard: 'zhLabels=',
-    enPattern: /for\(let ([a-zA-Z0-9_$]+) of\[\.\.\.([a-zA-Z0-9_$]+)\?\.builtIns\?\?\[\],\.\.\.\2\?\.customs\?\?\[\]\]\)\{let ([a-zA-Z0-9_$]+)=\1\.toLowerCase\(\);\1\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(\3\)\|\|\(\4\.add\(\3\),([a-zA-Z0-9_$]+)\.push\(\{value:\1,label:\1\}\)\)\}/g,
-    zhSnippet: 'for(let $1 of[...$2?.builtIns??[],...$2?.customs??[]]){let $3=$1.toLowerCase();if($1.length!==0&&!$4.has($3)){$4.add($3);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[$3]||$1;$5.push({value:$1,label:lbl})}}',
+    enPattern: /for\(let ([a-zA-Z0-9_$]+) of\[\.\.\.([a-zA-Z0-9_$]+)(?:\?\.builtIns\?\?\[\])?,\.\.\.([a-zA-Z0-9_$]+)(?:\?\.customs\?\?\[\])?\]\)\{let ([a-zA-Z0-9_$]+)=\1\.toLowerCase\(\);\1\.length===0\|\|([a-zA-Z0-9_$]+)\.has\(\4\)\|\|\(\5\.add\(\4\),([a-zA-Z0-9_$]+)\.push\(\{value:\1,label:\1\}\)\)\}/g,
+    zhSnippet: 'for(let $1 of[...$2,...$3]){let $4=$1.toLowerCase();if($1.length!==0&&!$5.has($4)){$5.add($4);let zhLabels={"default":"默认","concise":"简洁","explanatory":"详尽","learning":"启发","proactive":"主动"};let lbl=zhLabels[$4]||$1;$6.push({value:$1,label:lbl})}}',
     zhPattern: /zhLabels=\{"default":"默认","concise":"简洁"/g,
-    restoreEn: 'for(let $1 of[...$2?.builtIns??[],...$2?.customs??[]]){let $3=$1.toLowerCase();$1.length===0||$4.has($3)||($4.add($3),$5.push({value:$1,label:$1}))}',
+    restoreEn: 'for(let $1 of[...$2,...$3]){let $4=$1.toLowerCase();$1.length===0||$5.has($4)||($5.add($4),$6.push({value:$1,label:$1}))}',
     intlKey: 'outStyleMap'
   },
   {
@@ -300,10 +300,10 @@ const JS_LITERAL_PATCHES = [
     description: '活动热力图阅读量对比世界名著书名汉化 (Moby-Dick 等)',
     enGuard: 'Moby-Dick',
     zhGuard: '白鲸',
-    enPattern: /name:"The Little Prince",tokens:22e3\},\{name:"Animal Farm",tokens:39e3\},\{name:"The Great Gatsby",tokens:62e3\},\{name:"Harry Potter and the Philosopher's Stone",tokens:103e3\},\{name:"The Hobbit",tokens:123e3\},\{name:"Pride and Prejudice",tokens:156e3\},\{name:"Dune",tokens:244e3\},\{name:"Moby-Dick",tokens:268e3\},\{name:"The Lord of the Rings",tokens:576e3\},\{name:"War and Peace",tokens:73e4\}/g,
-    zhSnippet: 'name:"小王子",tokens:22e3},{name:"动物庄园",tokens:39e3},{name:"了不起的盖茨比",tokens:62e3},{name:"哈利·波特与魔法石",tokens:103e3},{name:"霍比特人",tokens:123e3},{name:"傲慢与偏见",tokens:156e3},{name:"沙丘",tokens:244e3},{name:"白鲸",tokens:268e3},{name:"魔戒",tokens:576e3},{name:"战争与和平",tokens:73e4}',
+    enPattern: /\{name:"The Little Prince",tokens:22e3\},(?:.*?)\{name:"War and Peace",tokens:73e4\}/g,
+    zhSnippet: '{name:"小王子",tokens:22e3},{name:"老人与海",tokens:35e3},{name:"圣诞颂歌",tokens:37e3},{name:"动物庄园",tokens:39e3},{name:"华氏 451 度",tokens:6e4},{name:"了不起的盖茨比",tokens:62e3},{name:"五号屠场",tokens:64e3},{name:"美丽新世界",tokens:83e3},{name:"麦田里的守望者",tokens:95e3},{name:"哈利·波特与魔法石",tokens:103e3},{name:"霍比特人",tokens:123e3},{name:"1984",tokens:123e3},{name:"杀死一只知更鸟",tokens:13e4},{name:"傲慢与偏见",tokens:156e3},{name:"沙丘",tokens:244e3},{name:"白鲸",tokens:268e3},{name:"罪与罚",tokens:274e3},{name:"权力的游戏",tokens:381e3},{name:"安娜·卡列尼娜",tokens:468e3},{name:"堂吉诃德",tokens:52e4},{name:"魔戒",tokens:576e3},{name:"基督山伯爵",tokens:603e3},{name:"悲惨世界",tokens:689e3},{name:"战争与和平",tokens:73e4}',
     zhPattern: /name:"白鲸",tokens:268e3/g,
-    restoreEn: 'name:"The Little Prince",tokens:22e3},{name:"Animal Farm",tokens:39e3},{name:"The Great Gatsby",tokens:62e3},{name:"Harry Potter and the Philosopher\'s Stone",tokens:103e3},{name:"The Hobbit",tokens:123e3},{name:"Pride and Prejudice",tokens:156e3},{name:"Dune",tokens:244e3},{name:"Moby-Dick",tokens:268e3},{name:"The Lord of the Rings",tokens:576e3},{name:"War and Peace",tokens:73e4}',
+    restoreEn: '{name:"The Little Prince",tokens:22e3},{name:"The Old Man and the Sea",tokens:35e3},{name:"A Christmas Carol",tokens:37e3},{name:"Animal Farm",tokens:39e3},{name:"Fahrenheit 451",tokens:6e4},{name:"The Great Gatsby",tokens:62e3},{name:"Slaughterhouse-Five",tokens:64e3},{name:"Brave New World",tokens:83e3},{name:"The Catcher in the Rye",tokens:95e3},{name:"Harry Potter and the Philosopher\\u2019s Stone",tokens:103e3},{name:"The Hobbit",tokens:123e3},{name:"1984",tokens:123e3},{name:"To Kill a Mockingbird",tokens:13e4},{name:"Pride and Prejudice",tokens:156e3},{name:"Dune",tokens:244e3},{name:"Moby-Dick",tokens:268e3},{name:"Crime and Punishment",tokens:274e3},{name:"A Game of Thrones",tokens:381e3},{name:"Anna Karenina",tokens:468e3},{name:"Don Quixote",tokens:52e4},{name:"The Lord of the Rings",tokens:576e3},{name:"The Count of Monte Cristo",tokens:603e3},{name:"Les Mis\\u00E9rables",tokens:689e3},{name:"War and Peace",tokens:73e4}',
     intlKey: 'activityBooks'
   },
   {
@@ -333,10 +333,10 @@ const JS_LITERAL_PATCHES = [
     description: '内置技能列表 (consolidate-memory/context/explain-usage/schedule/setup-claude/docx/pdf/pptx/xlsx/frontend-design) 前端中文简介无损映射',
     enGuard: 'getSupportedCommands',
     zhGuard: 'getSupportedCommands',
-    enPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)(?!\.map\()/g,
-    zhSnippet: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork").map($2=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};var _d=$2.description&&$2.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$2.name];return _d?{...$2,description:_d}:$2})',
-    zhPattern: /\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\2\.scope==="cowork"\)\.map\(\2=>\{var _sm=\{"consolidate-memory":"[^"]+",[^}]+\};var _d=\2\.description&&\2\.description\.includes\("not available"\)\?"[^"]+":_sm\[\2\.name\];return _d\?\{\.\.\.\2,description:_d\}:\2\}\)/g,
-    restoreEn: '(await $1.getSupportedCommands()).filter($2=>$2.scope==="cowork")',
+    enPattern: /(?:async function ([a-zA-Z0-9_$]+)\(\)\{return ([a-zA-Z0-9_$]+)\?\.getSupportedCommands\?\(await \2\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)\):\[\]\}|\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\5\.scope==="cowork"\))(?!\.map\()/g,
+    zhSnippet: 'async function $1(){return $2?.getSupportedCommands?(await $2.getSupportedCommands()).filter($3).map($3=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};var _d=$3.description&&$3.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$3.name];return _d?{...$3,description:_d}:$3}):[]}',
+    zhPattern: /async function ([a-zA-Z0-9_$]+)\(\)\{return ([a-zA-Z0-9_$]+)\?\.getSupportedCommands\?\(await \2\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)\)\.map\(/g,
+    restoreEn: 'async function $1(){return $2?.getSupportedCommands?(await $2.getSupportedCommands()).filter($3):[]}',
     intlKey: null
   },
   {
@@ -364,12 +364,12 @@ const JS_LITERAL_PATCHES = [
   {
     id: 'effort-slider-recommended-badge',
     description: '模型推理强度滑块刻度 Recommended 徽标汉化 (Recommended ➔ 推荐)',
-    enGuard: 'variant!=="warning"',
+    enGuard: 'badge?.message',
     zhGuard: 'm==="Recommended"?"推荐"',
-    enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.findIndex\(([a-zA-Z0-9_$]+)=>\3\.badge\?\.message&&\3\.badge\.variant!=="warning"\),([a-zA-Z0-9_$]+)=\2\[\1\]\?\.badge\?\.message/g,
-    zhSnippet: '$1=$2.findIndex($3=>$3.badge?.message&&$3.badge.variant!=="warning"),$4=(function(m){return m==="Recommended"?"推荐":m})($2[$1]?.badge?.message)',
+    enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\[([a-zA-Z0-9_$]+)\]\?\.badge\?\.message(?=,[a-zA-Z0-9_$]+=J4\()/g,
+    zhSnippet: '$1=(function(m){return m==="Recommended"?"推荐":m})($2[$3]?.badge?.message)',
     zhPattern: /\(function\(m\)\{return m==="Recommended"\?"推荐":m\}\)\(([a-zA-Z0-9_$]+)\[([a-zA-Z0-9_$]+)\]\?\.badge\?\.message\)/g,
-    restoreEn: '$1=$2.findIndex($3=>$3.badge?.message&&$3.badge.variant!=="warning"),$4=$2[$1]?.badge?.message',
+    restoreEn: '$1=$2[$3]?.badge?.message',
     intlKey: null
   },
   {
@@ -377,10 +377,10 @@ const JS_LITERAL_PATCHES = [
     description: '模型推理强度二级菜单 Recommended 徽标汉化 (Recommended ➔ 推荐)',
     enGuard: 'badge?.message',
     zhGuard: 'message==="Recommended"?"推荐"',
-    enPattern: /([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.badge\?\.message\?\2\.badge:void 0,([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\(\2\)/g,
-    zhSnippet: '$1=$2.badge?.message?{...$2.badge,message:$2.badge.message==="Recommended"?"推荐":$2.badge.message}:void 0,$3=$4($2)',
+    enPattern: /(?:([a-zA-Z0-9_$]+)=([a-zA-Z0-9_$]+)\.badge\?\.message\?\2\.badge:void 0)(?=,([a-zA-Z0-9_$]+)=(?:[a-zA-Z0-9_$]+\([^)]+\)|[a-zA-Z0-9_$]+\(\2\)))/g,
+    zhSnippet: '$1=$2.badge?.message?{...$2.badge,message:$2.badge.message==="Recommended"?"推荐":$2.badge.message}:void 0',
     zhPattern: /\{(?:\.\.\.[a-zA-Z0-9_$]+\.badge,)?message:[a-zA-Z0-9_$]+\.badge\.message==="Recommended"\?"推荐":[a-zA-Z0-9_$]+\.badge\.message\}/g,
-    restoreEn: '$1=$2.badge?.message?$2.badge:void 0,$3=$4($2)',
+    restoreEn: '$1=$2.badge?.message?$2.badge:void 0',
     intlKey: null
   }
 ];
