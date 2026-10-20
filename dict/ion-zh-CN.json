@@ -30310,5 +30310,10 @@
   "7cMqtjbRin": "已保存",
   "FFgIGfn7o1": "{name} 已读",
   "LDB0HWL01K": "默认快速输入快捷键",
-  "3O+fRjXvM7": "为尚未在“设置”中自行配置快捷键的用户，设置打开“快速输入”的默认快捷键（例如 Ctrl+Alt+K）。使用“off”表示不设置快捷键。"
+  "3O+fRjXvM7": "为尚未在“设置”中自行配置快捷键的用户，设置打开“快速输入”的默认快捷键（例如 Ctrl+Alt+K）。使用“off”表示不设置快捷键。",
+  "KIXFESsSdo": "针对每个工具或规则进行审批（例如 Bash(curl *)）。“ask”会在每次匹配调用前提示用户。“allow”为默认设置。若要阻止，请使用“已禁用的内置工具”。",
+  "ReleaseChannel": "发布通道",
+  "ReleaseChannelShort": "自动更新所安装的发布版本。Stable（稳定版）：在每个版本推出时即时安装。Staggered（分批灰度版）：仅在某版本在稳定版通道运行一段时间后再安装。",
+  "ReleaseChannelStable": "Stable (稳定版)",
+  "ReleaseChannelStaggered": "Staggered (分批灰度版)"
 }
