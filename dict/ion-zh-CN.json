@@ -30300,5 +30300,15 @@
   "+ghh1mMSJk": "{count, plural, =2 {归档 # 个会话} one {归档全部 # 个会话} other {归档全部 # 个会话}}",
   "+sPwOqR8AG": "{folder}：{count, plural, one {# 个未提交更改} other {# 个未提交更改}}",
   "++NxuZ/gLw": "您组织的策略已禁用浏览其他网站。",
-  "+/q+0iu2Ev": "无法连接到 {serverName}。其配置中的一个或多个可选字段为空，这可能是导致此问题的原因。若要填写这些字段，您可以移除 {serverName} 并重新设置。"
+  "+/q+0iu2Ev": "无法连接到 {serverName}。其配置中的一个或多个可选字段为空，这可能是导致此问题的原因。若要填写这些字段，您可以移除 {serverName} 并重新设置。",
+  "zAxRiK0DOZ": "会话栏",
+  "D51Rg00H+B": "显示会话栏",
+  "cpEXLxZB9d": "隐藏会话栏",
+  "fJNj3+uHty": "新分区",
+  "JT3r1TFEIO": "重置为默认值",
+  "fs11ci1KNs": "保存",
+  "7cMqtjbRin": "已保存",
+  "FFgIGfn7o1": "{name} 已读",
+  "LDB0HWL01K": "默认快速输入快捷键",
+  "3O+fRjXvM7": "为尚未在“设置”中自行配置快捷键的用户，设置打开“快速输入”的默认快捷键（例如 Ctrl+Alt+K）。使用“off”表示不设置快捷键。"
 }
