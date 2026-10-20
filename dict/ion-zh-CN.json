@@ -30315,5 +30315,13 @@
   "ReleaseChannel": "发布通道",
   "ReleaseChannelShort": "自动更新所安装的发布版本。Stable（稳定版）：在每个版本推出时即时安装。Staggered（分批灰度版）：仅在某版本在稳定版通道运行一段时间后再安装。",
   "ReleaseChannelStable": "Stable (稳定版)",
-  "ReleaseChannelStaggered": "Staggered (分批灰度版)"
+  "ReleaseChannelStaggered": "Staggered (分批灰度版)",
+  "nvT70SKhkd": "显示",
+  "t9g/H2fK6D": "侧边对话",
+  "72eO6R57Yo": "空分组",
+  "clLrzfj75o": "通过开发者设置添加的本地 stdio 服务器。在第三方部署中，关闭该项还会停止插件的本地服务器。远程服务器将保持正常运行。",
+  "5xkWpa1rVR": "新环境",
+  "YxxUA60sT0": "新环境",
+  "bz16qO90l5": "新环境",
+  "u6c1aDVosk": "全部展开"
 }
