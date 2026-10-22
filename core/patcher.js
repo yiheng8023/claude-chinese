@@ -334,9 +334,24 @@ const JS_LITERAL_PATCHES = [
     enGuard: 'getSupportedCommands',
     zhGuard: 'getSupportedCommands',
     enPattern: /(?:async function ([a-zA-Z0-9_$]+)\(\)\{return ([a-zA-Z0-9_$]+)\?\.getSupportedCommands\?\(await \2\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)\):\[\]\}|\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\5\.scope==="cowork"\))(?!\.map\()/g,
-    zhSnippet: 'async function $1(){return $2?.getSupportedCommands?(await $2.getSupportedCommands()).filter($3).map($3=>{var _sm={"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"};var _d=$3.description&&$3.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[$3.name];return _d?{...$3,description:_d}:$3}):[]}',
-    zhPattern: /async function ([a-zA-Z0-9_$]+)\(\)\{return ([a-zA-Z0-9_$]+)\?\.getSupportedCommands\?\(await \2\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)\)\.map\(/g,
-    restoreEn: 'async function $1(){return $2?.getSupportedCommands?(await $2.getSupportedCommands()).filter($3):[]}',
+    zhSnippet: (match, p1, p2, p3, p4, p5) => {
+      const dictStr = '{"consolidate-memory":"回顾并整理您的记忆文件——合并重复项、修正过期信息、精简索引。","context":"显示当前上下文窗口的占用情况","explain-usage":"使用通俗语言和简洁图表解释本会话的 Token 消耗去向。","schedule":"创建或更新自动运行的定时任务（例如每天、每天早上或指定时间自动执行）。","setup-claude":"引导式设置——安装匹配的插件、体验技能并连接工具。","setup-cowork":"引导式设置——安装匹配的插件、体验技能并连接工具。","design":"使用 Claude Design (claude.ai/design)：创建、导入、导出、同步与登录","docx":"创建、读取、编辑或处理 Word 文档 (.docx) 与模板 (.dotx)——支持提取或重组内容、插入图片、查找替换、处理修订批注及生成精美文档。","frontend-design":"在构建新 UI 或重构现有界面时提供独具匠心的视觉设计指导，协助把控美学方向与排版布局，避免千篇一律的模板化设计。","pdf":"处理各类 PDF 文件——涵盖读取或提取文本与表格、合并或拆分页面、旋转、添加水印、创建 PDF、填写表单、加解密及扫描件 OCR 识别。","pdf-reading":"从磁盘读取、检查或提取 PDF 文件内容——涵盖内容盘点、文本提取、页面光栅化视觉检查、提取内嵌图片/表格/表单字段及文档读取策略选择。","pptx":"创建、读取、编辑或处理 PowerPoint (.pptx / .potx) 演示文稿——涵盖制作幻灯片与路演文稿、提取文本、合并拆分页面及管理母版版式与备注。","xlsx":"创建、读取、编辑或处理电子表格 (.xlsx / .xlsm / .csv / .tsv)——涵盖添加列、公式计算、格式美化、绘制图表、清洗杂乱数据及格式转换。"}';
+      if (p1 && p2 && p3) {
+        return `async function ${p1}(){return ${p2}?.getSupportedCommands?(await ${p2}.getSupportedCommands()).filter(${p3}).map(${p3}=>{var _sm=${dictStr};var _d=${p3}.description&&${p3}.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[${p3}.name];return _d?{...${p3},description:_d}:${p3}}):[]}`;
+      } else if (p4 && p5) {
+        return `(await ${p4}.getSupportedCommands()).filter(${p5}=>${p5}.scope==="cowork").map(${p5}=>{var _sm=${dictStr};var _d=${p5}.description&&${p5}.description.includes("not available")?"引导式设置——根据您的组织策略不可用。":_sm[${p5}.name];return _d?{...${p5},description:_d}:${p5}})`;
+      }
+      return match;
+    },
+    zhPattern: /(?:async function ([a-zA-Z0-9_$]+)\(\)\{return ([a-zA-Z0-9_$]+)\?\.getSupportedCommands\?\(await \2\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)\)\.map\(|\(await ([a-zA-Z0-9_$]+)\.getSupportedCommands\(\)\)\.filter\(([a-zA-Z0-9_$]+)=>\4\.scope==="cowork"\)\.map\()/g,
+    restoreEn: (match, p1, p2, p3, p4) => {
+      if (p1 && p2 && p3) {
+        return `async function ${p1}(){return ${p2}?.getSupportedCommands?(await ${p2}.getSupportedCommands()).filter(${p3}):[]}`;
+      } else if (p4) {
+        return `(await ${p4}.getSupportedCommands()).filter(_item7=>_item7.scope==="cowork")`;
+      }
+      return match;
+    },
     intlKey: null
   },
   {
