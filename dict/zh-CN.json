@@ -1175,5 +1175,19 @@
   "ri8dv4Rtyt": "保存",
   "s5AwVGlph6": "Claude 无法删除其数据。",
   "tQ/pZQzgIy": "{k, plural, one {未能添加另外 # 个市场。} other {未能添加另外 # 个市场。}}",
-  "wh1rgE0O35": "Claude 无法开始重置，因为无法更改其数据文件夹中的此文件：\n{file}\n请确保该文件夹具有可写权限，然后再次选择“重置应用数据”。"
+  "wh1rgE0O35": "Claude 无法开始重置，因为无法更改其数据文件夹中的此文件：\n{file}\n请确保该文件夹具有可写权限，然后再次选择“重置应用数据”。",
+  "9NPJIAADj2": "是否为 {name} 创建主机？",
+  "DO6xtJmQ1s": "这将在本计算机上运行 {program}（如 Claude Code 设置中所配置）。除非这是您刚刚发起的请求，否则请选择“{cancelLabel}”。",
+  "DbaiNC9FYf": "取消",
+  "N7O6mYIONv": "{count, plural, one {退出并打开文件夹} other {退出并打开文件夹}}",
+  "NEX5kJDXaJ": "Claude",
+  "TNbJAY06HZ": "已配置的会话主机未投入使用，因为无法验证其许可证。",
+  "Ysd8lAXo91": "若要完成重置，请退出 Claude，然后在此处删除 Claude 的数据：",
+  "aay/84s+zW": "已配置的会话主机未投入使用，因为它未出示有效的 Anthropic 许可证。",
+  "ekEmN7IJQO": "如果仍然无效，请退出 Claude，然后在此处删除 Claude 的数据：",
+  "kcWuTohBHT": "若要完成重置，请退出 Claude，然后在此处删除 Claude 的剩余数据：",
+  "oVAWDUSewD": "创建主机",
+  "ubaJwRGt1M": "无法加载此产物。请重新加载以重试。如果仍然无法解决，请重启 Claude。",
+  "vlZ0Lmw/CS": "重启 Claude 以连接到已配置的会话主机。",
+  "y3D2qdSXmg": "获取新的 Kerberos 票据 (kinit)，然后重新连接。您在该处的会话将继续保留。"
 }
