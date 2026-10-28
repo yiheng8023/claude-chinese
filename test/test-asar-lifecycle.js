@@ -83,10 +83,10 @@ try {
   assert(fs.existsSync(exeBakPath), '必须生成 claude.exe.orig.bak 出厂备份！');
   console.log('  ✅ 出厂双重纯净备份 .orig.bak 就绪');
 
-  // 验证 claude.exe 的双保险破解
+  // 验证 claude.exe 的安全原位同步 (Fuse 4 保持开启 0x31 激活防篡改 + PE 资源硬编码 SHA256 原位替换)
   const patchedExeBuf = fs.readFileSync(exePath);
-  assert.strictEqual(patchedExeBuf[magicIdx + 38], 0x30, '修改后 Fuse 4 必须被设为 0 (关闭完整性校验)！');
-  console.log('  ✅ [双保险 1] Electron Fuse 4 (embeddedAsarIntegrityValidation) 成功禁用 (1 -> 0)');
+  assert.strictEqual(patchedExeBuf[magicIdx + 38], 0x31, 'Fuse 4 必须严格保持为 1 (激活完整性校验防篡改)！');
+  console.log('  🛡️ [安全强化 1] Electron Fuse 4 (embeddedAsarIntegrityValidation) 保持激活 (1 = Enabled，绝不降级防线)');
 
   const newAsarSha256 = getRawHeaderSha256(origAsarPath);
   assert.notStrictEqual(newAsarSha256, origAsarSha256, '新 ASAR 的 Header SHA256 必须发生变动');

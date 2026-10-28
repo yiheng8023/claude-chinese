@@ -33,12 +33,29 @@ function resolveTargetDirs(targetDir) {
 }
 
 /**
- * 针对当前用户及管理员组授予修改与写入权限（覆盖 app 与 resources 目录，确保可修改 claude.exe）
+ * 安全权限收敛：清除全局 Users 组 (*S-1-5-32-545) 的显式高危写入与完全控制权限，恢复受限只读继承
+ */
+function sanitizePermissions(targetDir) {
+  if (process.platform !== 'win32' || !targetDir || !fs.existsSync(targetDir)) return;
+  const targetDirs = resolveTargetDirs(targetDir);
+  for (const dir of targetDirs) {
+    try {
+      execSync(`icacls "${dir}" /remove:g "*S-1-5-32-545" /t /c /q`, { stdio: 'ignore' });
+    } catch (_) {}
+  }
+}
+
+/**
+ * 严格基于最小特权原则赋权：仅授予当前用户及管理员组写入权限，坚决杜绝全局 Users 组提权
  */
 function grantPermissions(targetDir) {
   if (process.platform !== 'win32' || !targetDir || !fs.existsSync(targetDir)) return true;
 
   const targetDirs = resolveTargetDirs(targetDir);
+
+  // 先行清理可能残留的高危 Users 组显式权限
+  sanitizePermissions(targetDir);
+
   if (targetDirs.every(d => canWriteDirectory(d))) return true;
 
   const username = process.env.USERNAME;
@@ -53,7 +70,7 @@ function grantPermissions(targetDir) {
       } catch (e2) {}
     }
 
-    // 2. 赋予当前用户完全控制权限
+    // 2. 赋予当前用户完全控制权限 (最小特权精准授权)
     if (username) {
       try {
         execSync(`icacls "${dir}" /grant:r "${username}":(OI)(CI)F /t /q /c`, { stdio: 'ignore' });
@@ -69,7 +86,7 @@ function grantPermissions(targetDir) {
   // 关键门禁：若当前进程已成功赋权（如管理员运行），立即返回，杜绝冗余弹窗
   if (targetDirs.every(d => canWriteDirectory(d))) return true;
 
-  // 4. 若当前进程无管理员权限，通过原生临时脚本在后台静默触发 UAC 授权 (覆盖 app 及 resources 目录)
+  // 4. 若当前进程无管理员权限，通过原生临时脚本在后台静默触发 UAC 授权 (仅对当前用户和管理员组授权)
   const tmpScript = path.join(require('os').tmpdir(), `claude_perm_${Date.now()}.cmd`);
   try {
     let cmdContent = `@echo off\r\n`;
@@ -77,7 +94,7 @@ function grantPermissions(targetDir) {
       cmdContent +=
         `takeown /f "${dir}" /a /r /d y >nul 2>&1\r\n` +
         `takeown /f "${dir}" /r /d y >nul 2>&1\r\n` +
-        `icacls "${dir}" /grant:r "*S-1-5-32-545":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
+        `icacls "${dir}" /remove:g "*S-1-5-32-545" /t /c /q >nul 2>&1\r\n` +
         `icacls "${dir}" /grant:r "*S-1-5-32-544":(OI)(CI)F /t /c /q >nul 2>&1\r\n` +
         (username ? `icacls "${dir}" /grant:r "%USERNAME%":(OI)(CI)F /t /c /q >nul 2>&1\r\n` : '');
     }
@@ -98,5 +115,6 @@ function grantPermissions(targetDir) {
 module.exports = {
   canWriteDirectory,
   grantPermissions,
+  sanitizePermissions,
   resolveTargetDirs
 };

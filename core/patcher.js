@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { getClaudeInstallation } = require('./msix-detector');
-const { canWriteDirectory, grantPermissions } = require('./permissions');
+const { canWriteDirectory, grantPermissions, sanitizePermissions } = require('./permissions');
 const { execSync, execFileSync } = require('child_process');
 const crypto = require('crypto');
 const asar = require('@electron/asar');
@@ -37,7 +37,7 @@ function getRawHeaderSha256(archivePath) {
 }
 
 /**
- * 对 claude.exe 执行双保险破解 (Electron Fuse 4 禁用 + PE 资源 Header SHA256 原位替换)
+ * 对 claude.exe 执行安全原位同步 (保持 Electron Fuse 4 完整性防线激活 + PE 资源 Header SHA256 原位替换)
  */
 function patchClaudeExe(exePath, asarHashes = {}) {
   if (!fs.existsSync(exePath)) {
@@ -48,24 +48,9 @@ function patchClaudeExe(exePath, asarHashes = {}) {
 
   const exeBuf = fs.readFileSync(exePath);
   let modified = false;
-  let fusePatched = false;
   let hashPatched = false;
 
-  // 1. 关闭 Electron Fuse 4 (embeddedAsarIntegrityValidation)
-  const fuseMagic = Buffer.from('dL7pKGdnNz796PbbjQWNKmHXBZaB9tsX');
-  const fuseIdx = exeBuf.indexOf(fuseMagic);
-  if (fuseIdx !== -1) {
-    const fuse4Pos = fuseIdx + 38;
-    if (exeBuf[fuse4Pos] === 0x31) { // '1' -> '0'
-      exeBuf[fuse4Pos] = 0x30;
-      modified = true;
-      fusePatched = true;
-    } else if (exeBuf[fuse4Pos] === 0x30) {
-      fusePatched = true; // 熔丝已禁用
-    }
-  }
-
-  // 2. 原位替换 PE 资源中硬编码的各 ASAR Header SHA256 (64 字符十六进制)
+  // 1. 原位替换 PE 资源中硬编码的各 ASAR Header SHA256 (64 字符十六进制)
   for (const [asarName, newSha256] of Object.entries(hashMap)) {
     if (!newSha256 || typeof newSha256 !== 'string') continue;
     const patterns = [
@@ -91,19 +76,33 @@ function patchClaudeExe(exePath, asarHashes = {}) {
     }
   }
 
+  // 2. 核心安全防护：确保 Electron Fuse 4 (embeddedAsarIntegrityValidation) 保持激活状态 ('1' = 0x31)
+  // 杜绝因关闭完整性校验导致本地任意 ASAR 篡改提权风险
+  const fuseMagic = Buffer.from('dL7pKGdnNz796PbbjQWNKmHXBZaB9tsX');
+  const fuseIdx = exeBuf.indexOf(fuseMagic);
+  let integrityEnforced = true;
+  if (fuseIdx !== -1) {
+    const fuse4Pos = fuseIdx + 38;
+    if (exeBuf[fuse4Pos] === 0x30) { // 若之前被关闭，主动复位为 1 (开启校验)
+      exeBuf[fuse4Pos] = 0x31;
+      modified = true;
+    }
+    integrityEnforced = (exeBuf[fuse4Pos] === 0x31);
+  }
+
   if (modified) {
     fs.writeFileSync(exePath, exeBuf);
   }
 
-  if (!fusePatched && !hashPatched) {
+  if (!hashPatched) {
     return {
       success: false,
       modified: false,
-      error: '无法在 claude.exe 中定位 Electron Fuse 特征码或 PE 资源中的 ASAR SHA256 哈希值，上游二进制结构可能已发生变动！'
+      error: '无法在 claude.exe 中定位 PE 资源中的 ASAR SHA256 哈希值，上游二进制结构可能已发生变动！'
     };
   }
 
-  return { success: true, modified, fusePatched, hashPatched, error: null };
+  return { success: true, modified, integrityEnforced, error: null };
 }
 
 /**
@@ -1144,6 +1143,9 @@ function restorePatch(options = {}) {
         }
       }
     }
+
+    // 4. 安全权限出厂收敛：清理可能残留的 Users 组显式提权，恢复系统初始受限只读继承
+    sanitizePermissions(resDir);
 
     return { success: true };
   } catch (err) {
