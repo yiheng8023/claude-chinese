@@ -25,9 +25,40 @@ try {
   fs.mkdirSync(sandboxI18n, { recursive: true });
 
   // 如果本地有真实安装，直接复制真实打补丁的关键 bundle，测试全真 AST！
-  if (info.resourcesPath && fs.existsSync(info.resourcesPath)) {
-    console.log('📡 [MODE: REAL_CLIENT_BUNDLE] 检测到本地真实安装，拷贝真实 JS Bundle 执行真实 AST 语法扫描...\n');
-    const realAssets = path.join(info.resourcesPath, 'ion-dist', 'assets', 'v1');
+  const asarPath = info.resourcesPath ? path.join(info.resourcesPath, 'ion-dist.asar') : null;
+  const realAssets = info.resourcesPath ? path.join(info.resourcesPath, 'ion-dist', 'assets', 'v1') : null;
+
+  if (asarPath && fs.existsSync(asarPath)) {
+    console.log('📡 [MODE: REAL_CLIENT_ASAR] 检测到本地真实 ASAR 架构，从 ion-dist.asar 提取真实 JS Bundle 执行真实 AST 语法扫描...\n');
+    const asar = require('@electron/asar');
+    const allEntries = asar.listPackage(asarPath);
+    const jsEntries = allEntries.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
+    const targetEntries = [
+      jsEntries.find(e => path.basename(e).startsWith('shared-5-')),
+      jsEntries.find(e => path.basename(e).startsWith('shared-13-')),
+      jsEntries.find(e => path.basename(e).startsWith('shared-52-')),
+      jsEntries.find(e => {
+        try {
+          const content = asar.extractFile(asarPath, e.replace(/^[\\\/]/, '')).toString('utf8');
+          return content.includes('["en-US"');
+        } catch (_) { return false; }
+      })
+    ].filter(Boolean);
+
+    for (const entry of targetEntries) {
+      const fileName = path.basename(entry);
+      const content = asar.extractFile(asarPath, entry.replace(/^[\\\/]/, ''));
+      fs.writeFileSync(path.join(sandboxAssets, fileName), content);
+    }
+
+    try {
+      const enUsBuf = asar.extractFile(asarPath, 'i18n/en-US.json');
+      fs.writeFileSync(path.join(sandboxI18n, 'en-US.json'), enUsBuf);
+    } catch (_) {
+      fs.writeFileSync(path.join(sandboxI18n, 'en-US.json'), '{}', 'utf8');
+    }
+  } else if (realAssets && fs.existsSync(realAssets)) {
+    console.log('📡 [MODE: REAL_CLIENT_BUNDLE] 检测到本地真实散装安装，拷贝真实 JS Bundle 执行真实 AST 语法扫描...\n');
     const allFiles = fs.readdirSync(realAssets).filter(f => f.endsWith('.js') && !f.endsWith('.bak'));
     const targetFiles = [
       allFiles.find(f => f.startsWith('shared-5-')),

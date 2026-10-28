@@ -34,8 +34,21 @@ function runCompatibilityMatrix(options = {}) {
   // 1. 测试真实或沙盒环境中的 JS 硬编码补丁抗混淆拓扑命中
   console.log('【阶段 1】JS 硬编码补丁拓扑命中率矩阵 (Patch Hit Rate Matrix)');
   const assetsDir = resDir ? path.join(resDir, 'ion-dist', 'assets', 'v1') : null;
+  const asarPath = resDir ? path.join(resDir, 'ion-dist.asar') : null;
   let allJs = '';
-  if (assetsDir && fs.existsSync(assetsDir)) {
+
+  if (asarPath && fs.existsSync(asarPath)) {
+    const asar = require('@electron/asar');
+    try {
+      const list = asar.listPackage(asarPath);
+      const jsEntries = list.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
+      for (const entry of jsEntries) {
+        try {
+          allJs += asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8') + '\n';
+        } catch (_) {}
+      }
+    } catch (_) {}
+  } else if (assetsDir && fs.existsSync(assetsDir)) {
     const files = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
     for (const f of files) {
       allJs += fs.readFileSync(path.join(assetsDir, f), 'utf8') + '\n';

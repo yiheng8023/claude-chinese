@@ -7,33 +7,49 @@ const path = require('path');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { JS_LITERAL_PATCHES, safeTest } = require('../core/patcher');
 
+const asar = require('@electron/asar');
+
 function runDriftDetection(customEnPath = null) {
   let targetEnPath = customEnPath;
   let resourcesDir = null;
+  let upstreamDict = null;
 
   const info = getClaudeInstallation();
   if (info && info.resourcesPath) {
     resourcesDir = info.resourcesPath;
+    const asarPath = path.join(info.resourcesPath, 'ion-dist.asar');
     if (!targetEnPath || (fs.existsSync(targetEnPath) && fs.statSync(targetEnPath).isDirectory())) {
-      const candidates = [
-        path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json'),
-        path.join(info.resourcesPath, 'i18n', 'en-US.json'),
-        path.join(info.resourcesPath, 'en-US.json')
-      ];
-      for (const cand of candidates) {
-        if (fs.existsSync(cand) && fs.statSync(cand).isFile()) {
-          targetEnPath = cand;
-          break;
+      if (fs.existsSync(asarPath)) {
+        try {
+          const buf = asar.extractFile(asarPath, 'i18n/en-US.json');
+          upstreamDict = JSON.parse(buf.toString('utf8'));
+          targetEnPath = `${asarPath} [i18n/en-US.json]`;
+        } catch (_) {}
+      }
+
+      if (!upstreamDict) {
+        const candidates = [
+          path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json'),
+          path.join(info.resourcesPath, 'i18n', 'en-US.json'),
+          path.join(info.resourcesPath, 'en-US.json')
+        ];
+        for (const cand of candidates) {
+          if (fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+            targetEnPath = cand;
+            break;
+          }
         }
       }
     }
   }
 
-  if (!targetEnPath || !fs.existsSync(targetEnPath)) {
-    targetEnPath = path.join(__dirname, '../dict/en-US.base.json');
+  if (!upstreamDict) {
+    if (!targetEnPath || !fs.existsSync(targetEnPath)) {
+      targetEnPath = path.join(__dirname, '../dict/en-US.base.json');
+    }
+    upstreamDict = JSON.parse(fs.readFileSync(targetEnPath, 'utf8'));
   }
 
-  const upstreamDict = JSON.parse(fs.readFileSync(targetEnPath, 'utf8'));
   const zhPath = fs.existsSync(path.join(__dirname, '../dict/ion-zh-CN.json'))
     ? path.join(__dirname, '../dict/ion-zh-CN.json')
     : path.join(__dirname, '../dict/zh-CN.json');
@@ -53,16 +69,30 @@ function runDriftDetection(customEnPath = null) {
   // 2. JS 硬编码特征漂移检测 (JS Literal Drift Guard)
   const jsPatchesStatus = [];
   if (resourcesDir) {
+    const asarPath = path.join(resourcesDir, 'ion-dist.asar');
     const assetsDir = path.join(resourcesDir, 'ion-dist', 'assets', 'v1');
-    if (fs.existsSync(assetsDir)) {
+    let allJsContent = '';
+
+    if (fs.existsSync(asarPath)) {
+      try {
+        const list = asar.listPackage(asarPath);
+        const jsEntries = list.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
+        for (const entry of jsEntries) {
+          try {
+            allJsContent += asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8') + '\n';
+          } catch (_) {}
+        }
+      } catch (_) {}
+    } else if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
-      let allJsContent = '';
       for (const f of jsFiles) {
         try {
           allJsContent += fs.readFileSync(path.join(assetsDir, f), 'utf8') + '\n';
         } catch (e) {}
       }
+    }
 
+    if (allJsContent) {
       for (const patch of (JS_LITERAL_PATCHES || [])) {
         const matchesEn = patch.enPattern ? safeTest(patch.enPattern, allJsContent) : false;
         const matchesZh = patch.zhPattern ? safeTest(patch.zhPattern, allJsContent) : false;

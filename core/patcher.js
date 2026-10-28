@@ -6,10 +6,105 @@ const path = require('path');
 const os = require('os');
 const { getClaudeInstallation } = require('./msix-detector');
 const { canWriteDirectory, grantPermissions } = require('./permissions');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const crypto = require('crypto');
+const asar = require('@electron/asar');
 
 const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
+
+/**
+ * 借助 Node.js 子进程同步执行 ASAR 打包，规避复杂异步改动并免疫路径空格
+ */
+function packAsarSync(srcDir, destFile, options = {}) {
+  const unpackPattern = options.unpack ? options.unpack : '';
+  const code = unpackPattern
+    ? 'const asar = require("@electron/asar"); (async () => { try { await asar.createPackageWithOptions(process.argv[1], process.argv[2], { unpack: process.argv[3] }); } catch (err) { console.error(err); process.exit(1); } })();'
+    : 'const asar = require("@electron/asar"); (async () => { try { await asar.createPackage(process.argv[1], process.argv[2]); } catch (err) { console.error(err); process.exit(1); } })();';
+  const args = unpackPattern
+    ? ['-e', code, srcDir, destFile, unpackPattern]
+    : ['-e', code, srcDir, destFile];
+  execFileSync(process.execPath, args, { stdio: 'pipe' });
+  if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+}
+
+/**
+ * 读取 ASAR 文件 Raw Header 并计算 SHA256 哈希值
+ */
+function getRawHeaderSha256(archivePath) {
+  if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+  const rawHeader = asar.getRawHeader(archivePath);
+  return crypto.createHash('sha256').update(rawHeader.headerString).digest('hex');
+}
+
+/**
+ * 对 claude.exe 执行双保险破解 (Electron Fuse 4 禁用 + PE 资源 Header SHA256 原位替换)
+ */
+function patchClaudeExe(exePath, asarHashes = {}) {
+  if (!fs.existsSync(exePath)) {
+    return { success: false, modified: false, error: `未找到主程序: ${exePath}` };
+  }
+  // 兼容直接传入单个字符串 (newAsarSha256) 的向后兼容调用
+  const hashMap = typeof asarHashes === 'string' ? { 'ion-dist.asar': asarHashes } : asarHashes;
+
+  const exeBuf = fs.readFileSync(exePath);
+  let modified = false;
+  let fusePatched = false;
+  let hashPatched = false;
+
+  // 1. 关闭 Electron Fuse 4 (embeddedAsarIntegrityValidation)
+  const fuseMagic = Buffer.from('dL7pKGdnNz796PbbjQWNKmHXBZaB9tsX');
+  const fuseIdx = exeBuf.indexOf(fuseMagic);
+  if (fuseIdx !== -1) {
+    const fuse4Pos = fuseIdx + 38;
+    if (exeBuf[fuse4Pos] === 0x31) { // '1' -> '0'
+      exeBuf[fuse4Pos] = 0x30;
+      modified = true;
+      fusePatched = true;
+    } else if (exeBuf[fuse4Pos] === 0x30) {
+      fusePatched = true; // 熔丝已禁用
+    }
+  }
+
+  // 2. 原位替换 PE 资源中硬编码的各 ASAR Header SHA256 (64 字符十六进制)
+  for (const [asarName, newSha256] of Object.entries(hashMap)) {
+    if (!newSha256 || typeof newSha256 !== 'string') continue;
+    const patterns = [
+      Buffer.from(`resources\\\\${asarName}","alg":"SHA256","value":"`),
+      Buffer.from(`resources/${asarName}","alg":"SHA256","value":"`),
+      Buffer.from(`${asarName}","alg":"SHA256","value":"`)
+    ];
+
+    for (const pattern of patterns) {
+      const pIdx = exeBuf.indexOf(pattern);
+      if (pIdx !== -1) {
+        const hashStart = pIdx + pattern.length;
+        const currentHash = exeBuf.subarray(hashStart, hashStart + 64).toString('utf8');
+        if (currentHash !== newSha256) {
+          Buffer.from(newSha256, 'utf8').copy(exeBuf, hashStart);
+          modified = true;
+          hashPatched = true;
+        } else {
+          hashPatched = true; // 哈希已对齐
+        }
+        break;
+      }
+    }
+  }
+
+  if (modified) {
+    fs.writeFileSync(exePath, exeBuf);
+  }
+
+  if (!fusePatched && !hashPatched) {
+    return {
+      success: false,
+      modified: false,
+      error: '无法在 claude.exe 中定位 Electron Fuse 特征码或 PE 资源中的 ASAR SHA256 哈希值，上游二进制结构可能已发生变动！'
+    };
+  }
+
+  return { success: true, modified, fusePatched, hashPatched, error: null };
+}
 
 /**
  * ESM AST 语法完整性快速自检 (保证注入后的 JS 文件语法绝对合法，杜绝客户端黑屏崩溃)
@@ -400,6 +495,145 @@ const JS_LITERAL_PATCHES = [
   }
 ];
 
+/**
+ * 遍历注入指定目录下的所有 JS 文件 (语言白名单放宽、硬编码补丁、折叠长文档拦截与 AST 语法自检)
+ */
+function patchJsFiles(assetsDirectory, patchHits, options = {}) {
+  const { isAsarMode = false, fileManifest = {} } = options;
+  if (!assetsDirectory || !fs.existsSync(assetsDirectory)) return { count: 0, error: null };
+
+  const jsFiles = fs.readdirSync(assetsDirectory).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
+  // 正则放宽：支持如 es-419 等含数字和符号的语言标识符
+  const regexAdd = /\["en-US"(?:,"[a-zA-Z0-9_-]+")+\]/g;
+  const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
+  const hasLongDocsFile = fs.existsSync(longDocsPath);
+  const zFnDeclarationRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/g;
+  const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
+  const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
+
+  let jsPatchedCount = 0;
+
+  for (const file of jsFiles) {
+    const fullPath = path.join(assetsDirectory, file);
+    const bakPath = `${fullPath}.orig.bak`;
+    const current = fs.readFileSync(fullPath, 'utf8');
+
+    let currentHash = null;
+    const getCurrentHash = () => {
+      if (currentHash === null) currentHash = getHash(current);
+      return currentHash;
+    };
+
+    let content = current;
+
+    if (!isAsarMode && fs.existsSync(bakPath)) {
+      const bak = fs.readFileSync(bakPath, 'utf8');
+      const bakHash = getHash(bak);
+
+      const isOurPatched = (fileManifest[file] && getCurrentHash() === fileManifest[file].patchedHash) ||
+                           current.includes(',"zh-CN"]') ||
+                           current.includes('var __ZH_DOCS__=') ||
+                           JS_LITERAL_PATCHES.some(p => {
+                             const guard = p.zhGuard || p.enGuard;
+                             if (guard && !current.includes(guard)) return false;
+                             return safeTest(p.zhPattern, current);
+                           });
+
+      if (getCurrentHash() !== bakHash && !isOurPatched) {
+        fs.copyFileSync(fullPath, bakPath);
+        content = current;
+      } else {
+        content = bak;
+      }
+    }
+
+    let newContent = content;
+    let modified = false;
+
+    // 1. 语言白名单正则放宽追加 ,"zh-CN"]
+    if (newContent.includes('"en-US"') && !newContent.includes('"zh-CN"')) {
+      if (safeTest(regexAdd, newContent)) {
+        newContent = newContent.replace(regexAdd, (match) => {
+          return match.slice(0, -1) + ',"zh-CN"]';
+        });
+        modified = true;
+      }
+    }
+
+    // 2. 结构化硬编码补丁注入与命中统计
+    for (const patch of JS_LITERAL_PATCHES) {
+      const hasEnGuard = !patch.enGuard || newContent.includes(patch.enGuard);
+      const hasZhGuard = !patch.zhGuard || newContent.includes(patch.zhGuard);
+      if (!hasEnGuard && !hasZhGuard) {
+        continue;
+      }
+
+      if (hasEnGuard && safeTest(patch.enPattern, newContent)) {
+        newContent = newContent.replace(patch.enPattern, patch.zhSnippet);
+        if (patchHits[patch.id] !== undefined) patchHits[patch.id]++;
+        modified = true;
+      } else if (hasZhGuard && safeTest(patch.zhPattern, newContent)) {
+        if (patchHits[patch.id] !== undefined) patchHits[patch.id]++;
+      }
+    }
+
+    // 3. 动态注入“了解更多”长篇折叠文档全局翻译拦截器
+    if (hasLongDocsFile && newContent.includes('text:') && (safeTest(zFnDeclarationRegex, newContent) || safeTest(zFnArrowRegex, newContent) || safeTest(zFnAssignRegex, newContent))) {
+      const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
+      let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
+      let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
+
+      newContent = newContent.replace(zFnDeclarationRegex, (match, fnName, a1, a2) => {
+        const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
+        header = '';
+        return repl;
+      });
+
+      newContent = newContent.replace(zFnArrowRegex, (match, fnName, a1, a2) => {
+        const repl = `${header}${fnName}=(${a1},${a2})=>{if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
+        header = '';
+        return repl;
+      });
+
+      newContent = newContent.replace(zFnAssignRegex, (match, fnName, a1, a2) => {
+        const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return Object.assign({text:${a1}},${a2});var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return Object.assign({text:tr||${a1}},${a2})}`;
+        header = '';
+        return repl;
+      });
+
+      modified = true;
+    }
+
+    if (modified && newContent !== content) {
+      // 核心安全防御：AST 语法自检防火墙 (防止破坏 JS 语法导致客户端黑屏崩溃)
+      const syntaxCheck = validateJsSyntax(newContent);
+      if (!syntaxCheck.valid) {
+        console.error(`❌ [AST 语法防火墙拦截] 补丁导致 ${file} 出现语法错误，已安全拒绝写入！`);
+        console.error(syntaxCheck.error);
+        return {
+          count: jsPatchedCount,
+          error: `补丁注入后检测到语法错误 (${file}): ${syntaxCheck.error}。为防止客户端黑屏，已终止注入并保持原版。`
+        };
+      }
+
+      if (!isAsarMode) {
+        if (!fs.existsSync(bakPath)) {
+          fs.copyFileSync(fullPath, bakPath);
+        }
+        fileManifest[file] = {
+          originalHash: getHash(content),
+          patchedHash: getHash(newContent)
+        };
+      }
+
+      fs.writeFileSync(fullPath, newContent, 'utf8');
+      jsPatchedCount++;
+    }
+  }
+
+  return { count: jsPatchedCount, error: null };
+}
+
 function applyPatch(options = {}) {
   const info = getClaudeInstallation(options.customPath);
 
@@ -410,7 +644,7 @@ function applyPatch(options = {}) {
     };
   }
 
-  // 1. 官方中文自动检测与优雅让位机制 (Native Chinese Auto-Detection & Graceful Yield)
+  // 1. 官方中文自动检测与优雅让位机制
   if (info.hasNativeChinese) {
     return {
       success: true,
@@ -428,14 +662,22 @@ function applyPatch(options = {}) {
   }
 
   const resDir = info.resourcesPath;
+  const asarPath = path.join(resDir, 'ion-dist.asar');
+  const isAsarMode = fs.existsSync(asarPath);
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
+  const appDir = path.dirname(resDir);
+  const exePath = path.join(appDir, 'claude.exe');
 
-  // 3. 检查并提权（单次递归赋权 resDir 即可覆盖所有子目录，杜绝连续多次 UAC 弹窗）
-  if (!canWriteDirectory(resDir) || (fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir))) {
+  // 3. 检查并提权（同时覆盖 app 目录与 resources 目录，确保可修改 claude.exe 与 ion-dist.asar）
+  const needsPerm = !canWriteDirectory(resDir) ||
+                    (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir)) ||
+                    (!isAsarMode && fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir));
+
+  if (needsPerm) {
     grantPermissions(resDir);
-    if (!canWriteDirectory(resDir)) {
+    if (!canWriteDirectory(resDir) || (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir))) {
       return {
         success: false,
         error: '目录写权限不足。请右键点击 install.bat 选择【以管理员身份运行】。'
@@ -444,7 +686,6 @@ function applyPatch(options = {}) {
   }
 
   try {
-    // 4. 补丁 JS 资源：注册 zh-CN 语言支持与硬编码下拉项
     let jsPatchedCount = 0;
     const patchHits = {};
     for (const p of JS_LITERAL_PATCHES) {
@@ -458,148 +699,6 @@ function applyPatch(options = {}) {
     }
     const fileManifest = existingMeta.files || {};
 
-    if (fs.existsSync(assetsDir)) {
-      const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
-      const regexAdd = /((?:[\w$]+)=\["en-US"(?:,"[^"]+")+\])/g;
-      const longDocsPath = path.join(__dirname, '../dict/long-docs-zh-CN.json');
-      const hasLongDocsFile = fs.existsSync(longDocsPath);
-      const zFnDeclarationRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\{text:\2,\.\.\.\3\}\}/g;
-      const zFnArrowRegex = /([a-zA-Z0-9_$]+)=\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)=>\(\{text:\2,\.\.\.\3\}\)/g;
-      const zFnAssignRegex = /function\s+([a-zA-Z0-9_$]+)\(([a-zA-Z0-9_$]+),([a-zA-Z0-9_$]+)\)\{return\s+Object\.assign\(\{text:\2\},\3\)\}/g;
-
-      for (const file of jsFiles) {
-        const fullPath = path.join(assetsDir, file);
-        const bakPath = `${fullPath}.orig.bak`;
-        const current = fs.readFileSync(fullPath, 'utf8');
-
-        let currentHash = null;
-        const getCurrentHash = () => {
-          if (currentHash === null) currentHash = getHash(current);
-          return currentHash;
-        };
-
-        let content = current;
-
-        if (fs.existsSync(bakPath)) {
-          const bak = fs.readFileSync(bakPath, 'utf8');
-          const bakHash = getHash(bak);
-
-          // 核心防御：判断当前 fullPath 是否处于已被我们打过补丁的状态
-          const isOurPatched = (fileManifest[file] && getCurrentHash() === fileManifest[file].patchedHash) ||
-                               current.includes(',"zh-CN"]') ||
-                               current.includes('var __ZH_DOCS__=') ||
-                               JS_LITERAL_PATCHES.some(p => {
-                                 const guard = p.zhGuard || p.enGuard;
-                                 if (guard && !current.includes(guard)) return false;
-                                 return safeTest(p.zhPattern, current);
-                               });
-
-          if (getCurrentHash() !== bakHash && !isOurPatched) {
-            // 官方已静默更新该文件（内容变动且不含我们的汉化特征）
-            // 必须立即刷新备份基线为官方最新原版，丢弃陈旧备份，杜绝跨版本降级！
-            fs.copyFileSync(fullPath, bakPath);
-            content = current;
-          } else {
-            // 同版本正常重入（走纯净备份基线，实现幂等热重载）
-            content = bak;
-          }
-        }
-
-        let newContent = content;
-        let modified = false;
-
-        if (newContent.includes('"en-US"') && !newContent.includes('"zh-CN"')) {
-          if (safeTest(regexAdd, newContent)) {
-            newContent = newContent.replace(regexAdd, (match) => {
-              return match.slice(0, -1) + ',"zh-CN"]';
-            });
-            modified = true;
-          }
-        }
-
-        // 结构化硬编码补丁注入与命中统计（采用静态特征子串 Fast Substring Guard 预剪枝，消除 99% 无谓正则回溯）
-        for (const patch of JS_LITERAL_PATCHES) {
-          const hasEnGuard = !patch.enGuard || newContent.includes(patch.enGuard);
-          const hasZhGuard = !patch.zhGuard || newContent.includes(patch.zhGuard);
-          if (!hasEnGuard && !hasZhGuard) {
-            continue;
-          }
-
-          if (hasEnGuard && safeTest(patch.enPattern, newContent)) {
-            newContent = newContent.replace(patch.enPattern, patch.zhSnippet);
-            patchHits[patch.id]++;
-            modified = true;
-          } else if (hasZhGuard && safeTest(patch.zhPattern, newContent)) {
-            patchHits[patch.id]++;
-          }
-        }
-
-        // 动态注入“了解更多”长篇折叠文档全局翻译拦截器 (仅当包含 'text:' 特征子串时才执行正则判定)
-        if (hasLongDocsFile && newContent.includes('text:') && (safeTest(zFnDeclarationRegex, newContent) || safeTest(zFnArrowRegex, newContent) || safeTest(zFnAssignRegex, newContent))) {
-          const longDocs = JSON.parse(fs.readFileSync(longDocsPath, 'utf8'));
-          let hasInjectedHeader = newContent.includes('var __ZH_DOCS__=');
-          let header = hasInjectedHeader ? '' : `var __ZH_DOCS__=${JSON.stringify(longDocs)},__ZH_CACHE__={};`;
-
-          // 1. 标准函数声明式拓扑
-          newContent = newContent.replace(zFnDeclarationRegex, (match, fnName, a1, a2) => {
-            const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
-            header = '';
-            return repl;
-          });
-
-          // 2. 箭头函数变异式拓扑
-          newContent = newContent.replace(zFnArrowRegex, (match, fnName, a1, a2) => {
-            const repl = `${header}${fnName}=(${a1},${a2})=>{if(typeof ${a1}!=="string")return{text:${a1},...${a2}};var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return{text:tr||${a1},...${a2}}}`;
-            header = '';
-            return repl;
-          });
-
-          // 3. Object.assign 变异式拓扑
-          newContent = newContent.replace(zFnAssignRegex, (match, fnName, a1, a2) => {
-            const repl = `${header}function ${fnName}(${a1},${a2}){if(typeof ${a1}!=="string")return Object.assign({text:${a1}},${a2});var tr=__ZH_CACHE__[${a1}];if(tr===undefined){tr=__ZH_DOCS__[${a1}];if(!tr&&${a1}.length>10){for(var k in __ZH_DOCS__){if(${a1}.indexOf(k)===0||(k.length>20&&${a1}.indexOf(k)!==-1)){tr=__ZH_DOCS__[k];break;}}}__ZH_CACHE__[${a1}]=tr||null;}return Object.assign({text:tr||${a1}},${a2})}`;
-            header = '';
-            return repl;
-          });
-
-          modified = true;
-        }
-
-        if (modified && newContent !== content) {
-          // 核心安全防御：AST 语法自检防火墙 (防止破坏 JS 语法导致客户端黑屏崩溃)
-          const syntaxCheck = validateJsSyntax(newContent);
-          if (!syntaxCheck.valid) {
-            console.error(`❌ [AST 语法防火墙拦截] 补丁导致 ${file} 出现语法错误，已安全拒绝写入！`);
-            console.error(syntaxCheck.error);
-            return {
-              success: false,
-              error: `补丁注入后检测到语法错误 (${file}): ${syntaxCheck.error}。为防止客户端黑屏，已终止注入并保持原版。`
-            };
-          }
-
-          if (!fs.existsSync(bakPath)) {
-            fs.copyFileSync(fullPath, bakPath);
-          }
-          fileManifest[file] = {
-            originalHash: getHash(content),
-            patchedHash: getHash(newContent)
-          };
-
-          fs.writeFileSync(fullPath, newContent, 'utf8');
-          jsPatchedCount++;
-        }
-      }
-    }
-
-    const warnings = [];
-    if (fs.existsSync(assetsDir)) {
-      for (const patch of JS_LITERAL_PATCHES) {
-        if (patchHits[patch.id] === 0 && !patch.intlKey) {
-          warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
-        }
-      }
-    }
-
-    // 4. 增量挂载字典文件 (保留官方原版 en-US.json 100% 纯净作为终极兜底，不直接覆盖 en-US)
     const shellZhPath = path.join(__dirname, '../dict/zh-CN.json');
     const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
     const dynZhPath = path.join(__dirname, '../dict/dynamic-zh-CN.json');
@@ -620,7 +719,6 @@ function applyPatch(options = {}) {
       const bakPath = path.join(targetDir, 'en-US.backup.json');
       let baseEn = {};
 
-      // 确立当前未污染的官方 en-US.json 为绝对第一权威基线 (消除陈旧备份覆盖风险)
       if (fs.existsSync(enPath)) {
         try {
           const content = fs.readFileSync(enPath, 'utf8');
@@ -630,7 +728,6 @@ function applyPatch(options = {}) {
         } catch (e) {}
       }
 
-      // 仅当当前 en-US 缺失或被历史中文污染时，才回退从纯净备份读取基底
       if (Object.keys(baseEn).length === 0 && fs.existsSync(bakPath)) {
         try {
           const bakContent = fs.readFileSync(bakPath, 'utf8');
@@ -640,26 +737,220 @@ function applyPatch(options = {}) {
         } catch (e) {}
       }
 
-      // 增量合并：官方未翻译词条保留英文作为兜底，已翻译词条精准替换，生产级紧凑单行格式极速减重
       const merged = Object.assign({}, baseEn, zhDict);
       fs.writeFileSync(path.join(targetDir, 'zh-CN.json'), JSON.stringify(merged), 'utf8');
+      return merged;
     };
 
-    // A. 注入 Shell 层 zh-CN.json
+    // -------------------------------------------------------------
+    // 方案 A: ASAR 模式 (Claude 4.x 封装架构)
+    // -------------------------------------------------------------
+    if (isAsarMode) {
+      const asarBakPath = path.join(resDir, 'ion-dist.asar.orig.bak');
+      const exeBakPath = path.join(appDir, 'claude.exe.orig.bak');
+
+      // 1. 首次创建纯净出厂备份
+      if (fs.existsSync(exePath) && !fs.existsSync(exeBakPath)) {
+        fs.copyFileSync(exePath, exeBakPath);
+      }
+      if (!fs.existsSync(asarBakPath)) {
+        fs.copyFileSync(asarPath, asarBakPath);
+      }
+
+      // 2. 提取源永远优先使用纯净出厂备份，保证幂等与基线纯度
+      const sourceAsar = fs.existsSync(asarBakPath) ? asarBakPath : asarPath;
+      const tmpExtractDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-ion-dist-'));
+
+      try {
+        asar.extractAll(sourceAsar, tmpExtractDir);
+
+        // 3. 注入前端 JS 资源
+        const tmpAssets = path.join(tmpExtractDir, 'assets', 'v1');
+        const patchRes = patchJsFiles(tmpAssets, patchHits, { isAsarMode: true });
+        if (patchRes.error) {
+          return { success: false, error: patchRes.error };
+        }
+        jsPatchedCount = patchRes.count;
+
+        // 4. 增量合并并同步覆盖 i18n/zh-CN.json 与 i18n/en-US.json (双重保险)
+        const tmpI18n = path.join(tmpExtractDir, 'i18n');
+        const tmpDyn = path.join(tmpI18n, 'dynamic');
+
+        if (fs.existsSync(tmpI18n)) {
+          let baseIonEn = {};
+          const enPath = path.join(tmpI18n, 'en-US.json');
+          if (fs.existsSync(enPath)) {
+            try {
+              const c = fs.readFileSync(enPath, 'utf8');
+              if (isEnUsClean(c)) baseIonEn = JSON.parse(c);
+            } catch (e) {}
+          }
+          const mergedIon = Object.assign({}, baseIonEn, ionZh);
+          fs.writeFileSync(path.join(tmpI18n, 'zh-CN.json'), JSON.stringify(mergedIon), 'utf8');
+          fs.writeFileSync(path.join(tmpI18n, 'zh-CN.overrides.json'), '{}\n', 'utf8');
+          // 双重保险：同步覆盖 en-US.json 彻底杜绝任何回退漏网之鱼
+          fs.writeFileSync(enPath, JSON.stringify(mergedIon), 'utf8');
+        }
+
+        if (fs.existsSync(tmpDyn)) {
+          let baseDynEn = {};
+          const dynEnPath = path.join(tmpDyn, 'en-US.json');
+          if (fs.existsSync(dynEnPath)) {
+            try {
+              const c = fs.readFileSync(dynEnPath, 'utf8');
+              if (isEnUsClean(c)) baseDynEn = JSON.parse(c);
+            } catch (e) {}
+          }
+          const mergedDyn = Object.assign({}, baseDynEn, dynZh);
+          fs.writeFileSync(path.join(tmpDyn, 'zh-CN.json'), JSON.stringify(mergedDyn), 'utf8');
+          // 双重保险：同步覆盖 dynamic/en-US.json
+          fs.writeFileSync(dynEnPath, JSON.stringify(mergedDyn), 'utf8');
+        }
+
+        // 5. 打包新 ion-dist.asar 到临时文件并计算 Header SHA256
+        const newIonAsarTmp = path.join(os.tmpdir(), `ion-dist-${Date.now()}-${Math.random().toString(36).slice(2, 6)}.asar`);
+        packAsarSync(tmpExtractDir, newIonAsarTmp);
+        const newIonSha256 = getRawHeaderSha256(newIonAsarTmp);
+
+        // 6. 注入 Shell 外壳菜单到 app.asar (解决 4.x 下 File/Edit/View/Help 等系统菜单显示为英文的问题)
+        const appAsarPath = path.join(resDir, 'app.asar');
+        const appAsarBakPath = path.join(resDir, 'app.asar.orig.bak');
+        let newAppAsarTmp = null;
+        let newAppSha256 = null;
+
+        if (fs.existsSync(appAsarPath) || fs.existsSync(appAsarBakPath)) {
+          if (fs.existsSync(appAsarBakPath)) {
+            // 确保以官方纯净原版为基准进行解压，消除历史残缺注入干扰
+            fs.copyFileSync(appAsarBakPath, appAsarPath);
+          } else {
+            fs.copyFileSync(appAsarPath, appAsarBakPath);
+          }
+
+          const tmpAppExtract = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-app-asar-'));
+          try {
+            if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+            asar.extractAll(appAsarPath, tmpAppExtract);
+
+            // A. 注入 i18n 多语言包
+            const appI18nDir = path.join(tmpAppExtract, 'resources', 'i18n');
+            if (fs.existsSync(appI18nDir)) {
+              let baseAppZh = {};
+              const appZhPath = path.join(appI18nDir, 'zh-CN.json');
+              const appEnPath = path.join(appI18nDir, 'en-US.json');
+              if (fs.existsSync(appZhPath)) {
+                try { baseAppZh = JSON.parse(fs.readFileSync(appZhPath, 'utf8')); } catch (_) {}
+              } else if (fs.existsSync(appEnPath)) {
+                try {
+                  const c = fs.readFileSync(appEnPath, 'utf8');
+                  if (isEnUsClean(c)) baseAppZh = JSON.parse(c);
+                } catch (_) {}
+              }
+              const mergedApp = Object.assign({}, baseAppZh, shellZh);
+              const compactApp = JSON.stringify(mergedApp);
+              fs.writeFileSync(appZhPath, compactApp, 'utf8');
+              fs.writeFileSync(path.join(appI18nDir, 'zh-Hans.json'), compactApp, 'utf8');
+              // 双重保险：同步覆盖 app.asar 内的 en-US.json，彻底绝杀兜底英文
+              if (fs.existsSync(appEnPath)) {
+                fs.writeFileSync(appEnPath, compactApp, 'utf8');
+              }
+            }
+
+            // B. 破解主进程语言白名单与默认回退语言 (锁定 zh-CN)
+            const viteBuildDir = path.join(tmpAppExtract, '.vite', 'build');
+            if (fs.existsSync(viteBuildDir)) {
+              const jsFiles = fs.readdirSync(viteBuildDir).filter(f => f.endsWith('.js'));
+              for (const f of jsFiles) {
+                const fullF = path.join(viteBuildDir, f);
+                let content = fs.readFileSync(fullF, 'utf8');
+                let modified = false;
+                if (content.includes('fwt={en:"en-US"') && !content.includes('zh:"zh-CN"')) {
+                  content = content.replace('fwt={en:"en-US"', 'fwt={en:"en-US",zh:"zh-CN","zh-CN":"zh-CN","zh-Hans":"zh-CN"');
+                  modified = true;
+                }
+                if (content.includes('_v="en-US"') && content.includes('fwt=')) {
+                  content = content.replace('_v="en-US"', '_v="zh-CN"');
+                  modified = true;
+                }
+                if (modified) {
+                  fs.writeFileSync(fullF, content, 'utf8');
+                }
+              }
+            }
+
+            // C. 重新打包 app.asar 并保持原生模块 unpacked
+            newAppAsarTmp = path.join(os.tmpdir(), `app-${Date.now()}-${Math.random().toString(36).slice(2, 6)}.asar`);
+            packAsarSync(tmpAppExtract, newAppAsarTmp, { unpack: '**/*.{node,dll,exe}' });
+            newAppSha256 = getRawHeaderSha256(newAppAsarTmp);
+          } finally {
+            try { fs.rmSync(tmpAppExtract, { recursive: true, force: true }); } catch (_) {}
+          }
+        }
+
+        // 7. 核心事务防护：对 claude.exe 执行安全熔丝关闭与多 ASAR SHA256 原位替换
+        if (fs.existsSync(exePath)) {
+          const hashesToPatch = { 'ion-dist.asar': newIonSha256 };
+          if (newAppSha256) {
+            hashesToPatch['app.asar'] = newAppSha256;
+          }
+          const exeRes = patchClaudeExe(exePath, hashesToPatch);
+          if (!exeRes.success) {
+            try { fs.unlinkSync(newIonAsarTmp); } catch (_) {}
+            if (newAppAsarTmp) { try { fs.unlinkSync(newAppAsarTmp); } catch (_) {} }
+            return {
+              success: false,
+              error: `修改主程序安全熔丝失败: ${exeRes.error}。为防止客户端崩溃闪退，已安全中止注入并保持原版。`
+            };
+          }
+        }
+
+        // 8. 确认二进制破解就绪后，执行新 ion-dist.asar 与 app.asar 的原子落盘替换
+        fs.copyFileSync(newIonAsarTmp, asarPath);
+        if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+        try { fs.unlinkSync(newIonAsarTmp); } catch (_) {}
+
+        if (newAppAsarTmp && fs.existsSync(newAppAsarTmp)) {
+          fs.copyFileSync(newAppAsarTmp, appAsarPath);
+          if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+          try { fs.unlinkSync(newAppAsarTmp); } catch (_) {}
+        }
+      } finally {
+        try { fs.rmSync(tmpExtractDir, { recursive: true, force: true }); } catch (_) {}
+      }
+    } else {
+      // -------------------------------------------------------------
+      // 方案 B: 散装目录模式 (Claude 3.x 散装目录向后兼容)
+      // -------------------------------------------------------------
+      if (fs.existsSync(assetsDir)) {
+        const patchRes = patchJsFiles(assetsDir, patchHits, { isAsarMode: false, fileManifest });
+        if (patchRes.error) {
+          return { success: false, error: patchRes.error };
+        }
+        jsPatchedCount = patchRes.count;
+      }
+
+      // 注入 Ion-Dist Web UI 层 zh-CN.json + zh-CN.overrides.json
+      if (fs.existsSync(i18nDir)) {
+        createIncrementalZh(i18nDir, ionZh);
+        fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
+      }
+
+      // 注入 Dynamic 层 zh-CN.json
+      if (fs.existsSync(dynDir)) {
+        createIncrementalZh(dynDir, dynZh);
+      }
+    }
+
+    const warnings = [];
+    for (const patch of JS_LITERAL_PATCHES) {
+      if (patchHits[patch.id] === 0 && !patch.intlKey) {
+        warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
+      }
+    }
+
+    // A. 注入 Shell 外壳层 zh-CN.json
     createIncrementalZh(resDir, shellZh);
 
-    // B. 注入 Ion-Dist Web UI 层 zh-CN.json + zh-CN.overrides.json
-    if (fs.existsSync(i18nDir)) {
-      createIncrementalZh(i18nDir, ionZh);
-      fs.writeFileSync(path.join(i18nDir, 'zh-CN.overrides.json'), '{}\n', 'utf8');
-    }
-
-    // C. 注入 Dynamic 层 zh-CN.json
-    if (fs.existsSync(dynDir)) {
-      createIncrementalZh(dynDir, dynZh);
-    }
-
-    // 5. 官方 en-US 权威保护与防旧备份覆盖降级熔断
+    // 官方外壳 en-US 权威保护与防旧备份覆盖降级熔断
     const sanitizeEnUS = (targetDir, fallbackBase) => {
       const enPath = path.join(targetDir, 'en-US.json');
       const bakPath = path.join(targetDir, 'en-US.backup.json');
@@ -677,7 +968,6 @@ function applyPatch(options = {}) {
       const isPolluted = !isEnUsClean(content);
 
       if (isPolluted) {
-        // 当前 en-US 确实被污染，尝试从纯净旧备份或 fallbackBase 恢复
         if (fs.existsSync(bakPath)) {
           const bakContent = fs.readFileSync(bakPath, 'utf8');
           if (isEnUsClean(bakContent)) {
@@ -689,8 +979,6 @@ function applyPatch(options = {}) {
           fs.copyFileSync(fallbackBase, enPath);
         }
       } else {
-        // 核心安全原则：当前 en-US 100% 为官方未污染纯净版，确立其绝对权威！
-        // 绝不允许旧备份覆盖当前新版；若存在陈旧备份，安全清理以消除潜在降级风险！
         if (fs.existsSync(bakPath)) {
           try { fs.unlinkSync(bakPath); } catch (e) {}
         }
@@ -699,7 +987,7 @@ function applyPatch(options = {}) {
 
     sanitizeEnUS(resDir, path.join(__dirname, '../dict/en-US.base.json'));
 
-    // 6. 写入元数据与文件哈希清单
+    // 写入元数据与文件哈希清单
     const metaFile = path.join(resDir, '.claude_chinese_meta.json');
     const meta = {
       patchedAt: new Date().toISOString(),
@@ -707,7 +995,7 @@ function applyPatch(options = {}) {
       type: info.type,
       jsPatchedCount,
       totalEntries: Object.keys(ionZh).length,
-      mode: 'incremental_overlay',
+      mode: isAsarMode ? 'asar_repack' : 'incremental_overlay',
       files: fileManifest
     };
     fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2), 'utf8');
@@ -722,7 +1010,7 @@ function applyPatch(options = {}) {
         jsPatchedCount,
         processAutoClosed,
         warnings,
-        mode: 'incremental_overlay'
+        mode: meta.mode
       }
     };
   } catch (err) {
@@ -744,16 +1032,21 @@ function restorePatch(options = {}) {
   }
 
   const resDir = info.resourcesPath;
+  const asarPath = path.join(resDir, 'ion-dist.asar');
+  const asarBakPath = path.join(resDir, 'ion-dist.asar.orig.bak');
+  const appDir = path.dirname(resDir);
+  const exePath = path.join(appDir, 'claude.exe');
+  const exeBakPath = path.join(appDir, 'claude.exe.orig.bak');
+
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
 
-  if (!canWriteDirectory(resDir) || (fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir))) {
+  if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
   }
 
   try {
-    // 0. 优先读取现有元数据清单，用于判定文件是否确为补丁版本
     const metaFile = path.join(resDir, '.claude_chinese_meta.json');
     let existingMeta = {};
     if (fs.existsSync(metaFile)) {
@@ -761,7 +1054,31 @@ function restorePatch(options = {}) {
     }
     const fileManifest = existingMeta.files || {};
 
-    // 1. 增量挂载纯净清理：仅移除注入的中文文件与元数据，绝对不触碰官方原版 en-US.json
+    const appAsarPath = path.join(resDir, 'app.asar');
+    const appAsarBakPath = path.join(resDir, 'app.asar.orig.bak');
+
+    // 1. ASAR 模式权威物理出厂恢复 (还原 claude.exe, ion-dist.asar 与 app.asar)
+    if (fs.existsSync(asarBakPath) || fs.existsSync(exeBakPath) || fs.existsSync(appAsarBakPath)) {
+      if (fs.existsSync(exeBakPath) && fs.existsSync(exePath)) {
+        if (!canWriteDirectory(appDir)) {
+          grantPermissions(appDir);
+        }
+        fs.copyFileSync(exeBakPath, exePath);
+        try { fs.unlinkSync(exeBakPath); } catch (_) {}
+      }
+      if (fs.existsSync(asarBakPath) && fs.existsSync(asarPath)) {
+        fs.copyFileSync(asarBakPath, asarPath);
+        if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+        try { fs.unlinkSync(asarBakPath); } catch (_) {}
+      }
+      if (fs.existsSync(appAsarBakPath) && fs.existsSync(appAsarPath)) {
+        fs.copyFileSync(appAsarBakPath, appAsarPath);
+        if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
+        try { fs.unlinkSync(appAsarBakPath); } catch (_) {}
+      }
+    }
+
+    // 2. 增量清理注入的中文文件与元数据
     const filesToDelete = [
       path.join(resDir, 'zh-CN.json'),
       path.join(i18nDir, 'zh-CN.json'),
@@ -776,7 +1093,7 @@ function restorePatch(options = {}) {
       }
     }
 
-    // 3. 权威物理出厂恢复：从 .orig.bak 还原官方被修改 JS 资源
+    // 3. 散装目录模式权威物理出厂恢复：从 .orig.bak 还原官方被修改 JS 资源
     if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
       for (const file of jsFiles) {
@@ -796,13 +1113,12 @@ function restorePatch(options = {}) {
                                  return safeTest(p.zhPattern, current);
                                });
 
-          // 核心防御：仅当当前文件确为补丁文件时才还原；若官方已静默更新，严禁将旧 bak 覆盖新版！
           if (isOurPatched) {
             fs.copyFileSync(bakPath, fullPath);
           }
           fs.unlinkSync(bakPath);
         } else {
-          // 兜底：正则清理（采用静态特征子串快速剪枝，若无任何汉化特征则极速跳过）
+          // 兜底正则清理
           let content = fs.readFileSync(fullPath, 'utf8');
           const hasAnyZhFeature = content.includes(',"zh-CN"]') ||
                                   content.includes('__ZH_DOCS__') ||
@@ -845,5 +1161,9 @@ module.exports = {
   closeClaude,
   isProtectedEnvironment,
   JS_LITERAL_PATCHES,
-  safeTest
+  safeTest,
+  patchJsFiles,
+  patchClaudeExe,
+  packAsarSync,
+  getRawHeaderSha256
 };

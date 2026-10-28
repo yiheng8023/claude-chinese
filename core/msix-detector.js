@@ -105,21 +105,68 @@ function getClaudeInstallation(customPath = null) {
     const ionZhPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'zh-CN.json');
     const enUsPath = path.join(result.resourcesPath, 'ion-dist', 'i18n', 'en-US.json');
 
-    // 官方原生支持判定：官方自身随安装包分发了 ion-dist/i18n/zh-CN.json，且未打过我们的元数据补丁，且包含官方完整词典结构
+    const ionAsarPath = path.join(result.resourcesPath, 'ion-dist.asar');
+    const ionAsarBakPath = path.join(result.resourcesPath, 'ion-dist.asar.orig.bak');
+
+    // 官方原生支持判定：官方自身随安装包分发了 zh-CN.json（散装目录或未补丁的 asar 内置），且未打过我们的元数据补丁
     let isOfficialNative = false;
-    if (!fs.existsSync(metaPath) && fs.existsSync(ionZhPath) && fs.existsSync(enUsPath)) {
-      try {
-        const statZh = fs.statSync(ionZhPath);
-        const statEn = fs.statSync(enUsPath);
-        // 如果官方原生分发的 zh-CN.json 词条规模与 en-US.json 相当
-        if (statZh.size > 50000 && statZh.size >= statEn.size * 0.5) {
-          isOfficialNative = true;
-        }
-      } catch (e) {}
+    if (!fs.existsSync(metaPath)) {
+      if (fs.existsSync(ionZhPath) && fs.existsSync(enUsPath)) {
+        try {
+          const statZh = fs.statSync(ionZhPath);
+          const statEn = fs.statSync(enUsPath);
+          // 如果官方原生分发的 zh-CN.json 词条规模与 en-US.json 相当
+          if (statZh.size > 50000 && statZh.size >= statEn.size * 0.5) {
+            isOfficialNative = true;
+          }
+        } catch (e) {}
+      } else if (fs.existsSync(ionAsarPath) && !fs.existsSync(ionAsarBakPath)) {
+        try {
+          const asar = require('@electron/asar');
+          const files = asar.listPackage(ionAsarPath);
+          const hasZh = files.some(f => f.replace(/\\/g, '/').toLowerCase().includes('i18n/zh-cn.json'));
+          if (hasZh) {
+            isOfficialNative = true;
+          }
+        } catch (e) {}
+      }
     }
 
     result.hasNativeChinese = isOfficialNative;
-    result.isPatched = fs.existsSync(metaPath) || (fs.existsSync(zhPath) && fs.existsSync(ionZhPath));
+
+    // 严谨判定是否已打补丁：必须确凿存在有效补丁特征（meta 中实际 jsPatchedCount > 0 或 mode 为 asar_repack 且含词条）
+    let isPatched = false;
+    if (fs.existsSync(metaPath)) {
+      try {
+        const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+        if (meta) {
+          if (meta.mode === 'asar_repack') {
+            isPatched = (meta.jsPatchedCount > 0) || (meta.totalEntries > 0);
+          } else {
+            isPatched = typeof meta.jsPatchedCount === 'number' && meta.jsPatchedCount > 0;
+          }
+        }
+      } catch (e) {}
+    } else if (fs.existsSync(ionAsarBakPath)) {
+      try {
+        const statBak = fs.statSync(ionAsarBakPath);
+        const statCur = fs.statSync(ionAsarPath);
+        if (statBak.size !== statCur.size || statBak.mtimeMs !== statCur.mtimeMs) {
+          isPatched = true;
+        }
+      } catch (e) {
+        isPatched = true;
+      }
+    } else {
+      const assetsDir = path.join(result.resourcesPath, 'ion-dist', 'assets', 'v1');
+      if (fs.existsSync(assetsDir)) {
+        try {
+          const baks = fs.readdirSync(assetsDir).filter(f => f.endsWith('.orig.bak'));
+          if (baks.length > 0) isPatched = true;
+        } catch (e) {}
+      }
+    }
+    result.isPatched = isPatched;
   }
 
   return result;

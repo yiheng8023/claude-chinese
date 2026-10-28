@@ -61,12 +61,18 @@ function runPreflightCheck(options = {}) {
   // 4. 目录写权限探测
   let writePassed = false;
   if (installPassed) {
-    writePassed = canWriteDirectory(info.resourcesPath);
+    const isAsarMode = fs.existsSync(path.join(info.resourcesPath, 'ion-dist.asar'));
+    const appDir = path.dirname(info.resourcesPath);
+    if (isAsarMode) {
+      writePassed = canWriteDirectory(info.resourcesPath) && canWriteDirectory(appDir);
+    } else {
+      writePassed = canWriteDirectory(info.resourcesPath);
+    }
   }
   checks.push({
     id: 'filesystem-permissions',
     name: '资源目录读写权限',
-    detail: writePassed ? '正常 (直接可写)' : '受限 (安装器将自动申请提权)',
+    detail: writePassed ? '正常 (直接可写)' : '受限 (首次需以管理员身份运行 install.bat)',
     passed: true,
     critical: false
   });
