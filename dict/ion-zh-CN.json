@@ -30868,5 +30868,7 @@
   "N6ISBJGFvY": "终端字体大小",
   "O3Xz/Oj58E": "新对话与任务始终从默认模型和推理强度开始，而非每个人上次使用的配置。用户仍可针对当前会话进行更改。",
   "zvxZS7M22M": "Claude 可以在其中工作的文件夹，适用于 Cowork、Code（仅部分 Shell 命令）以及对话读取的项目文件夹。留空表示不受限访问。",
-  "WxZNdVT4iL": "允许 Claude 在本地沙盒中运行代码，以分析其无法原生读取的附件文件（例如 Excel 和 PowerPoint）。"
+  "WxZNdVT4iL": "允许 Claude 在本地沙盒中运行代码，以分析其无法原生读取的附件文件（例如 Excel 和 PowerPoint）。",
+  "XbJErwjmO/": "固定为章节",
+  "okjTCuruM3": "取消固定章节"
 }
