@@ -1,6 +1,6 @@
 /**
  * 前置环境全维预检引擎 (Pre-flight Health Check)
- * 包含 Node.js 弹性最低版本判定 (>= 16.0.0 绝不锁死高版本)、客户端安装探测、进程文件锁占用与目录读写权限全维断言。
+ * 包含 Node.js 弹性最低版本判定 (>= 20.0.0 绝不锁死高版本，全面支持 Node 20/22 LTS 与 Node 24+)、客户端安装探测、进程文件锁占用与目录读写权限全维断言。
  */
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +8,7 @@ const { getClaudeInstallation } = require('./msix-detector');
 const { isClaudeRunning, closeClaude } = require('./patcher');
 const { canWriteDirectory } = require('./permissions');
 
-const MIN_NODE_VERSION = 16;
+const MIN_NODE_VERSION = 20;
 
 function runPreflightCheck(options = {}) {
   const checks = [];

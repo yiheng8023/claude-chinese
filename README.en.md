@@ -6,7 +6,7 @@
   <a href="https://github.com/yiheng8023/claude-chinese/releases"><img src="https://img.shields.io/github/downloads/yiheng8023/claude-chinese/total?style=flat&color=3388ff&logo=github&label=Downloads" alt="Total Downloads"></a>
   <a href="https://github.com/yiheng8023/claude-chinese/stargazers"><img src="https://img.shields.io/github/stars/yiheng8023/claude-chinese?style=flat&logo=github&color=ffaa00" alt="GitHub Stars"></a>
   <a href="https://github.com/yiheng8023/claude-chinese/network/members"><img src="https://img.shields.io/github/forks/yiheng8023/claude-chinese?style=flat&logo=github&color=grey" alt="GitHub Forks"></a>
-  <img src="https://img.shields.io/badge/Node.js-%3E%3D16.x-brightgreen?logo=node.js" alt="Node Version">
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D20.x-brightgreen?logo=node.js" alt="Node Version">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform Support">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/yiheng8023/claude-chinese?color=green" alt="License"></a>
 </p>
@@ -73,7 +73,7 @@ graph TD
    - **macOS**: macOS 12+ (Apple Silicon M-series & Intel chips)
    - **Linux**: Major distributions (Ubuntu, Debian, Fedora, Arch, etc., x64 / ARM64)
 2. **Node.js Runtime Environment**:
-   - **Node.js (>= 16.x)** with `npm` (Fully compatible with Node 18/20/22/24+ LTS releases).
+   - **Node.js (>= 20.x LTS)** with `npm` (Fully compatible with Node 20 / 22 LTS and Node 24+ releases).
    - Run `node -v` to verify. If not installed, download the LTS release from [Node.js Official Website](https://nodejs.org/).
 3. **Claude Desktop Installed**:
    - Ensure the official Claude Desktop client is installed on your system.

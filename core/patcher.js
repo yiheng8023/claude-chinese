@@ -669,7 +669,10 @@ function applyPatch(options = {}) {
   const appDir = path.dirname(resDir);
   const exePath = path.join(appDir, 'claude.exe');
 
-  // 3. 检查并提权（同时覆盖 app 目录与 resources 目录，确保可修改 claude.exe 与 ion-dist.asar）
+  // 3. 独立安全权限收敛：无论当前目录是否可写，均无条件先行清理历史版本可能残留的高危 Users 组显式权限
+  sanitizePermissions(resDir);
+
+  // 4. 检查并提权（同时覆盖 app 目录与 resources 目录，确保可修改 claude.exe 与 ion-dist.asar）
   const needsPerm = !canWriteDirectory(resDir) ||
                     (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir)) ||
                     (!isAsarMode && fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir));
@@ -1040,6 +1043,9 @@ function restorePatch(options = {}) {
   const i18nDir = path.join(resDir, 'ion-dist', 'i18n');
   const dynDir = path.join(i18nDir, 'dynamic');
   const assetsDir = path.join(resDir, 'ion-dist', 'assets', 'v1');
+
+  // 0. 独立安全权限收敛：无论当前目录是否可写，均无条件先行清理历史版本可能残留的高危 Users 组显式权限
+  sanitizePermissions(resDir);
 
   if (!canWriteDirectory(resDir)) {
     grantPermissions(resDir);
