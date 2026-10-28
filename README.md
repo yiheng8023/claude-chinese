@@ -6,7 +6,7 @@
   <a href="https://github.com/yiheng8023/claude-chinese/releases"><img src="https://img.shields.io/github/downloads/yiheng8023/claude-chinese/total?style=flat&color=3388ff&logo=github&label=Downloads" alt="Total Downloads"></a>
   <a href="https://github.com/yiheng8023/claude-chinese/stargazers"><img src="https://img.shields.io/github/stars/yiheng8023/claude-chinese?style=flat&logo=github&color=ffaa00" alt="GitHub Stars"></a>
   <a href="https://github.com/yiheng8023/claude-chinese/network/members"><img src="https://img.shields.io/github/forks/yiheng8023/claude-chinese?style=flat&logo=github&color=grey" alt="GitHub Forks"></a>
-  <img src="https://img.shields.io/badge/Node.js-%3E%3D20.x-brightgreen?logo=node.js" alt="Node Version">
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D20.x%20(Rec%20%3E%3D22.12)-brightgreen?logo=node.js" alt="Node Version">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform Support">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/yiheng8023/claude-chinese?color=green" alt="License"></a>
 </p>
@@ -74,8 +74,11 @@ graph TD
    - **macOS**：macOS 12+（Apple Silicon M 系列及 Intel 芯片）
    - **Linux**：主流发行版（x64 / ARM64）
 2. **Node.js 基础运行环境**：
-   - 系统中需安装 **Node.js (>= 20.x LTS)** 及附带的 **npm**（完全兼容 Node 20 / 22 LTS 与 Node 24+）。
+   - 系统中需安装 **Node.js (推荐 >= 22.12.0 LTS，最低兼容 >= 20.x)** 及附带的 **npm**。
    - 验证方式：在终端运行 `node -v`。若未安装，请前往 [Node.js 官方网站](https://nodejs.org/) 下载安装 LTS 版本。
+   - ⚠️ **引擎依赖兼容性声明 (Compatibility Note)**：
+     - **推荐基线（零警告原生支持）**：**Node.js ≥ 22.12.0**（如 Node 22 LTS 或 Node 24+）。项目底层核心打包依赖 `@electron/asar` 声明 `engines.node: ">=22.12.0"`，在 Node 22+ 下可获得零引擎警告（`EBADENGINE`）的最佳体验；
+     - **兼容状态说明**：**Node.js 20.x**（实测在 Node 20.20.2 下核心功能与自动化测试均可通过，但执行 `npm install` 阶段会提示 `EBADENGINE` 引擎警告；若用户全局启用了 `engine-strict=true` 可能会阻断安装。因此暂不能将所有 Node ≥20 环境列为无警告完全验证环境，建议优先升级至 Node 22+ LTS）。
 3. **已安装 Claude Desktop 客户端**：
    - 确保本机已安装官方 Claude 桌面客户端。
 

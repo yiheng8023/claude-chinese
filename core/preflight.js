@@ -18,10 +18,18 @@ function runPreflightCheck(options = {}) {
   const nodeVerStr = process.version.replace(/^v/, '');
   const majorVer = parseInt(nodeVerStr.split('.')[0], 10);
   const nodePassed = !isNaN(majorVer) && majorVer >= MIN_NODE_VERSION;
+  let nodeDetail = `当前: v${nodeVerStr} (要求: >= v${MIN_NODE_VERSION}.0.0)`;
+  if (nodePassed) {
+    if (majorVer === 20) {
+      nodeDetail += ' [兼容模式: 功能测试通过，但底层 @electron/asar 依赖声明 >=22.12，安装伴随引擎警告，推荐使用 Node 22 LTS]';
+    } else {
+      nodeDetail += ' [推荐环境: 完全契合 @electron/asar 依赖引擎规范]';
+    }
+  }
   checks.push({
     id: 'node-runtime',
     name: 'Node.js 运行时版本',
-    detail: `当前: v${nodeVerStr} (要求: >= v${MIN_NODE_VERSION}.0.0)`,
+    detail: nodeDetail,
     passed: nodePassed,
     critical: true
   });
