@@ -1,79 +1,47 @@
 /**
- * 全平台 (Windows / macOS / Linux) 探测与注入真实代码断言测试 (跨平台真机与 CI 必备)
- * 1. 验证系统级默认路径自动探测 (无参 getClaudeInstallation() 在真实 Linux/macOS/Win32 上的自动命中)
- * 2. 验证核心代码：msix-detector.js 与 patcher.js 在全平台路径解析、增量注入、JS 白名单穿透与还原复位
+ * 跨平台路径探测与散装资源布局回归。
+ * 自动探测只读已有安装；Linux 用户目录探测和注入测试使用独立临时目录。
+ * 合成布局不代表已验证对应平台的官方客户端。
  */
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { applyPatch, restorePatch } = require('../core/patcher');
 
 console.log('====================================================');
-console.log(`   全平台真实核心代码与系统级自动探测测试 (Runner OS: ${process.platform})`);
+console.log(`   跨平台路径与合成资源布局测试 (Runner OS: ${process.platform})`);
 console.log('====================================================\n');
 
 // ----------------------------------------------------
-// Part 1: 真实系统级默认路径自动探测断言 (Auto Discovery Test)
+// Part 1: 只读观察已有安装；绝不创建或删除系统级客户端目录。
 // ----------------------------------------------------
 console.log('【阶段 1】测试当前系统原生默认路径自动探测 (无参调用 getClaudeInstallation())...');
 
-let createdSystemMockDir = null;
+const installed = getClaudeInstallation();
+console.log(installed.resourcesPath ? `   只读检测到有效 ${installed.type} 资源。` : '   未发现有效安装；继续执行隔离布局测试。');
 
-try {
-  if (process.platform === 'linux') {
-    // Linux 下系统默认候选路径之一: ~/.local/share/claude-desktop/resources
-    const homeDir = process.env.HOME || '/tmp';
-    createdSystemMockDir = path.join(homeDir, '.local', 'share', 'claude-desktop', 'resources');
-    fs.mkdirSync(createdSystemMockDir, { recursive: true });
-    fs.writeFileSync(path.join(createdSystemMockDir, 'en-US.json'), '{}', 'utf8');
-
-    const autoDetected = getClaudeInstallation();
-    console.log('   Linux 自动探测结果:', autoDetected);
-
-    if (autoDetected.type !== 'linux' || !autoDetected.resourcesPath) {
-      console.error('❌ Linux 系统级默认安装路径自动探测失败！');
-      process.exit(1);
-    }
-    console.log('   ✅ Linux 系统默认路径自动探测成功！');
-
-  } else if (process.platform === 'darwin') {
-    // macOS 下系统默认路径: /Applications/Claude.app/Contents/Resources
-    // 若在 CI runner (拥有 /Applications 写入权限或临时测试权限)
-    const macApp = '/Applications/Claude.app/Contents/Resources';
-    try {
-      fs.mkdirSync(macApp, { recursive: true });
-      fs.writeFileSync(path.join(macApp, 'en-US.json'), '{}', 'utf8');
-      createdSystemMockDir = '/Applications/Claude.app';
-
-      const autoDetected = getClaudeInstallation();
-      console.log('   macOS 自动探测结果:', autoDetected);
-
-      if (autoDetected.type !== 'macos' || !autoDetected.resourcesPath) {
-        console.error('❌ macOS 系统默认路径自动探测失败！');
-        process.exit(1);
-      }
-      console.log('   ✅ macOS 系统默认路径自动探测成功！');
-    } catch (e) {
-      console.log('   ⚠️ /Applications 权限受限，回退至隔离沙盒断言。');
-    }
-
-  } else if (process.platform === 'win32') {
-    // Windows 下自动探测 MSIX 或 Win32
-    const autoDetected = getClaudeInstallation();
-    console.log('   Windows 自动探测结果:', autoDetected.type, autoDetected.resourcesPath);
-    if (!autoDetected.installPath || !autoDetected.resourcesPath) {
-      console.log('   ⚠️ 未检测到 Windows 安装环境，自动进入模拟断言阶段。');
-    } else {
-      console.log('   ✅ Windows 原生安装自动探测成功！');
-    }
-  }
-} finally {
-  // 严格清理临时创建的系统级路径
-  if (createdSystemMockDir && fs.existsSync(createdSystemMockDir)) {
-    try {
-      fs.rmSync(createdSystemMockDir, { recursive: true, force: true });
-    } catch (e) {}
+if (process.platform === 'linux') {
+  const mockHome = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-discovery-home-'));
+  assert.equal(path.dirname(mockHome), path.resolve(os.tmpdir()));
+  try {
+    const resources = path.join(mockHome, '.local', 'share', 'claude-desktop', 'resources');
+    fs.mkdirSync(path.join(resources, 'ion-dist', 'assets', 'v1'), { recursive: true });
+    fs.mkdirSync(path.join(resources, 'ion-dist', 'i18n'), { recursive: true });
+    fs.writeFileSync(path.join(resources, 'ion-dist', 'i18n', 'en-US.json'), '{}');
+    const script = `const info=require(${JSON.stringify(require.resolve('../core/msix-detector'))}).getClaudeInstallation(); console.log(JSON.stringify({type:info.type,resourcesPath:info.resourcesPath}));`;
+    // Only the child probe receives a temporary HOME; the parent environment stays unchanged.
+    const found = JSON.parse(execFileSync(process.execPath, ['-e', script], {
+      encoding: 'utf8', env: { ...process.env, HOME: mockHome }
+    }));
+    assert.equal(found.type, 'linux');
+    assert(found.resourcesPath, 'Linux 自动探测应找到有效资源');
+    if (!installed.resourcesPath) assert.equal(found.resourcesPath, resources);
+    console.log('   ✅ Linux 隔离用户目录探测通过。');
+  } finally {
+    fs.rmSync(mockHome, { recursive: true, force: true });
   }
 }
 
@@ -114,7 +82,7 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     const detected = getClaudeInstallation(appRoot);
     if (!detected.resourcesPath || path.resolve(detected.resourcesPath) !== path.resolve(resDir)) {
       console.error(`  ❌ 路径解析断言失败! 期望: ${resDir}, 实际: ${detected.resourcesPath}`);
-      process.exit(1);
+      throw new Error('路径解析断言失败');
     }
     console.log(`  ✅ 路径解析成功: ${detected.resourcesPath}`);
 
@@ -123,21 +91,21 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     const patchRes = applyPatch({ customPath: appRoot });
     if (!patchRes.success) {
       console.error('  ❌ 注入失败:', patchRes.error);
-      process.exit(1);
+      throw new Error('合成布局注入失败');
     }
 
     // 检查 JS 文件中是否真正由 patcher.js 写入了 "zh-CN"
     const patchedJsContent = fs.readFileSync(jsFilePath, 'utf8');
     if (!patchedJsContent.includes('"zh-CN"')) {
       console.error('  ❌ patcher.js 未能通过正则在 JS 文件中注册 "zh-CN"!');
-      process.exit(1);
+      throw new Error('语言白名单注册失败');
     }
     console.log('  ✅ JS 语言白名单通过 patcher.js 正则成功穿透注册!');
 
     // 检查 zh-CN.json 与 meta 是否生成
     if (!fs.existsSync(path.join(resDir, 'zh-CN.json')) || !fs.existsSync(path.join(resDir, '.claude_chinese_meta.json'))) {
       console.error('  ❌ 注入文件缺失!');
-      process.exit(1);
+      throw new Error('注入文件缺失');
     }
     console.log('  ✅ 增量 zh-CN.json 与补丁元数据就绪!');
 
@@ -146,7 +114,7 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     const patchedStatus = getClaudeInstallation(appRoot);
     if (patchedStatus.isPatched !== true) {
       console.error('  ❌ 注入后 isPatched 判定异常: false');
-      process.exit(1);
+      throw new Error('补丁状态判定失败');
     }
     console.log('  ✅ 注入后 isPatched = true 断言通过!');
 
@@ -155,14 +123,14 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     const restoreRes = restorePatch({ customPath: appRoot });
     if (!restoreRes.success) {
       console.error('  ❌ 还原失败:', restoreRes.error);
-      process.exit(1);
+      throw new Error('合成布局还原失败');
     }
 
     // 检查 JS 是否复原
     const restoredJsContent = fs.readFileSync(jsFilePath, 'utf8');
     if (restoredJsContent.includes('"zh-CN"')) {
       console.error('  ❌ restorePatch 未能清除 JS 中的 "zh-CN"!');
-      process.exit(1);
+      throw new Error('还原后语言白名单未清理');
     }
     console.log('  ✅ JS 语言白名单已由 restorePatch 干净清除!');
 
@@ -170,7 +138,7 @@ function runPlatformTestSuite(testId, displayName, isMacBundle = false) {
     const finalStatus = getClaudeInstallation(appRoot);
     if (finalStatus.isPatched !== false) {
       console.error('  ❌ 还原后 isPatched 未能复位为 false!');
-      process.exit(1);
+      throw new Error('还原后状态未复位');
     }
     console.log('  ✅ 还原后 isPatched = false 断言通过!');
 
