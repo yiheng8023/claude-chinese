@@ -24,6 +24,19 @@ function runCompatibilityMatrix(options = {}) {
 
   const info = getClaudeInstallation(options.customPath);
   const resDir = info.resourcesPath;
+  report.sourceScope = resDir ? 'installed-client' : 'synthetic-fixtures';
+  if (resDir && fs.existsSync(path.join(resDir, 'app.asar'))) {
+    const asar = require('@electron/asar');
+    const { patchShellLocale } = require('../core/shell-locale');
+    const app = path.join(resDir, 'app.asar');
+    let maps = 0;
+    for (const file of asar.listPackage(app).filter(file => file.endsWith('.js') && file.includes('build'))) {
+      maps += patchShellLocale(asar.extractFile(app, file.replace(/^[\\/]/, '')).toString('utf8')).mapCount;
+    }
+    report.shellLocale = { matches: maps, passed: maps === 1 };
+    if (maps !== 1) report.allPassed = false;
+    console.log(`主进程语言注册结构匹配: ${maps}（要求 1）`);
+  }
 
   if (!resDir || !fs.existsSync(resDir)) {
     console.log('🧪 [MODE: SYNTHETIC_MOCK] 未检测到本地真实安装客户端，进入合成仿真模式执行拓扑抗混淆变异测试。\n');
@@ -57,6 +70,8 @@ function runCompatibilityMatrix(options = {}) {
 
   const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
   const ionZh = fs.existsSync(ionZhPath) ? JSON.parse(fs.readFileSync(ionZhPath, 'utf8')) : {};
+  const official = require('../core/catalogs').readOfficialCatalog(info);
+  const ionEn = official?.dictionary || {};
 
   let activeHits = 0;
   let standardizedCount = 0;
@@ -71,7 +86,7 @@ function runCompatibilityMatrix(options = {}) {
       } else if (patch.enPattern && safeTest(patch.enPattern, allJs)) {
         status = 'ACTIVE_READY';
         activeHits++;
-      } else if (patch.intlKey && ionZh[patch.intlKey]) {
+      } else if (patch.intlKey && ionEn[patch.intlKey]) {
         status = 'UPSTREAM_STANDARDIZED';
         standardizedCount++;
       } else {
@@ -80,7 +95,7 @@ function runCompatibilityMatrix(options = {}) {
         report.allPassed = false;
       }
     } else {
-      status = (patch.intlKey && ionZh[patch.intlKey]) ? 'UPSTREAM_STANDARDIZED' : 'ACTIVE_SYNTHETIC';
+      status = 'ACTIVE_SYNTHETIC';
       activeHits++;
     }
 

@@ -9,6 +9,7 @@ const os = require('os');
 const { execSync } = require('child_process');
 const { applyPatch, restorePatch } = require('../core/patcher');
 const { getClaudeInstallation } = require('../core/msix-detector');
+const { baselineArtifacts, readMeta } = require('../core/asar-transaction');
 
 console.log('====================================================');
 console.log('   Claude-Chinese AST 语法防火墙与黑屏崩溃拦截测试');
@@ -25,7 +26,10 @@ try {
   fs.mkdirSync(sandboxI18n, { recursive: true });
 
   // 如果本地有真实安装，直接复制真实打补丁的关键 bundle，测试全真 AST！
-  const asarPath = info.resourcesPath ? path.join(info.resourcesPath, 'ion-dist.asar') : null;
+  let asarPath = info.resourcesPath ? path.join(info.resourcesPath, 'ion-dist.asar') : null;
+  if (asarPath && fs.existsSync(asarPath)) {
+    asarPath = baselineArtifacts(info.resourcesPath, readMeta(info.resourcesPath)).find(item => item.name === 'ion-dist.asar').source;
+  }
   const realAssets = info.resourcesPath ? path.join(info.resourcesPath, 'ion-dist', 'assets', 'v1') : null;
 
   if (asarPath && fs.existsSync(asarPath)) {
@@ -33,17 +37,7 @@ try {
     const asar = require('@electron/asar');
     const allEntries = asar.listPackage(asarPath);
     const jsEntries = allEntries.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
-    const targetEntries = [
-      jsEntries.find(e => path.basename(e).startsWith('shared-5-')),
-      jsEntries.find(e => path.basename(e).startsWith('shared-13-')),
-      jsEntries.find(e => path.basename(e).startsWith('shared-52-')),
-      jsEntries.find(e => {
-        try {
-          const content = asar.extractFile(asarPath, e.replace(/^[\\\/]/, '')).toString('utf8');
-          return content.includes('["en-US"');
-        } catch (_) { return false; }
-      })
-    ].filter(Boolean);
+    const targetEntries = jsEntries;
 
     for (const entry of targetEntries) {
       const fileName = path.basename(entry);
@@ -60,15 +54,7 @@ try {
   } else if (realAssets && fs.existsSync(realAssets)) {
     console.log('📡 [MODE: REAL_CLIENT_BUNDLE] 检测到本地真实散装安装，拷贝真实 JS Bundle 执行真实 AST 语法扫描...\n');
     const allFiles = fs.readdirSync(realAssets).filter(f => f.endsWith('.js') && !f.endsWith('.bak'));
-    const targetFiles = [
-      allFiles.find(f => f.startsWith('shared-5-')),
-      allFiles.find(f => f.startsWith('shared-13-')),
-      allFiles.find(f => {
-        try {
-          return fs.readFileSync(path.join(realAssets, f), 'utf8').includes('["en-US"');
-        } catch (e) { return false; }
-      })
-    ].filter(Boolean);
+    const targetFiles = allFiles;
 
     for (const f of targetFiles) {
       const realFile = path.join(realAssets, f);
@@ -97,7 +83,7 @@ try {
 
   // 2. 对沙盒中所有修改过的 JS 文件执行严格的 Node.js ESM 语法检查
   console.log('【阶段 2】执行严格的 Node.js ESM AST 语法完整性扫描 (node --check)...');
-  const jsFiles = fs.readdirSync(sandboxAssets).filter(f => f.endsWith('.js') && !f.endsWith('.bak'));
+  const jsFiles = fs.readdirSync(sandboxAssets).filter(f => f.endsWith('.js') && fs.existsSync(path.join(sandboxAssets, f + '.orig.bak')));
   
   // 写入 package.json {"type": "module"} 使 node --check 以 ESM 模式严格验证语法
   fs.writeFileSync(path.join(sandboxAssets, 'package.json'), JSON.stringify({ type: 'module' }));

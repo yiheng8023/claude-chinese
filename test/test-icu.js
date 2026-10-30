@@ -4,7 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const { validateDictionary, extractPlaceholders } = require('../tools/icu-validator');
+const { validateDictionary, validateSyntax } = require('../tools/icu-validator');
+const { getClaudeInstallation } = require('../core/msix-detector');
+const { readOfficialCatalog } = require('../core/catalogs');
 
 console.log('--- 测试 2: 验证全量三套字典 ICU 占位符结构与专有名词 ---');
 
@@ -40,9 +42,7 @@ if (fs.existsSync(ionZhPath)) {
   ionTotal = Object.keys(ionZh).length;
   for (const [key, text] of Object.entries(ionZh)) {
     if (typeof text === 'string') {
-      const openCount = (text.match(/\{/g) || []).length;
-      const closeCount = (text.match(/\}/g) || []).length;
-      if (openCount !== closeCount) {
+      if (!validateSyntax(text).valid) {
         console.error(`[Ion-Dist 大括号不闭合] key: ${key}, text: ${text}`);
         ionInvalidCount++;
       }
@@ -61,9 +61,7 @@ if (fs.existsSync(dynZhPath)) {
   dynTotal = Object.keys(dynZh).length;
   for (const [key, text] of Object.entries(dynZh)) {
     if (typeof text === 'string') {
-      const openCount = (text.match(/\{/g) || []).length;
-      const closeCount = (text.match(/\}/g) || []).length;
-      if (openCount !== closeCount) {
+      if (!validateSyntax(text).valid) {
         console.error(`[Dynamic 词库大括号不闭合] key: ${key}, text: ${text}`);
         dynInvalidCount++;
       }
@@ -73,4 +71,12 @@ if (fs.existsSync(dynZhPath)) {
   assert.strictEqual(dynInvalidCount, 0, 'Dynamic 词库不应有大括号不闭合或结构破坏的词条');
 }
 
-console.log(`✅ 测试 2 通过: 全量 ${valResults.total + ionTotal + dynTotal} 词条 ICU 占位符与变量结构 100% 合法且专有名词受到严格保护！`);
+const info = getClaudeInstallation();
+for (const [layer, dict] of [['ion', 'ion-zh-CN.json'], ['dynamic', 'dynamic-zh-CN.json']]) {
+  const official = readOfficialCatalog(info, layer);
+  if (!official) { console.log(`[${layer}] 未安装可读取的宿主，英文对照检查跳过。`); continue; }
+  const result = validateDictionary(official.dictionary, JSON.parse(fs.readFileSync(path.join(__dirname, '../dict', dict), 'utf8')));
+  assert.deepEqual(result.invalid.map(item => ({ key: item.key, errors: item.errors })), [], `${layer} 当前宿主变量结构不匹配`);
+  console.log(`[${layer}] 已对照当前宿主校验 ${result.validCount} 项，未收录 ${result.missing.length} 项保留英文回退。`);
+}
+console.log(`✅ ICU 校验通过：外壳英文对照与 ${ionTotal + dynTotal} 项消息语法检查完成。`);

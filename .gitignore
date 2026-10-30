@@ -1,5 +1,6 @@
 # Dependencies & Logs
 node_modules/
+.tmp/
 *.tmp
 *.log
 

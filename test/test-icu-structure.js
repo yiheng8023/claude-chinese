@@ -1,0 +1,13 @@
+const assert = require('node:assert/strict');
+const { validatePair, validateSyntax, extractVariables } = require('../tools/icu-validator');
+const en = '{count, plural, one {Hello {name}} other {Hello {name}, # files}}';
+assert.equal(validatePair('nested', en, '{count, plural, one {你好 {name}} other {你好 {name}，# 个文件}}').valid, true);
+assert.equal(validatePair('missing', en, '{count, plural, one {你好} other {你好，# 个文件}}').valid, false);
+assert.equal(validatePair('type', '{amount, number}', '{amount}').valid, false);
+assert.equal(validatePair('branches', '{mode, select, on {On} other {Off}}', '{mode, select, yes {开} other {关}}').valid, false);
+assert.equal(validateSyntax('{n, plural, one {One}}').valid, false);
+assert.equal(validateSyntax("JSON should start with '{'.").valid, true);
+assert.equal(validatePair('literal', "JSON should start with '{'.", "JSON 应以 '{' 开头。").valid, true);
+assert.deepEqual(extractVariables(en).sort(), ['count', 'name']);
+assert.equal(validatePair('chinese-plural', en, '{count, plural, other {你好 {name}，# 个文件}}').valid, true);
+console.log('PASS: ICU nested arguments, selectors, formatting types and quoted literal braces');

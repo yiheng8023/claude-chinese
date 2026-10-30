@@ -1,5 +1,5 @@
 /**
- * ASAR 架构端到端生命周期回归测试 (包含 Electron Fuse 4 禁用与 Header SHA256 原位替换断言)
+ * ASAR 生命周期回归测试（保持 Fuse 4 开启并同步 Header SHA256）
  */
 const assert = require('assert');
 const fs = require('fs');
@@ -11,7 +11,7 @@ const { applyPatch, restorePatch, packAsarSync, getRawHeaderSha256 } = require('
 const { getClaudeInstallation } = require('../core/msix-detector');
 
 console.log('====================================================');
-console.log('   Claude-Chinese ASAR 架构与 Fuse 破解闭环回归测试');
+console.log('   Claude-Chinese ASAR 生命周期与完整性同步回归测试');
 console.log('====================================================\n');
 
 const mockDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-asar-test-'));
@@ -108,8 +108,9 @@ try {
   assert(Object.keys(ionZhInAsar).length > 1000, 'ASAR 内部 zh-CN.json 必须包含全量中文词条！');
 
   const enUsInAsar = JSON.parse(fs.readFileSync(path.join(extractedDir, 'i18n', 'en-US.json'), 'utf8'));
-  assert(enUsInAsar['1uz/I31pXU'] === '1M', '双重保险：ASAR 内部 en-US.json 必须同步覆盖为中文增量！');
-  console.log('  ✅ ASAR 内部 i18n/zh-CN.json 生成与 en-US.json 双重保险同步覆盖验证通过');
+  assert(enUsInAsar['1uz/I31pXU'] === '1M', '模型上下文规格应保持不变');
+  assert.strictEqual(fs.readFileSync(path.join(extractedDir, 'i18n', 'en-US.json'), 'utf8'), sampleEnUs, 'English catalog bytes must remain unchanged');
+  console.log('  ✅ ASAR 内部 zh-CN.json 已生成，原版 en-US.json 字节保持不变');
   fs.rmSync(extractedDir, { recursive: true, force: true });
 
   // 验证状态判定
@@ -128,7 +129,7 @@ try {
   const restoredExeBuf = fs.readFileSync(exePath);
   assert.strictEqual(restoredExeBuf.compare(initialExeBuf), 0, '还原后 claude.exe 必须 100% 字节级恢复为出厂原版！');
   assert(!fs.existsSync(exeBakPath), '还原后 claude.exe.orig.bak 备份必须被干净删除！');
-  console.log('  ✅ claude.exe 100% 字节级出厂还原，Fuse 4 复位，备份干净清理');
+  console.log('  ✅ claude.exe 字节级还原，Fuse 4 保持原样，备份干净清理');
 
   const restoredAsarSha = getRawHeaderSha256(origAsarPath);
   assert.strictEqual(restoredAsarSha, origAsarSha256, '还原后 ion-dist.asar 必须 100% 恢复为官方原版！');
@@ -140,7 +141,7 @@ try {
   console.log('  ✅ 还原后 getClaudeInstallation().isPatched === false 判定通过');
 
   console.log('\n====================================================');
-  console.log('   🎉 ASAR 架构端到端生命周期与双保险破解全部 PASS！');
+  console.log('   🎉 ASAR 生命周期与完整性同步全部 PASS！');
   console.log('====================================================\n');
 
 } finally {

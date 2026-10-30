@@ -1,3 +1,5 @@
+const { parse } = require('@formatjs/icu-messageformat-parser');
+
 /**
  * ICU 占位符与 AST 结构校验器
  * 确保翻译后的文本与原始英文在变量名、ICU 复数语法和格式化标记上保持 100% 结构一致。
@@ -25,36 +27,49 @@ function extractPlaceholders(text) {
 }
 
 function extractVariables(text) {
-  const placeholders = extractPlaceholders(text);
   const vars = [];
-  for (const ph of placeholders) {
-    const inner = ph.slice(1, -1).trim();
-    const varName = inner.split(',')[0].trim();
-    vars.push(varName);
+  function walk(nodes) {
+    for (const node of nodes) {
+      if (node.type >= 1 && node.type <= 6) vars.push(node.value);
+      if (node.options) for (const [selector, option] of Object.entries(node.options)) {
+        if (node.type !== 6 || selector === 'other' || selector.startsWith('=')) walk(option.value);
+      }
+      if (node.children) walk(node.children);
+    }
   }
-  return vars;
+  walk(parse(text || '', { ignoreTag: true }));
+  return [...new Set(vars)];
+}
+
+function signature(text) {
+  const parts = [];
+  function walk(nodes, scope = '') {
+    for (const node of nodes) {
+      if (node.type >= 1 && node.type <= 6) {
+        const selectors = node.options ? Object.keys(node.options).filter(key => node.type !== 6 || key === 'other' || key.startsWith('=')).sort() : null;
+        parts.push(JSON.stringify([scope, node.value, node.type, node.offset || 0, selectors, node.style || null]));
+      }
+      if (node.options) for (const [selector, option] of Object.entries(node.options)) {
+        if (node.type !== 6 || selector === 'other' || selector.startsWith('=')) walk(option.value, `${scope}/${node.value}:${selector}`);
+      }
+      if (node.children) walk(node.children, scope);
+    }
+  }
+  walk(parse(text, { ignoreTag: true }));
+  return [...new Set(parts)].sort().join('\n');
+}
+
+function validateSyntax(text) {
+  try { parse(text, { ignoreTag: true }); return { valid: true, errors: [] }; }
+  catch (error) { return { valid: false, errors: [error.message] }; }
 }
 
 function validatePair(key, enText, zhText) {
   const errors = [];
 
-  const enVars = extractVariables(enText);
-  const zhVars = extractVariables(zhText);
-
-  // 1. 检查变量数量与名称是否一致
-  const enVarSet = [...enVars].sort();
-  const zhVarSet = [...zhVars].sort();
-
-  if (enVarSet.join(',') !== zhVarSet.join(',')) {
-    errors.push(`变量不匹配: 英文包含 [${enVarSet.join(', ')}]，中文包含 [${zhVarSet.join(', ')}]`);
-  }
-
-  // 2. 检查大括号平衡
-  const openCount = (zhText.match(/\{/g) || []).length;
-  const closeCount = (zhText.match(/\}/g) || []).length;
-  if (openCount !== closeCount) {
-    errors.push(`大括号不闭合: 开括号 ${openCount} 个，闭括号 ${closeCount} 个`);
-  }
+  try {
+    if (signature(enText) !== signature(zhText)) errors.push('ICU 变量、格式类型或选择分支不匹配');
+  } catch (error) { errors.push(`ICU 语法错误: ${error.message}`); }
 
   return {
     key,
@@ -92,5 +107,6 @@ module.exports = {
   extractPlaceholders,
   extractVariables,
   validatePair,
+  validateSyntax,
   validateDictionary
 };

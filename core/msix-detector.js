@@ -4,6 +4,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { hashFile } = require('./asar-transaction');
+const { localizationFingerprint } = require('./localization-state');
 
 function getClaudeInstallation(customPath = null) {
   const result = {
@@ -17,7 +19,11 @@ function getClaudeInstallation(customPath = null) {
   };
 
   // 0. 支持用户手动指定路径
-  if (customPath && fs.existsSync(customPath)) {
+  if (customPath) {
+    if (!fs.existsSync(customPath) || !fs.statSync(customPath).isDirectory()) {
+      result.error = '指定的安装目录不存在或不是目录。';
+      return result;
+    }
     result.type = 'custom';
     result.installPath = customPath;
     if (fs.existsSync(path.join(customPath, 'resources'))) {
@@ -27,23 +33,28 @@ function getClaudeInstallation(customPath = null) {
     } else if (fs.existsSync(path.join(customPath, 'Contents', 'Resources'))) {
       result.resourcesPath = path.join(customPath, 'Contents', 'Resources');
     } else {
-      result.resourcesPath = customPath;
+      if (fs.existsSync(path.join(customPath, 'ion-dist.asar')) || fs.existsSync(path.join(customPath, 'ion-dist', 'assets', 'v1'))) {
+        result.resourcesPath = customPath;
+      }
     }
   } else if (process.platform === 'win32') {
     // 1. 优先检测 Windows MSIX / Appx 安装
     try {
-      const output = execSync('powershell -NoProfile -Command "Get-AppxPackage -Name *Claude* | Select-Object -First 1 -Property PackageFullName, InstallLocation, Version, PackageFamilyName | ConvertTo-Json"', {
+      const output = execSync('powershell -NoProfile -Command "Get-AppxPackage -Name *Claude* | Where-Object { $_.Name -in @(\'Claude\', \'AnthropicPBC.Claude\') } | Select-Object Name, InstallLocation, Version, PackageFamilyName | ConvertTo-Json -Compress"', {
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore']
       }).trim();
 
       if (output) {
-        const pkg = JSON.parse(output);
+        const parsed = JSON.parse(output);
+        const packages = Array.isArray(parsed) ? parsed : [parsed];
+        const pkg = packages.find(p => p.Name === 'Claude') || packages.find(p => p.Name === 'AnthropicPBC.Claude');
         if (pkg && pkg.InstallLocation && fs.existsSync(pkg.InstallLocation)) {
           result.type = 'msix';
           result.version = pkg.Version;
           result.installPath = pkg.InstallLocation;
           result.packageFamilyName = pkg.PackageFamilyName;
+          result.distribution = pkg.Name === 'AnthropicPBC.Claude' ? 'store' : 'website';
           
           const resPath = path.join(pkg.InstallLocation, 'app', 'resources');
           if (fs.existsSync(resPath)) {
@@ -98,6 +109,12 @@ function getClaudeInstallation(customPath = null) {
     }
   }
 
+  if (result.resourcesPath && !fs.existsSync(path.join(result.resourcesPath, 'ion-dist.asar')) &&
+      !(fs.existsSync(path.join(result.resourcesPath, 'ion-dist', 'assets', 'v1')) && fs.existsSync(path.join(result.resourcesPath, 'ion-dist', 'i18n', 'en-US.json')))) {
+    result.resourcesPath = null;
+    result.error = '指定目录缺少 Claude 前端资源，未执行任何修改。';
+  }
+
   // 5. 检查是否已汉化及是否官方已原生支持中文 (严谨特征判定)
   if (result.resourcesPath) {
     const metaPath = path.join(result.resourcesPath, '.claude_chinese_meta.json');
@@ -140,7 +157,12 @@ function getClaudeInstallation(customPath = null) {
       try {
         const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
         if (meta) {
-          if (meta.mode === 'asar_repack') {
+          if (meta.mode === 'asar_repack' && meta.archives) {
+            const targets = { 'ion-dist.asar': ionAsarPath, 'app.asar': path.join(result.resourcesPath, 'app.asar'), 'claude.exe': path.join(path.dirname(result.resourcesPath), 'claude.exe') };
+            const entries = Object.entries(meta.archives);
+            isPatched = entries.length > 0 && entries.every(([name, record]) => targets[name] && fs.existsSync(targets[name]) && hashFile(targets[name]) === record.patchedHash);
+            if (!isPatched) result.patchStale = true;
+          } else if (meta.mode === 'asar_repack') {
             isPatched = (meta.jsPatchedCount > 0) || (meta.totalEntries > 0);
           } else {
             isPatched = typeof meta.jsPatchedCount === 'number' && meta.jsPatchedCount > 0;
@@ -167,6 +189,20 @@ function getClaudeInstallation(customPath = null) {
       }
     }
     result.isPatched = isPatched;
+    if (isPatched) {
+      try {
+        const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+        const current = localizationFingerprint();
+        result.needsUpdate = meta.toolkitVersion !== current.toolkitVersion || meta.dictionaryDigest !== current.dictionaryDigest;
+      } catch (_) { result.needsUpdate = true; }
+    }
+  }
+
+  if (!result.version && result.resourcesPath) {
+    const archive = path.join(result.resourcesPath, 'app.asar');
+    if (fs.existsSync(archive)) {
+      try { result.version = JSON.parse(require('@electron/asar').extractFile(archive, 'package.json')).version || null; } catch (_) {}
+    }
   }
 
   return result;

@@ -15,61 +15,35 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A high-performance, reversible Chinese localization toolkit designed for Anthropic **Claude Desktop** clients (Windows MSIX / Win32 / macOS / Linux), currently at version **v1.2.89** (fully adapting official latest release **v4.29.0.0**). Built on official native i18n architectures with incremental overlay, multi-signature topological invariants, and self-healing lifecycle management.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.91**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
-## 🌟 Key Features & Design Philosophy
+## 🌟 Key Features
 
-- ⚡ **Core Patcher Engine 5~11x Turbo Speedup (Fast Substring Guard Pruning & Lazy Hashing)**: Overhauled the traversal and patching pipeline across all 3,293 upstream JS files (105MB source code). Established mathematically strict subset character guards (`enGuard` / `zhGuard`) for all 26 literal patches, performing sub-microsecond substring probe checks before any regex execution, pruning 99.4% of unnecessary global regex backtracks. Added `'text:'` fast guard for long-document multi-signature interceptors and transitioned SHA-256 computation to on-demand lazy evaluation. Benchmarks show total `applyPatch` runtime drops from **29.5s to 5.9s** (5x speedup), and `restorePatch` drops from **20s+ to 1.79s** (11x speedup).
-- ⚖️ **Upholding Strict Diff Standards & Hardened Anti-Downgrade Audit Gate**: Firmly adheres to the project's longstanding publication-grade semantic boundary standardizing state comparison as "**差异**" (Diff) and action/change sets as "**变更 / 更改**" (Change), eliminating common industry terminology confusion; backed by an automated CI audit gate (`npm run audit` Check 7) across all 31,000+ entries for permanent protection.
-- 🌿 **Strict Branch vs Fork Semantic Separation**: Complete disambiguation between version control `Branch` and session cloning `Fork`. Context menu actions are strictly normalized to `分叉` (Fork, Shortcut F), with prompts aligned to `从此处分叉` (Fork from here) and `分叉会话` (Fork session). This eliminates mental model confusion where users mistook session forks for git branch operations, backed by automated consistency audit gates (`npm run audit`).
-- 🛡️ **Reversible Incremental Overlay & Pure Fallback**: Merges translations dynamically on top of official `en-US` dictionaries while preserving the native English dictionary 100% intact as an ultimate fallback. Any newly introduced upstream keys fall back to English gracefully, completely preventing white-screen crash bugs.
-- 🛑 **Agent Suicide Prevention Safety Gate**: Built-in `isProtectedEnvironment()` probe guards against accidental kills when executed inside agent sessions, automated CLI pipelines, or protected environments, preventing crashes of the parent workflow.
-- 🛡️ **AST Syntax Firewall & Black-Screen Crash Prevention**: Built-in real-time Node.js ESM AST integrity self-audit asserts that every modified JS bundle possesses valid closure and syntax before hitting disk, completely eliminating corrupt syntax that triggers black or blank screen crashes.
-- 🧬 **Topology Multi-Signature Invariants & Mutation Fuzzing Matrix**: Replaces brittle regexes with parameter-name-agnostic reverse-reference semantic topology matching, supporting declarative functions, ESBuild arrow functions, and Babel `Object.assign` degraded forms. Fully guarded by state-free `safeTest` regex protections across long documents and UI patches; paired with preflight mutation testing (`npm run test:matrix`) and cloud CI sentinels to verify compatibility before releases reach users.
-- 🔄 **Dual-State Pristine Baseline & Anti-Downgrade Self-Healing**: Leverages SHA-256 digests and patch signatures. Confirms clean official `en-US` as authoritative; automatically refreshes baseline backups upon upstream silent updates and enforces atomic rollback circuit breakers during `restore`, preventing stale backups from downgrading newer official releases.
-- 🕊️ **Official Chinese Detection & Graceful Yield**: Built-in native multi-language and JavaScript runtime probes. When Anthropic rolls out official native Chinese localization in the future, the toolkit detects it in milliseconds and steps aside gracefully.
-- 🎯 **Full HashKey, Dynamic Namespaces & Deep Foldable Documents Coverage**: Over **31,700+** curated core entries (872 Shell baseline / 1,191 localized, 30,862 Web UI entries), **156 full-length foldable deep documentation guides**, and native dynamic i18n namespace keys (covering skill uploads/management, third-party MCP migration & imports, SSH remote session reconnection fixes, worktree port & site authorization alerts, nonessential network services guide, fast file search & filters, dual-tier bulletproof localization for model thinking effort slider/menu `Recommended` badges, Cowork canvas, approval workflows, Claude Code mode, Routines, design systems, nested sessions, thinking effort & output style dropdowns, lossless frontend Chinese descriptions for all 11 official built-in skills, and first-slot `中文（简体） / Chinese (Simplified)` native display in the language picker modal).
-- 🔒 **Strict ICU AST Syntax Firewall**: Absolute structural validation and protection for dynamic ICU variables (`{count, plural...}`, `{apps}`, `{folderName}`) and technical parameter enumerations (`allow`, `ask`, `low`, `high`, `/loop`), ensuring workflows never stall.
-- 🪟 **Least Privilege & MSIX Tailored Adaptation**: Strictly adheres to the principle of least privilege, granting write permissions solely to the current user via single-pass recursive ACLs to avoid repeated UAC prompts and hazardous global Users group escalations.
+- **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
+- **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
+- **Four catalog layers**: 1,282 Shell entries (961 current English baseline entries), 31,156 Web UI entries, 51 dynamic entries and 174 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
+- **Recoverable installation**: stage and verify both ASARs and the executable before replacing installed files; roll back ordinary write failures and retain matching original backups.
+- **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
+- **Actual validation**: parse ICU messages, nested arguments, format types and select branches while allowing Chinese plural grammar; syntax-check modified renderer and main-process JavaScript.
+- **Bounded scope**: no mirror client, Cowork eligibility changes, CC Switch routing changes or replacement updater. Save work and exit a running client before patching.
 
 ---
 
-## 🗺️ Architecture & Roadmap
+## 🗺️ Project Scope and Structure
 
-The project adopts a phased evolutionary architecture:
+This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-```mermaid
-graph TD
-    User((Developer / User)) --> ClaudeApp[Claude Desktop App]
-    
-    subgraph Mode1 ["【Released】Host UI Localization"]
-        ClaudeApp --> ShellLayer["Shell Layer (801 official baseline / 1,100 entries)"]
-        ClaudeApp --> WebUILayer["Ion-Dist Web UI (30,195 entries)"]
-        ClaudeApp --> LongDocsLayer["Full Long Foldable Docs (149 articles)"]
-        ClaudeApp --> DynamicLayer["Dynamic Model Features & Placeholders"]
-    end
-    
-    subgraph Mode2 ["【Roadmap / Planned】Agent Suite & Extensions"]
-        ClaudeApp -.-> MCP["MCP Server Chinese Protocol"]
-        ClaudeApp -.-> Rules["Chinese Interaction & Code Comment Rules"]
-        ClaudeApp -.-> Switcher["1P Official / 3P Gateway (DeepSeek) Router"]
-    end
-```
-
-1. **Dimension A: Host UI Localization (Ready & Complete)**:
-   - Complete localization of native menus, system tray, Cowork task canvas, approval dialogs, settings, and interactive inputs.
-2. **Dimension B: Agent Extension Ecosystem (Roadmap & Evolution)**:
-   - **[Planned]** MCP (Model Context Protocol) Chinese workflow integrations;
-   - **[Planned]** Adapters for gateway routers such as CC Switch and custom local inference endpoints.
+This update targets Windows **4.4212.0** installed through the official website installer (system package **4.4212.0.0**). Existing loose-resource layouts on macOS/Linux remain supported; synchronization of dual ASAR archives and executable integrity is currently implemented and verified only for the Windows layout.
 
 ---
 
 ## 📋 Prerequisites
 
 1. **Supported Operating Systems**:
-   - **Windows**: Windows 10 / 11 (x64) (Supports official MSIX sideloaded packages and standard standalone installations)
+   - **Windows**: Windows 10 / 11 (x64) (Supports the official website installer; Microsoft Store distribution is not supported)
    - **macOS**: macOS 12+ (Apple Silicon M-series & Intel chips)
    - **Linux**: Major distributions (Ubuntu, Debian, Fedora, Arch, etc., x64 / ARM64)
 2. **Node.js Runtime Environment**:
@@ -77,11 +51,22 @@ graph TD
    - Run `node -v` to verify. If not installed, download the LTS release from [Node.js Official Website](https://nodejs.org/).
    - ⚠️ **Engine Dependency Compatibility Note**:
      - **Recommended Baseline (Zero Warning)**: **Node.js ≥ 22.12.0** (Node 22 LTS or Node 24+). The underlying archive dependency `@electron/asar` declares `engines.node: ">=22.12.0"`, providing a native, zero-warning installation and execution environment.
-     - **Compatibility Status**: **Node.js 20.x** (Validated in testing environments such as Node 20.20.2 where all test suites pass; however, `npm install` emits an `EBADENGINE` engine warning, and environments with `engine-strict=true` may block installation. Therefore, not all Node ≥20 sub-versions can be considered officially verified without caveat; upgrading to Node 22 LTS is strongly recommended).
+     - **Compatibility Status**: CI includes **Node.js 20.x**, but dependency installation may emit `EBADENGINE` and may fail with `engine-strict=true`. Passing Node 20 CI does not establish compatibility with every earlier minor version. Prefer Node 22.12+.
 3. **Claude Desktop Installed**:
    - Ensure the official Claude Desktop client is installed on your system.
+   - ⚠️ **Windows Distribution Channel Compatibility**:
+     - **Supported**: The `.exe` installer downloaded from the [official website](https://claude.com/download). **This installer can deploy an MSIX package into WindowsApps**; the extension and installation directory alone do not identify the distribution channel.
+     - **Unsupported**: MSIX / AppX package distributed via the **Microsoft Store**. The detector distinguishes the website package `Claude` from the Store package `AnthropicPBC.Claude` and refuses writes to the latter.
 
 ---
+
+Patching changes ASAR files and integrity records in the Windows executable, **invalidating the original publisher signature**. Security software or device policy may reject the operation. Electron Fuse 4 stays enabled; the toolkit does not disable protection or create a second client. Rollback tests cover ordinary write errors, not power loss or concurrent external writers. Retain original backups.
+
+If English remains after restart, select Chinese (Simplified) in the client’s language picker; existing language preferences are preserved.
+
+Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
+
+On the website-distributed **4.4212.0** build, Help → Check for Updates returned “You are running the latest version.” The earlier Squirrel error was not reproduced on this build. The toolkit keeps the official updater; if an update replaces localization, exit the client and rerun the launcher or installer.
 
 ## 🚀 Quick Start
 
@@ -110,7 +95,7 @@ node cli.js check
 # 3. One-click install (runs pre-flight, safely releases file locks, and mounts overlay)
 node cli.js install
 
-# 4. Background watcher & hot-reload daemon (hot reloads on Ctrl+R, auto-repairs on updates)
+# 4. Optional resource/dictionary watcher (exit the client before patching; restart after ASAR changes)
 node cli.js watch
 
 # 5. Self-healing launch (auto-detects version updates, repairs overlay if needed, and launches)
@@ -130,7 +115,7 @@ node cli.js restore
 The project introduces rigorous end-to-end automated testing, mutation fuzzing, and a cross-platform CI pipeline (Windows / macOS / Ubuntu):
 
 ```bash
-# Run all core automated test suites (aggregating 5 core suites)
+# Run all core automated test suites (including ASAR rollback, update and restore regressions)
 npm test
 
 # Run AST syntax integrity and crash prevention test
@@ -143,15 +128,17 @@ npm run test:matrix
 npm run audit
 ```
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (740+ baseline keys, 880+ Chinese keys).
-- **ICU Syntax Firewall (`test/test-icu.js`)**: Structural validation and technical term protection across all **31,000+** core entries, ensuring 100% placeholder symmetry.
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (961 current Shell baseline keys).
+- **ICU Syntax Firewall (`test/test-icu.js`)**: Parse all messages and compare against actual installed English catalogs when available; explicitly mark missing upstream sources as skipped.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
 - **AST Syntax Firewall & Black-Screen Crash Prevention (`test/test-ast-syntax.js`)**: Enforces strict Node.js ESM AST integrity checks across real and sandboxed JS bundles, preventing syntax errors from reaching production.
-- **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience before upstream releases reach users.
-- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, Fork vs Branch disambiguation, Diff vs Change isolation, and native state machine enum integrity (8 dedicated suites), guaranteeing 0 HTML tag discrepancies, 0 ICU variable mismatches, and 0 terminology conflicts.
+- **Preflight Compatibility Matrix & Mutation Testing (`tools/upstream-compatibility-matrix.js` / `npm run test:matrix`)**: Simulates extreme bundler minification mutations (variable renaming, arrow functions, Object.assign fallbacks), asserting code topology resilience against available upstream source and synthetic fixtures.
+- **Ultimate Localization Consistency Audit (`tools/ultimate-consistency-audit.js` / `npm run audit`)**: Comprehensive audit of thinking efforts, approval workflows, action verbs, Fork vs Branch disambiguation, Diff vs Change isolation, and native state machine enum integrity (8 dedicated suites), reporting detected HTML, ICU and terminology discrepancies with failing exit codes.
 
 ---
+
+After installation, `npm run verify:client` performs read-only checks of actual archives, executable integrity, original backups, English catalog bytes and fuse state. It does not replace UI verification.
 
 ## 🔄 Self-Evolving Pipeline
 
@@ -160,7 +147,7 @@ flowchart LR
     A[Upstream Release Update] -->|Diff Extraction| B[Drift Detector scan:drift]
     B -->|Incremental Keys Detected| C[AI Incremental Translation & ICU Audit]
     C -->|Verified Dictionaries| D[Dual-Layer Smart Injection Engine]
-    D -->|Self-Healing Mount| E[Claude Desktop Rendered in Perfect Chinese]
+    D -->|Self-Healing Mount| E[Localized UI with English fallback]
 ```
 
 ---
@@ -174,9 +161,9 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (1,190+ entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (30,800+ entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (156 articles)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (1,282 entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (31,156 entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (174 documents)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing

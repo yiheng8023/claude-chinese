@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { extractVariables } = require('./icu-validator');
 const { getClaudeInstallation } = require('../core/msix-detector');
+const { readOfficialCatalog } = require('../core/catalogs');
 
 const ionZhPath = path.join(__dirname, '../dict/ion-zh-CN.json');
 const shellZhPath = path.join(__dirname, '../dict/zh-CN.json');
@@ -18,19 +19,9 @@ const dynZh = JSON.parse(fs.readFileSync(dynZhPath, 'utf8'));
 
 // 动态寻找官方 en-US 词典路径
 const info = getClaudeInstallation();
-let ionEn = {};
-let foundEnPath = null;
-
-if (info.resourcesPath) {
-  const cand1 = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json');
-  const cand2 = path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.backup.json');
-  if (fs.existsSync(cand1)) foundEnPath = cand1;
-  else if (fs.existsSync(cand2)) foundEnPath = cand2;
-}
-
-if (foundEnPath && fs.existsSync(foundEnPath)) {
-  try { ionEn = JSON.parse(fs.readFileSync(foundEnPath, 'utf8')); } catch (e) {}
-}
+const official = readOfficialCatalog(info);
+const ionEn = official?.dictionary || {};
+console.log(official ? `英文对照来源: ${official.source}` : '未找到宿主英文资源，跳过 Ion 英文对照；仍执行词库自身检查。');
 
 console.log('====================================================');
 console.log('   Claude-Chinese 终极全局一致性深度体检');
@@ -219,6 +210,7 @@ for (const k of STATE_MACHINE_KEYS) {
 
 console.log('\n====================================================');
 console.log(`体检总结: 发现并定位 ${issues.length} 项潜在优化点 (ICU: ${icuErrors}, 标签: ${tagErrors}, Fork/Branch: ${forkErrors}, Diff/Change: ${diffErrors}, 状态机枚举: ${stateMachineErrors})`);
+if (issues.length) process.exitCode = 1;
 console.log('====================================================');
 
 

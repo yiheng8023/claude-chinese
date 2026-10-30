@@ -9,51 +9,25 @@ const { JS_LITERAL_PATCHES, safeTest } = require('../core/patcher');
 
 const asar = require('@electron/asar');
 
-function runDriftDetection(customEnPath = null) {
-  let targetEnPath = customEnPath;
-  let resourcesDir = null;
-  let upstreamDict = null;
-
-  const info = getClaudeInstallation();
-  if (info && info.resourcesPath) {
-    resourcesDir = info.resourcesPath;
-    const asarPath = path.join(info.resourcesPath, 'ion-dist.asar');
-    if (!targetEnPath || (fs.existsSync(targetEnPath) && fs.statSync(targetEnPath).isDirectory())) {
-      if (fs.existsSync(asarPath)) {
-        try {
-          const buf = asar.extractFile(asarPath, 'i18n/en-US.json');
-          upstreamDict = JSON.parse(buf.toString('utf8'));
-          targetEnPath = `${asarPath} [i18n/en-US.json]`;
-        } catch (_) {}
-      }
-
-      if (!upstreamDict) {
-        const candidates = [
-          path.join(info.resourcesPath, 'ion-dist', 'i18n', 'en-US.json'),
-          path.join(info.resourcesPath, 'i18n', 'en-US.json'),
-          path.join(info.resourcesPath, 'en-US.json')
-        ];
-        for (const cand of candidates) {
-          if (fs.existsSync(cand) && fs.statSync(cand).isFile()) {
-            targetEnPath = cand;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  if (!upstreamDict) {
-    if (!targetEnPath || !fs.existsSync(targetEnPath)) {
-      targetEnPath = path.join(__dirname, '../dict/en-US.base.json');
-    }
-    upstreamDict = JSON.parse(fs.readFileSync(targetEnPath, 'utf8'));
-  }
-
-  const zhPath = fs.existsSync(path.join(__dirname, '../dict/ion-zh-CN.json'))
-    ? path.join(__dirname, '../dict/ion-zh-CN.json')
-    : path.join(__dirname, '../dict/zh-CN.json');
-  const zhDict = fs.existsSync(zhPath) ? JSON.parse(fs.readFileSync(zhPath, 'utf8')) : {};
+function runDriftDetection(customEnPath = null, options = {}) {
+  const { readOfficialCatalog } = require('../core/catalogs');
+  const directoryInput = customEnPath && fs.existsSync(customEnPath) && fs.statSync(customEnPath).isDirectory();
+  const info = getClaudeInstallation(options.customPath || (directoryInput ? customEnPath : null));
+  if (options.customPath && !info.resourcesPath) throw new Error(info.error || '指定的客户端目录缺少资源。');
+  const resourcesDir = customEnPath && !directoryInput && !options.customPath ? null : info.resourcesPath;
+  let source = null;
+  if (customEnPath) {
+    if (!fs.existsSync(customEnPath)) throw new Error('指定的英文词典不存在。');
+    if (fs.statSync(customEnPath).isDirectory()) {
+      source = readOfficialCatalog(getClaudeInstallation(customEnPath));
+      if (!source) throw new Error('指定目录没有可读取的英文词典。');
+    } else source = { dictionary: JSON.parse(fs.readFileSync(customEnPath, 'utf8')), source: customEnPath, scope: 'explicit-catalog' };
+  } else source = readOfficialCatalog(info);
+  const sourceScope = source?.scope || 'bundled-shell-baseline';
+  const upstreamDict = source?.dictionary || JSON.parse(fs.readFileSync(path.join(__dirname, '../dict/en-US.base.json'), 'utf8'));
+  const targetEnPath = source?.source || path.join(__dirname, '../dict/en-US.base.json');
+  const zhPath = path.join(__dirname, source ? '../dict/ion-zh-CN.json' : '../dict/zh-CN.json');
+  const zhDict = JSON.parse(fs.readFileSync(zhPath, 'utf8'));
 
   const upstreamKeys = Object.keys(upstreamDict);
   const zhKeys = Object.keys(zhDict);
@@ -102,7 +76,7 @@ function runDriftDetection(customEnPath = null) {
           status = 'ACTIVE_PATCHED';
         } else if (matchesEn) {
           status = 'MATCHED_UNPATCHED';
-        } else if (patch.intlKey && (upstreamDict[patch.intlKey] || zhDict[patch.intlKey])) {
+        } else if (patch.intlKey && upstreamDict[patch.intlKey]) {
           status = 'UPSTREAM_STANDARDIZED';
         }
 
@@ -119,6 +93,7 @@ function runDriftDetection(customEnPath = null) {
   const report = {
     timestamp: new Date().toISOString(),
     sourceFile: targetEnPath,
+    sourceScope,
     totalUpstreamKeys: upstreamKeys.length,
     totalZhKeys: zhKeys.length,
     matchedKeysCount: matchedKeys.length,
@@ -139,7 +114,7 @@ if (require.main === module) {
 
   console.log(`📡 目标源文件: ${report.sourceFile}`);
   console.log(`📊 官方词条总量: ${report.totalUpstreamKeys}`);
-  console.log(`🇨🇳 当前汉化覆盖率: ${report.coverage} (${report.matchedKeysCount} / ${report.totalUpstreamKeys})`);
+  console.log(`🇨🇳 当前词条收录率 (含保留英文术语): ${report.coverage} (${report.matchedKeysCount} / ${report.totalUpstreamKeys})`);
   console.log(`✨ 新增未汉化词条: ${report.newKeysCount}`);
   console.log(`🗑️ 历史陈旧废弃词条: ${report.staleKeysCount}`);
 

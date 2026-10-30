@@ -37,11 +37,11 @@ function runPreflightCheck(options = {}) {
 
   // 2. 客户端安装与资源路径自动探测
   const info = getClaudeInstallation(options.customPath);
-  const installPassed = !!(info.installPath && info.resourcesPath);
+  const installPassed = !!(info.installPath && info.resourcesPath && info.distribution !== 'store');
   checks.push({
     id: 'client-installation',
     name: 'Claude 客户端安装状态',
-    detail: installPassed ? `${info.type.toUpperCase()} 安装 (版本: ${info.version || '未知'})` : '未检测到客户端安装路径',
+    detail: installPassed ? `${info.type.toUpperCase()} 安装 (版本: ${info.version || '未知'})` : info.distribution === 'store' ? '暂不支持 Microsoft Store 版本，请使用官网安装器' : (info.error || '未检测到客户端安装路径'),
     passed: installPassed,
     critical: true
   });
