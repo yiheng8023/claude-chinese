@@ -38,6 +38,7 @@ try {
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');
     assert(!/\*\*[^*\n]*[：。，；！？]\*\*(?=[\p{L}\p{N}])/u.test(translated), 'Punctuation at the end of bold Chinese labels needs a following space to render emphasis');
+    assert(!/`[^`\n]+`[、，]`[^`\n]+`/u.test(translated), 'Code lists need separating whitespace so the help panel can wrap them');
     assert.deepEqual(protectedParts(translated), protectedParts(english), 'Code examples, configuration keys and documentation links must survive translation');
     const rendered = context.doc(english, { docsUrl: 'https://example.test/docs' });
     assert.equal(rendered.text, translated, 'Expanded help must render the complete current translation');
