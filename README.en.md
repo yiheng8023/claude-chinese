@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.91**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.92**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -23,7 +23,8 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
-- **Four catalog layers**: 1,282 Shell entries (961 current English baseline entries), 31,156 Web UI entries, 51 dynamic entries and 174 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Four catalog layers**: 1,282 Shell entries (961 current English baseline entries), 31,162 Web UI entries, 51 dynamic entries and 286 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Expanded help checks**: this update reviews 126 help references covering 124 distinct bodies in 4.4212, adding 112 missing bodies. Regression checks exercise rendered prose, code examples and links. `npm run audit` also compares the installed client's original documentation modules with the reviewed snapshot and requires a fresh review when their source changes.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable before replacing installed files; roll back ordinary write failures and retain matching original backups.
 - **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
@@ -162,8 +163,8 @@ claude-chinese/
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
 │   ├── zh-CN.json                    # Shell layer translation dictionary (1,282 entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (31,156 entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (174 documents)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (31,162 entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (286 documents)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing
