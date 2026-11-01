@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.92**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.93**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -127,7 +127,14 @@ npm run test:matrix
 
 # Run comprehensive localization consistency and ICU terminology audit
 npm run audit
+
+# Check npm advisories (fail for moderate or higher severity, or query errors)
+npm run audit:deps
 ```
+
+v1.2.93 retains `@electron/asar@4.3.1` and overrides its dependency tree with the paired `glob@14.0.3` and `minimatch@11.0.3` to address GHSA-3g3m-2fjr-6pw4 and GHSA-g3hv-75wg-m249. This is a temporary bridge while upstream constraints remain unchanged: review and remove or adjust the override when upgrading ASAR, and do not upgrade minimatch alone. `npm test` covers traversal cancellation, preprocessing limits, archive inventories, hidden files and multiple unpacked paths; macOS/Linux CI covers symbolic links.
+
+Both regular CI and the daily sentinel run `npm run audit:deps`. `npm run audit` remains a localization audit and does not replace dependency security checks. The security check depends on the npm advisory service; query failures also block the check and do not by themselves indicate a new vulnerability.
 
 - **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (961 current Shell baseline keys).
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Parse all messages and compare against actual installed English catalogs when available; explicitly mark missing upstream sources as skipped.
