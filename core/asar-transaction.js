@@ -50,6 +50,21 @@ function artifactPaths(resources) {
   ].filter(([, file]) => fs.existsSync(file));
 }
 
+function assertReadableArchives(resources) {
+  asar.uncacheAll();
+  for (const name of ['app.asar', 'ion-dist.asar']) {
+    const file = path.join(resources, name);
+    if (!fs.existsSync(file)) continue;
+    const size = fs.statSync(file).size;
+    try {
+      if (size < 8) throw new Error('truncated header');
+      asar.getRawHeader(file);
+    } catch {
+      throw new Error(`客户端资源 ${name} 已损坏（${size === 0 ? '0 字节' : '归档头不可读'}）。请使用官网完整安装包修复客户端后重新汉化；现有原版备份已保留。`);
+    }
+  }
+}
+
 function readMeta(resources) {
   const file = path.join(resources, '.claude_chinese_meta.json');
   if (!fs.existsSync(file)) return {};
@@ -62,6 +77,7 @@ function hasChineseCatalog(archive) {
 }
 
 function baselineArtifacts(resources, meta) {
+  assertReadableArchives(resources);
   const artifacts = artifactPaths(resources);
   if (meta.archives && Object.keys(meta.archives).some(name => !artifacts.some(([key]) => key === name))) {
     throw new Error('补丁清单中的客户端文件缺失或名称无效，原版备份已保留。');
@@ -242,4 +258,4 @@ function restoreAsarTransaction(info) {
   }
 }
 
-module.exports = { hashFile, integrityRecords, verifyIntegrity, artifactPaths, readMeta, baselineArtifacts, applyAsarTransaction, restoreAsarTransaction };
+module.exports = { hashFile, integrityRecords, verifyIntegrity, artifactPaths, assertReadableArchives, readMeta, baselineArtifacts, applyAsarTransaction, restoreAsarTransaction };

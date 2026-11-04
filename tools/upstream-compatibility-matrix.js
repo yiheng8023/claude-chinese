@@ -72,6 +72,8 @@ function runCompatibilityMatrix(options = {}) {
   const ionZh = fs.existsSync(ionZhPath) ? JSON.parse(fs.readFileSync(ionZhPath, 'utf8')) : {};
   const official = require('../core/catalogs').readOfficialCatalog(info);
   const ionEn = official?.dictionary || {};
+  const dynamicEn = require('../core/catalogs').readOfficialCatalog(info, 'dynamic')?.dictionary || {};
+  const dynamicZh = require('../dict/dynamic-zh-CN.json');
 
   let activeHits = 0;
   let standardizedCount = 0;
@@ -86,7 +88,7 @@ function runCompatibilityMatrix(options = {}) {
       } else if (patch.enPattern && safeTest(patch.enPattern, allJs)) {
         status = 'ACTIVE_READY';
         activeHits++;
-      } else if (patch.intlKey && ionEn[patch.intlKey]) {
+      } else if (patch.intlKey && (patch.intlLayer === 'dynamic' ? dynamicEn[patch.intlKey] && dynamicZh[patch.intlKey] : ionEn[patch.intlKey] && ionZh[patch.intlKey])) {
         status = 'UPSTREAM_STANDARDIZED';
         standardizedCount++;
       } else {

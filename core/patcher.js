@@ -498,7 +498,8 @@ const JS_LITERAL_PATCHES = [
     zhSnippet: '$1=$2.badge?.message?{...$2.badge,message:$2.badge.message==="Recommended"?"推荐":$2.badge.message}:void 0',
     zhPattern: /\{(?:\.\.\.[a-zA-Z0-9_$]+\.badge,)?message:[a-zA-Z0-9_$]+\.badge\.message==="Recommended"\?"推荐":[a-zA-Z0-9_$]+\.badge\.message\}/g,
     restoreEn: '$1=$2.badge?.message?$2.badge:void 0',
-    intlKey: null
+    intlKey: 'XPiJIxyAVt',
+    intlLayer: 'dynamic'
   }
 ];
 

@@ -43,6 +43,8 @@ function runDriftDetection(customEnPath = null, options = {}) {
   // 2. JS 硬编码特征漂移检测 (JS Literal Drift Guard)
   const jsPatchesStatus = [];
   if (resourcesDir) {
+    const dynamicEn = readOfficialCatalog(info, 'dynamic')?.dictionary || {};
+    const dynamicZh = require('../dict/dynamic-zh-CN.json');
     const asarPath = path.join(resourcesDir, 'ion-dist.asar');
     const assetsDir = path.join(resourcesDir, 'ion-dist', 'assets', 'v1');
     let allJsContent = '';
@@ -76,7 +78,7 @@ function runDriftDetection(customEnPath = null, options = {}) {
           status = 'ACTIVE_PATCHED';
         } else if (matchesEn) {
           status = 'MATCHED_UNPATCHED';
-        } else if (patch.intlKey && upstreamDict[patch.intlKey]) {
+        } else if (patch.intlKey && (patch.intlLayer === 'dynamic' ? dynamicEn[patch.intlKey] && dynamicZh[patch.intlKey] : upstreamDict[patch.intlKey] && zhDict[patch.intlKey])) {
           status = 'UPSTREAM_STANDARDIZED';
         }
 

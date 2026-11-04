@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.93**, targeting **4.4212.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.94**, targeting **4.16336.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -23,8 +23,8 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
-- **Four catalog layers**: 1,282 Shell entries (961 current English baseline entries), 31,162 Web UI entries, 51 dynamic entries and 286 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
-- **Expanded help checks**: this update reviews 126 help references covering 124 distinct bodies in 4.4212, adding 112 missing bodies. Regression checks exercise rendered prose, code examples and links. `npm run audit` also compares the installed client's original documentation modules with the reviewed snapshot and requires a fresh review when their source changes.
+- **Four catalog layers**: 1,446 Shell entries (1,112 current English baseline entries), 31,444 Web UI entries, 52 dynamic entries and 308 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Expanded help checks**: this update reviews 131 help references covering 129 distinct bodies in 4.16336, updating 22 bodies while retaining the 4.4212 regression snapshot. Checks exercise complete rendered prose, code examples and links. `npm run audit` also compares the installed client's original documentation modules with the reviewed snapshot and requires a fresh review when their source changes.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable before replacing installed files; roll back ordinary write failures and retain matching original backups.
 - **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
@@ -37,7 +37,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This update targets Windows **4.4212.0** installed through the official website installer (system package **4.4212.0.0**). Existing loose-resource layouts on macOS/Linux remain supported; synchronization of dual ASAR archives and executable integrity is currently implemented and verified only for the Windows layout.
+This update targets Windows **4.16336.0** installed through the official website installer (system package **4.16336.0.0**). Existing loose-resource layouts on macOS/Linux remain supported; synchronization of dual ASAR archives and executable integrity is currently implemented and verified only for the Windows layout.
 
 ---
 
@@ -67,7 +67,11 @@ If English remains after restart, select Chinese (Simplified) in the client’s 
 
 Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
 
-On the website-distributed **4.4212.0** build, Help → Check for Updates returned “You are running the latest version.” The earlier Squirrel error was not reproduced on this build. The toolkit keeps the official updater; if an update replaces localization, exit the client and rerun the launcher or installer.
+The toolkit keeps the official updater. Before a manual update, you can run `npm run restore` to restore official files, then exit the updated client and reapply localization. If an update leaves the client unable to start and `app.asar` or `ion-dist.asar` is empty or has an unreadable header, repair it with the full official website installer before applying localization. Preflight reports this corruption and preserves backups instead of accepting empty files as originals.
+
+For Windows shortcuts, use `explorer.exe` with `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude` rather than a versioned installation path. This app identity survives version changes; recreating a shortcut cannot repair damaged client resources or guarantee successful updates.
+
+Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. Keep undisclosed details unknown and optimize confirmed problems as needed. The official desktop feed describes 4.16336.0 as `Production Release - No Notes`. The latest in-app entry is still 4.4212.0 from 2026-10-29, with a notice that it may lag behind. UI and configuration changes reviewed here therefore come from original package resources rather than an itemized official changelog.
 
 ## 🚀 Quick Start
 
@@ -136,7 +140,7 @@ v1.2.93 retains `@electron/asar@4.3.1` and overrides its dependency tree with th
 
 Both regular CI and the daily sentinel run `npm run audit:deps`. `npm run audit` remains a localization audit and does not replace dependency security checks. The security check depends on the npm advisory service; query failures also block the check and do not by themselves indicate a new vulnerability.
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (961 current Shell baseline keys).
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (1,112 current Shell baseline keys).
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Parse all messages and compare against actual installed English catalogs when available; explicitly mark missing upstream sources as skipped.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
@@ -169,9 +173,9 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (1,282 entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (31,162 entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (286 documents)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (1,446 entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (31,444 entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (308 documents)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing

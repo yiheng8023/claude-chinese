@@ -8,6 +8,7 @@ const { auditInferenceHelp } = require('../tools/audit-inference-help');
 const zh = require('../dict/ion-zh-CN.json');
 const translatedDocs = require('../dict/long-docs-zh-CN.json');
 const fixture = require('./fixtures/inference-help-4.4212.json');
+const currentFixture = require('./fixtures/inference-help-4.16336.json');
 
 function protectedParts(text) {
   const blocks = [...text.matchAll(/```[^\n]*\n[\s\S]*?```/g)].map(m => m[0]);
@@ -19,8 +20,19 @@ function protectedParts(text) {
   };
 }
 
-const labels = { DajEsL0bgK: '文件树位置', MmisWi8T3N: '在文件树中选择一个文件。', yKiRiVmLd5: '自动', DbN79DWvpd: '左侧', UfWUHzL0CF: '右侧', HIc5BpkJZP: '新建会话' };
+const labels = {
+  DajEsL0bgK: '文件树位置', MmisWi8T3N: '在文件树中选择一个文件。', yKiRiVmLd5: '自动',
+  DbN79DWvpd: '左侧', UfWUHzL0CF: '右侧', HIc5BpkJZP: '新建会话',
+  IYqnbutkNe: '定时任务仅在电脑处于唤醒状态并联网时运行。',
+  PC56sEVf9Z: '在日历中的每场会议前提供简短资料，涵盖与会者、背景和议程。',
+  Jff654lhcV: '折叠所有文件夹', KR30GhQ0bY: '制表符宽度',
+  'SM/PSyq5fS': '没有已展开的文件夹可供折叠。', '42YfXqKAm8': '新建侧边会话',
+  '65lRW0A2LM': '问个简单问题', myljfhoK3X: '选择环境'
+};
 for (const [id, text] of Object.entries(labels)) assert.equal(zh[id], text, `Reported UI label ${id}`);
+const menuBadge = JS_LITERAL_PATCHES.find(patch => patch.id === 'effort-menu-recommended-badge');
+assert.equal(menuBadge.intlLayer, 'dynamic');
+assert.equal(require('../dict/dynamic-zh-CN.json')[menuBadge.intlKey], '推荐', 'The new native dynamic badge must have its translation');
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-help-render-'));
 assert.equal(path.dirname(root), path.resolve(os.tmpdir()));
@@ -33,7 +45,8 @@ try {
   const context = vm.createContext({});
   vm.runInContext(fs.readFileSync(path.join(root, 'factory.js'), 'utf8'), context);
   assert.equal(fixture.documents.length, 124);
-  for (const english of fixture.documents) {
+  assert.equal(currentFixture.documents.length, 129);
+  for (const english of new Set([...fixture.documents, ...currentFixture.documents])) {
     assert(Object.hasOwn(translatedDocs, english), `Missing complete help body: ${english.split('\n')[0]}`);
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');
@@ -52,5 +65,5 @@ try {
   fs.writeFileSync(schema, '// Upstream help changed after the recorded review.\n');
   packAsarSync(changedSource, path.join(resources, 'ion-dist.asar'));
   assert.throws(() => auditInferenceHelp({ resourcesPath: resources, version: '4.4213.0' }), /源码.*不一致/, 'Changed installed help must require a new review instead of passing an old snapshot');
-  console.log('PASS: reported file-tree labels and all 124 current inference help bodies render Chinese with code and links preserved');
+  console.log('PASS: reported labels and reviewed 4.4212/4.16336 inference help render Chinese with code and links preserved');
 } finally { fs.rmSync(root, { recursive: true, force: true }); }

@@ -7,6 +7,7 @@ const path = require('path');
 const { getClaudeInstallation } = require('./msix-detector');
 const { isClaudeRunning, closeClaude } = require('./patcher');
 const { canWriteDirectory } = require('./permissions');
+const { assertReadableArchives } = require('./asar-transaction');
 
 const MIN_NODE_VERSION = 20;
 
@@ -46,6 +47,13 @@ function runPreflightCheck(options = {}) {
     critical: true
   });
   if (!installPassed) allPassed = false;
+
+  if (installPassed) {
+    let archiveError = null;
+    try { assertReadableArchives(info.resourcesPath); } catch (error) { archiveError = error.message; }
+    checks.push({ id: 'client-archives', name: '客户端资源归档', detail: archiveError || '归档头可读', passed: !archiveError, critical: true });
+    if (archiveError) allPassed = false;
+  }
 
   // 3. 运行中进程占用与文件锁释放探测
   const isRunning = isClaudeRunning();

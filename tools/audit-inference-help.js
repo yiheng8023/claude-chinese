@@ -5,24 +5,27 @@ const crypto = require('node:crypto');
 const asar = require('@electron/asar');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { baselineArtifacts, readMeta } = require('../core/asar-transaction');
-const fixture = require('../test/fixtures/inference-help-4.4212.json');
+const fixtures = [require('../test/fixtures/inference-help-4.4212.json'), require('../test/fixtures/inference-help-4.16336.json')];
 const translations = require('../dict/long-docs-zh-CN.json');
 
 function auditInferenceHelp(info = getClaudeInstallation()) {
-  const missing = fixture.documents.filter(text => !Object.hasOwn(translations, text));
+  const documents = [...new Set(fixtures.flatMap(fixture => fixture.documents))];
+  const missing = documents.filter(text => !Object.hasOwn(translations, text));
   if (missing.length) throw Error(`当前折叠正文快照有 ${missing.length} 篇缺少完整译文。`);
   const archive = info.resourcesPath && path.join(info.resourcesPath, 'ion-dist.asar');
-  if (!archive || !fs.existsSync(archive)) return { scope: 'fixture-only', bodies: fixture.documents.length, installedSchemaChecked: false };
+  if (!archive || !fs.existsSync(archive)) return { scope: 'fixture-only', bodies: documents.length, installedSchemaChecked: false };
   const source = baselineArtifacts(info.resourcesPath, readMeta(info.resourcesPath)).find(item => item.name === 'ion-dist.asar').source;
   asar.uncacheAll();
-  for (const record of fixture.sourceFiles) {
-    let bytes;
-    try { bytes = asar.extractFile(source, record.file.split('/').join(path.sep)); }
-    catch { throw Error('当前客户端的折叠说明模块已变化，请重新提取并审核正文快照；未按旧词库判定通过。'); }
-    const digest = crypto.createHash('sha256').update(bytes).digest('hex');
-    if (digest !== record.sha256) throw Error('当前客户端的折叠说明源码与已审核快照不一致，请重新提取并审核正文。');
+  for (const fixture of fixtures) {
+    const matches = fixture.sourceFiles.every(record => {
+      try {
+        const bytes = asar.extractFile(source, record.file.split('/').join(path.sep));
+        return crypto.createHash('sha256').update(bytes).digest('hex') === record.sha256;
+      } catch { return false; }
+    });
+    if (matches) return { scope: 'installed-client-original-schema', bodies: fixture.documents.length, installedSchemaChecked: true, clientVersion: info.version, reviewedVersion: fixture.clientVersion };
   }
-  return { scope: 'installed-client-original-schema', bodies: fixture.documents.length, installedSchemaChecked: true, clientVersion: info.version };
+  throw Error('当前客户端的折叠说明源码与已审核快照不一致，请重新提取并审核正文。');
 }
 
 if (require.main === module) {

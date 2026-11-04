@@ -1,6 +1,6 @@
 {
   "name": "claude-chinese",
-  "version": "1.2.93",
+  "version": "1.2.94",
   "description": "Claude 桌面客户端高性能、可逆式、自愈型中文汉化工具包 (Self-Healing Chinese Localization Toolkit for Claude Desktop)",
   "main": "cli.js",
   "engines": {
@@ -10,7 +10,7 @@
     "claude-cn": "./cli.js"
   },
   "scripts": {
-    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-icu-structure.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js && node test/test-ast-syntax.js && node test/test-asar-lifecycle.js && node test/test-shell-locale.js && node test/test-asar-transaction.js && node test/test-dependency-security.js && node test/test-asar-dependency-compat.js && node test/test-long-docs-safety.js && node test/test-reported-localization.js && node test/test-cli-safety.js",
+    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-icu-structure.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js && node test/test-ast-syntax.js && node test/test-asar-lifecycle.js && node test/test-shell-locale.js && node test/test-asar-transaction.js && node test/test-corrupt-archives.js && node test/test-dependency-security.js && node test/test-asar-dependency-compat.js && node test/test-long-docs-safety.js && node test/test-reported-localization.js && node test/test-cli-safety.js",
     "test:dict": "node test/verify-dict.js",
     "test:icu": "node test/test-icu.js",
     "test:ast": "node test/test-ast-syntax.js",
