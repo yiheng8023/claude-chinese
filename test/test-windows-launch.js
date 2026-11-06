@@ -121,12 +121,45 @@ function Get-WinEvent {
         assert.equal(idempotent.status,0,'Already completed registration must not fail or issue another Add: '+idempotent.stderr);
         assert.equal(JSON.parse(idempotent.stdout).packageFullName,candidate.packageFullName);
       }
-      const shortcut = path.join(root,'Claude 中文 test.lnk');
-      const saved = require('../core/windows-shortcut').createLaunchShortcut(shortcut);
-      assert.equal(saved.target,path.resolve(__dirname,'../launch.bat'));
+      // Characters outside both English and Chinese ANSI code pages exercise the
+      // native Unicode persistence path, including a toolkit under a Unicode root.
+      const shortcutRoot = path.join(root,'中文目录-😀');
+      fs.mkdirSync(path.join(shortcutRoot,'core'),{recursive:true});
+      for(const file of ['windows-shortcut.js','windows-shortcut.ps1']) {
+        fs.copyFileSync(path.join(__dirname,'../core',file),path.join(shortcutRoot,'core',file));
+      }
+      fs.writeFileSync(path.join(shortcutRoot,'launch.bat'),'@echo off\r\n');
+      const shortcut = path.join(shortcutRoot,'Claude 中文 😀 test.lnk');
+      const create = require(path.join(shortcutRoot,'core/windows-shortcut')).createLaunchShortcut;
+      const saved = create(shortcut);
+      assert.equal(saved.output,shortcut);
+      assert.equal(saved.target,path.join(shortcutRoot,'launch.bat'));
+      assert.equal(saved.workingDirectory,shortcutRoot);
       const first = fs.readFileSync(shortcut);
-      require('../core/windows-shortcut').createLaunchShortcut(shortcut);
+      create(shortcut);
       assert.deepEqual(fs.readFileSync(shortcut+'.before-claude-chinese.bak'),first,'Preserve a replaced shortcut');
+      for(const explicitIcon of [true,false]) {
+      const seed = path.join(root,'existing.lnk');
+      const initialized=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',`
+[Console]::InputEncoding=New-Object System.Text.UTF8Encoding
+$request=[Console]::In.ReadToEnd() | ConvertFrom-Json
+$link=(New-Object -ComObject WScript.Shell).CreateShortcut($request.output)
+$link.TargetPath=$request.target
+$link.Arguments='--version'
+if($request.explicitIcon){$link.IconLocation=$request.target+',0'}
+$link.Save()
+`],{input:JSON.stringify({output:seed,target:process.execPath,explicitIcon}),encoding:'utf8',windowsHide:true});
+      assert.equal(initialized.status,0,initialized.stderr);
+      const existing=path.join(shortcutRoot,`Existing 中文 😀 ${explicitIcon}.lnk`);
+      fs.renameSync(seed,existing);
+      const original=fs.readFileSync(existing);
+      const replaced=create(existing);
+      assert.equal(replaced.iconPath.toLowerCase(),process.execPath.toLowerCase(),'Keep the original icon');
+      assert.equal(replaced.iconIndex,'0');
+      assert.deepEqual(fs.readFileSync(existing+'.before-claude-chinese.bak'),original);
+      create(existing);
+      assert.deepEqual(fs.readFileSync(existing+'.before-claude-chinese.bak'),original,'Never overwrite the first backup');
+      }
     }
     console.log('PASS: broken registered package recovers only to a verified newer same-family package; active clients, untrusted candidates and damaged resources stop safely');
   } finally { fs.rmSync(root,{recursive:true,force:true}); }

@@ -77,7 +77,7 @@ When `launch.bat` or its localization shortcut finds damaged archives in the reg
 node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude Chinese.lnk"
 ```
 
-You can also specify an existing `.lnk`. Before replacement, the command keeps a `.before-claude-chinese.bak` backup and preserves the existing icon. The shortcut points to `launch.bat` in this toolkit directory: keep the directory in place, or recreate the shortcut after moving it. Automatic localization still needs write access to the installation directory; if denied, follow the prompt to run the installer as administrator.
+You can also specify an existing `.lnk`, including Unicode directory and file names. Before replacement, the command keeps a `.before-claude-chinese.bak` backup and preserves the existing icon. The shortcut points to `launch.bat` in this toolkit directory: keep the directory in place, or recreate the shortcut after moving it. Automatic localization still needs write access to the installation directory; if denied, follow the prompt to run the installer as administrator.
 
 A per-user launch lock covers detection, registration, localization and the launch request to prevent concurrent recovery from repeated clicks. Normal returns and errors release it. Forcefully terminating the launcher or losing power can leave the lock behind; it is never taken over automatically. Follow the error message and confirm no installation or launch is in progress before cleaning it up. Completing Windows registration can still stop background processes associated with the old package, so use recovery after tasks have finished.
 
