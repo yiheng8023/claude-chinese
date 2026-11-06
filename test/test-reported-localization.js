@@ -9,6 +9,7 @@ const zh = require('../dict/ion-zh-CN.json');
 const translatedDocs = require('../dict/long-docs-zh-CN.json');
 const fixture = require('./fixtures/inference-help-4.4212.json');
 const currentFixture = require('./fixtures/inference-help-4.16336.json');
+const latestFixture = require('./fixtures/inference-help-4.23118.json');
 
 function protectedParts(text) {
   const blocks = [...text.matchAll(/```[^\n]*\n[\s\S]*?```/g)].map(m => m[0]);
@@ -27,7 +28,9 @@ const labels = {
   PC56sEVf9Z: '在日历中的每场会议前提供简短资料，涵盖与会者、背景和议程。',
   Jff654lhcV: '折叠所有文件夹', KR30GhQ0bY: '制表符宽度',
   'SM/PSyq5fS': '没有已展开的文件夹可供折叠。', '42YfXqKAm8': '新建侧边会话',
-  '65lRW0A2LM': '问个简单问题', myljfhoK3X: '选择环境'
+  '65lRW0A2LM': '问个简单问题', myljfhoK3X: '选择环境',
+  '8DbsasU3Hw': '跳转到行', PTtw6MZuiL: '创建分区',
+  '9WSR22vPgm': '保存为环境', fs9XMzW72m: '删除所有会话'
 };
 for (const [id, text] of Object.entries(labels)) assert.equal(zh[id], text, `Reported UI label ${id}`);
 const menuBadge = JS_LITERAL_PATCHES.find(patch => patch.id === 'effort-menu-recommended-badge');
@@ -46,7 +49,8 @@ try {
   vm.runInContext(fs.readFileSync(path.join(root, 'factory.js'), 'utf8'), context);
   assert.equal(fixture.documents.length, 124);
   assert.equal(currentFixture.documents.length, 129);
-  for (const english of new Set([...fixture.documents, ...currentFixture.documents])) {
+  assert.equal(latestFixture.documents.length, 132);
+  for (const english of new Set([...fixture.documents, ...currentFixture.documents, ...latestFixture.documents])) {
     assert(Object.hasOwn(translatedDocs, english), `Missing complete help body: ${english.split('\n')[0]}`);
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');
@@ -65,5 +69,5 @@ try {
   fs.writeFileSync(schema, '// Upstream help changed after the recorded review.\n');
   packAsarSync(changedSource, path.join(resources, 'ion-dist.asar'));
   assert.throws(() => auditInferenceHelp({ resourcesPath: resources, version: '4.4213.0' }), /源码.*不一致/, 'Changed installed help must require a new review instead of passing an old snapshot');
-  console.log('PASS: reported labels and reviewed 4.4212/4.16336 inference help render Chinese with code and links preserved');
+  console.log('PASS: reported labels and reviewed 4.4212/4.16336/4.23118 inference help render Chinese with code and links preserved');
 } finally { fs.rmSync(root, { recursive: true, force: true }); }

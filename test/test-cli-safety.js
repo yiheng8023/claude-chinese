@@ -6,7 +6,9 @@ for (const args of [
   ['install', '--path'],
   ['install', '--path', path.join(__dirname, 'missing-installation')],
   ['launch', '--path', path.join(__dirname, 'missing-installation')],
-  ['restore', '--path', path.join(__dirname, 'missing-installation')]
+  ['restore', '--path', path.join(__dirname, 'missing-installation')],
+  ['shortcut'],
+  ['shortcut', '--output', path.join(__dirname, 'not-a-shortcut.txt')]
 ]) {
   const result = spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', env: { ...process.env, CLAUDE_NO_KILL: '1' } });
   assert.notEqual(result.status, 0, `Invalid explicit target must fail: ${args.join(' ')}`);

@@ -4,6 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { runPreflightCheck } = require('../core/preflight');
 const { applyPatch } = require('../core/patcher');
+const { spawnSync } = require('node:child_process');
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-empty-archives-'));
 const resources = path.join(root, 'resources');
@@ -15,6 +16,9 @@ try {
     fs.writeFileSync(path.join(resources, name + '.orig.bak'), 'preserved original backup');
   }
   const before = fs.readdirSync(resources).map(name => [name, fs.readFileSync(path.join(resources, name))]);
+  const status = spawnSync(process.execPath, [path.join(__dirname, '../cli.js'), 'status', '--path', root], {encoding:'utf8'});
+  assert.notEqual(status.status, 0, 'Status must not describe a damaged client as a normal English installation');
+  assert.match(status.stdout + status.stderr, /0 字节.*官网完整安装包/);
   const preflight = runPreflightCheck({ customPath: root, autoClose: false });
   const health = preflight.checks.find(check => check.id === 'client-archives');
   assert.equal(health?.passed, false, 'Preflight must reject empty client archives');
