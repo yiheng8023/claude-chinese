@@ -123,7 +123,18 @@ function Get-WinEvent {
       }
       // Characters outside both English and Chinese ANSI code pages exercise the
       // native Unicode persistence path, including a toolkit under a Unicode root.
-      const shortcutRoot = path.join(root,'中文目录-😀');
+      const shortPath=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',`
+[Console]::InputEncoding=New-Object System.Text.UTF8Encoding
+[Console]::OutputEncoding=New-Object System.Text.UTF8Encoding
+$request=[Console]::In.ReadToEnd() | ConvertFrom-Json
+Add-Type 'using System.Text;using System.Runtime.InteropServices;public class ShortcutTestPath{[DllImport("kernel32.dll",CharSet=CharSet.Unicode)]public static extern uint GetShortPathName(string path,StringBuilder output,uint length);}'
+$buffer=New-Object Text.StringBuilder 32768
+$length=[ShortcutTestPath]::GetShortPathName($request.path,$buffer,32768)
+if($length -eq 0){throw 'Could not inspect fixture path'}
+@{path=$buffer.ToString()} | ConvertTo-Json -Compress
+`],{input:JSON.stringify({path:root}),encoding:'utf8',windowsHide:true});
+      assert.equal(shortPath.status,0,shortPath.stderr);
+      const shortcutRoot = path.join(JSON.parse(shortPath.stdout).path,'中文目录-😀');
       fs.mkdirSync(path.join(shortcutRoot,'core'),{recursive:true});
       for(const file of ['windows-shortcut.js','windows-shortcut.ps1']) {
         fs.copyFileSync(path.join(__dirname,'../core',file),path.join(shortcutRoot,'core',file));
@@ -133,8 +144,8 @@ function Get-WinEvent {
       const create = require(path.join(shortcutRoot,'core/windows-shortcut')).createLaunchShortcut;
       const saved = create(shortcut);
       assert.equal(saved.output,shortcut);
-      assert.equal(saved.target,path.join(shortcutRoot,'launch.bat'));
-      assert.equal(saved.workingDirectory,shortcutRoot);
+      assert.equal(saved.target,fs.realpathSync.native(path.join(shortcutRoot,'launch.bat')));
+      assert.equal(saved.workingDirectory,fs.realpathSync.native(shortcutRoot));
       const first = fs.readFileSync(shortcut);
       create(shortcut);
       assert.deepEqual(fs.readFileSync(shortcut+'.before-claude-chinese.bak'),first,'Preserve a replaced shortcut');
