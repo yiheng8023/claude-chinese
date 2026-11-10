@@ -1,4 +1,8 @@
 $ErrorActionPreference = 'Stop'
+# This Windows PowerShell child uses Windows system cmdlets. An inherited
+# PowerShell 7 module path can shadow the built-in signature cmdlet.
+$env:PSModulePath = Join-Path $PSHOME 'Modules'
+Import-Module Microsoft.PowerShell.Security -ErrorAction Stop
 [Console]::InputEncoding = New-Object System.Text.UTF8Encoding
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 $request = [Console]::In.ReadToEnd() | ConvertFrom-Json

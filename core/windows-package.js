@@ -63,7 +63,7 @@ function recoverPendingUpdate(info, options = {}) {
       if (stat.files || stat.link) continue;
       if (stat.integrity?.algorithm !== 'SHA256' || !stat.integrity.hash ||
           crypto.createHash('sha256').update(asar.extractFile(archive, relative)).digest('hex') !== stat.integrity.hash) {
-        throw new Error(`待注册新版 ${name} 的内容校验失败，未执行自动恢复。`);
+        throw new Error(`待注册新版 ${name} 的内容校验失败。请使用官网完整安装包完成更新。`);
       }
     }
   }

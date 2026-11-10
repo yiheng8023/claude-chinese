@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.95**, targeting **4.23118.0** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.96**, targeting **4.23118.1** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -24,7 +24,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
 - **Four catalog layers**: 1,467 Shell entries (1,130 current English baseline entries), 31,646 Web UI entries, 52 dynamic entries and 322 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
-- **Expanded help checks**: this update reviews 134 help references covering 132 distinct bodies in 4.23118, adding translations for 14 new or rewritten bodies while retaining the 4.4212 and 4.16336 regression snapshots. Checks exercise complete rendered prose, code examples and links. `npm run audit` also compares the installed client's original documentation modules with the reviewed snapshot and requires a fresh review when their source changes.
+- **Expanded help checks** cover 134 references and 132 distinct bodies. The 4.23118.1 documentation module fingerprints match 4.23118.0, so this build uses the reviewed translations and retains the 4.4212 and 4.16336 regression snapshots. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable before replacing installed files; roll back ordinary write failures and retain matching original backups.
 - **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
@@ -37,7 +37,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This update targets Windows **4.23118.0** installed through the official website installer (system package **4.23118.0.0**). Existing loose-resource layouts on macOS/Linux remain supported; synchronization of dual ASAR archives and executable integrity is currently implemented and verified only for the Windows layout.
+This update targets Windows **4.23118.1** installed through the official website installer (system package **4.23118.1.0**). macOS/Linux support existing loose-resource layouts. Synchronization of dual ASAR archives and executable integrity is implemented and verified on Windows.
 
 ---
 
@@ -73,6 +73,8 @@ The website-distributed Windows app identity is `shell:AppsFolder\Claude_pzs8sxr
 
 When `launch.bat` or its localization shortcut finds damaged archives in the registered package, it checks Windows deployment records for a newer package in the same family. It verifies the identity, original executable signature and ASAR integrity before completing registration, applying localization as needed and starting Claude. A running client stops recovery with a save-and-exit message. Without a trusted complete newer package, it preserves backups and directs the user to the official installer instead of restoring an older package. This handles already-deployed Windows updates and does not replace the official updater.
 
+Signature checks use Windows PowerShell's built-in system modules to avoid inheriting PowerShell 7's module search path. If package signing changes file bytes recorded in an ASAR header, the launcher directs you to complete the update using the full official installer. This installation recovery path was verified on 4.23118.1.
+
 ```bat
 node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude Chinese.lnk"
 ```
@@ -81,7 +83,7 @@ You can also specify an existing `.lnk`, including Unicode directory and file na
 
 A per-user launch lock covers detection, registration, localization and the launch request to prevent concurrent recovery from repeated clicks. Normal returns and errors release it. Forcefully terminating the launcher or losing power can leave the lock behind; it is never taken over automatically. Follow the error message and confirm no installation or launch is in progress before cleaning it up. Completing Windows registration can still stop background processes associated with the old package, so use recovery after tasks have finished.
 
-Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. Keep undisclosed details unknown and optimize confirmed problems as needed. The official desktop feed still describes 4.23118.0 as `Production Release - No Notes`; the latest in-app entry is 4.16336.0 from 2026-11-03. Product notes are not an itemized changelog for this build. UI and configuration changes reviewed here therefore come from original package resources.
+Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. The official desktop feed describes 4.23118.1 as `Production Release - No Notes`. The latest in-app entry is still 4.16336.0 from 2026-11-03. A comparison of the original packages found identical English catalogs across all three layers and identical expanded help modules in 4.23118.0 and 4.23118.1.
 
 ## 🚀 Quick Start
 

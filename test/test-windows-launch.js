@@ -86,13 +86,22 @@ const { withLaunchLock } = require('../core/launch-lock');
       for (const [directory,version] of [[oldRoot,'4.16336.0.0'],[newRoot,'4.23118.0.0']]) {
         fs.writeFileSync(path.join(directory,'AppxManifest.xml'),`<Package><Identity Name="Claude" Publisher="CN=Fixture" Version="${version}"/></Package>`);
       }
+      const foreignModule = path.join(root, 'foreign-modules', 'Microsoft.PowerShell.Security');
+      fs.mkdirSync(foreignModule, { recursive: true });
+      fs.writeFileSync(path.join(foreignModule, 'Microsoft.PowerShell.Security.psm1'),
+        "function Get-AuthenticodeSignature { throw 'Wrong PowerShell module' }\n");
       const nativeStubs = `
+$env:PSModulePath = $env:CLAUDE_TEST_FOREIGN_MODULES + ';' + $env:PSModulePath
 $script:packageQueries=0
 function Get-AppxPackage {
   $script:packageQueries++
   if($request.fixtureRegisteredAfter -and $script:packageQueries -gt 1){$request.fixtureRegisteredAfter}else{$request.fixtureRegistered}
 }
-function Get-AuthenticodeSignature { [pscustomobject]@{Status='Valid';SignerCertificate=[pscustomobject]@{Subject='CN=Fixture'}} }
+function Get-AuthenticodeSignature([string]$LiteralPath) {
+  $nativeSignature = Microsoft.PowerShell.Security\\Get-AuthenticodeSignature -LiteralPath $LiteralPath
+  if ($nativeSignature -isnot [System.Management.Automation.Signature]) { throw 'Expected Windows PowerShell signature cmdlet' }
+  [pscustomobject]@{Status='Valid';SignerCertificate=[pscustomobject]@{Subject='CN=Fixture'}}
+}
 function Add-AppxPackage { throw 'Live registration is forbidden in this test' }
 function Get-WinEvent {
   foreach($item in $request.fixtureEvents) {
@@ -106,11 +115,13 @@ function Get-WinEvent {
         input:JSON.stringify({action:'discover',name:'Claude',family:oldInfo.packageFamilyName,
           fixtureRegistered:{Name:'Claude',Version:'4.16336.0.0',PackageFamilyName:oldInfo.packageFamilyName,PackageFullName:path.basename(oldRoot),InstallLocation:oldRoot},
           fixtureEvents:[{old:path.basename(oldRoot),new:path.basename(incomplete)},{old:path.basename(oldRoot),new:path.basename(newRoot)}]}),
-        encoding:'utf8',windowsHide:true
+        encoding:'utf8',windowsHide:true,
+        env:{...process.env,CLAUDE_TEST_FOREIGN_MODULES:path.dirname(foreignModule)}
       });
       assert.equal(discovery.status,0,'A stale candidate must not abort native discovery: '+discovery.stderr);
       const found=JSON.parse(discovery.stdout);
-      assert.deepEqual(found.map(item=>item.packageFullName),[candidate.packageFullName]);
+      assert.deepEqual(found.map(item=>item.packageFullName),[candidate.packageFullName],
+        'Discovery must use the native signature module even with a foreign PSModulePath');
       const registeredOld={Name:'Claude',Version:'4.16336.0.0',PackageFamilyName:oldInfo.packageFamilyName,PackageFullName:path.basename(oldRoot),InstallLocation:oldRoot};
       const registeredNew={...registeredOld,Version:'4.23118.0.0',PackageFullName:candidate.packageFullName,InstallLocation:newRoot};
       for(const situation of [{fixtureRegistered:registeredNew},{fixtureRegistered:registeredOld,fixtureRegisteredAfter:registeredNew}]) {
