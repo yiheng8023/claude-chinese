@@ -644,6 +644,14 @@ function patchJsFiles(assetsDirectory, patchHits, options = {}) {
 }
 
 function applyPatch(options = {}) {
+  try {
+    return require('./launch-lock').withLaunchLock(() => applyPatchUnlocked(options));
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function applyPatchUnlocked(options) {
   const info = getClaudeInstallation(options.customPath);
   if (!options.customPath && isClaudeRunning()) {
     if (!options.autoClose || !closeClaude() || isClaudeRunning()) return { success: false, error: '客户端仍在运行，请保存工作并退出后重试。' };
@@ -1076,6 +1084,14 @@ function applyPatchDirect(options = {}) {
 }
 
 function restorePatch(options = {}) {
+  try {
+    return require('./launch-lock').withLaunchLock(() => restorePatchUnlocked(options));
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function restorePatchUnlocked(options) {
   const info = getClaudeInstallation(options.customPath);
   if (!options.customPath && isClaudeRunning()) {
     if (!options.autoClose || !closeClaude() || isClaudeRunning()) return { success: false, error: '客户端仍在运行，请保存工作并退出后重试。' };

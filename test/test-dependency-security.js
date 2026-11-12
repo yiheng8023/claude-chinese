@@ -56,8 +56,13 @@ function checkPatternLimit() {
     // Bounded variant of the upstream preprocessing regression: the old
     // dependency produces 256 rows despite the caller's limit of 64.
     const pattern = Array(8).fill('**/../a/b').join('/');
-    const matcher = new Minimatch(pattern, { optimizationLevel: 2, braceExpandMax: 64 });
-    assert(matcher.set.length <= 64, `${name}: GHSA-g3hv-75wg-m249 preprocessing must respect the expansion limit`);
+    let matcher;
+    try { matcher = new Minimatch(pattern, { optimizationLevel: 2, braceExpandMax: 64 }); }
+    catch (error) {
+      assert.match(error.message, /optimizationLevel 2: too many patterns from '\*\*\/\.\.'/,
+        `${name}: only explicit expansion-limit rejection is acceptable`);
+    }
+    if (matcher) assert(matcher.set.length <= 64, `${name}: GHSA-g3hv-75wg-m249 preprocessing must respect the expansion limit`);
 
     const ordinary = new Minimatch('**/../a/b/**/../c/d', { optimizationLevel: 2 });
     assert.equal(ordinary.match('../a/b/../c/d'), true);
@@ -67,9 +72,30 @@ function checkPatternLimit() {
   }
 }
 
+function checkWildcardCompileWork() {
+  for (const [name, load] of [['ASAR', fromAsar], ['glob', fromGlob]]) {
+    const { Minimatch } = load('minimatch');
+    const parts = 1024;
+    const pattern = Array(parts).fill('*').join('/');
+    const join = Array.prototype.join;
+    let joinedParts = 0;
+    // Count whole-pattern joining work rather than relying on CPU-time limits.
+    // GHSA-cf2h-pxjq-68xw repeatedly joins the full row for each wildcard.
+    Array.prototype.join = function (...args) {
+      if (this.length >= parts) joinedParts += this.length;
+      return Reflect.apply(join, this, args);
+    };
+    try {
+      const matcher = new Minimatch(pattern);
+      assert.equal(matcher.set.length, 1);
+    } finally { Array.prototype.join = join; }
+    assert(joinedParts <= parts * 16, `${name}: long wildcard patterns must not repeatedly join whole rows (${joinedParts} parts)`);
+  }
+}
+
 (async () => {
   const failures = [];
-  for (const [name, check] of [['glob cancellation', checkCancellation], ['minimatch preprocessing', checkPatternLimit]]) {
+  for (const [name, check] of [['glob cancellation', checkCancellation], ['minimatch preprocessing', checkPatternLimit], ['wildcard compile work', checkWildcardCompileWork]]) {
     try { await check(); console.log(`PASS: ${name}`); }
     catch (error) { failures.push(error); console.error(`FAIL: ${name}: ${error.message}`); }
   }

@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
+const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 const asar = require('@electron/asar');
 const { applyPatch, restorePatch, packAsarSync, getRawHeaderSha256, patchClaudeExe } = require('../core/patcher');
@@ -57,7 +58,12 @@ try {
   const copy = fs.copyFileSync;
   let injected = false;
   fs.copyFileSync = (source, dest, ...rest) => {
-    if (!injected && dest === path.join(res, 'app.asar')) { injected = true; throw new Error('simulated write failure'); }
+    if (!injected && source.endsWith(path.join('resources','app.asar')) &&
+        path.dirname(dest) === res && dest.endsWith('.new')) {
+      injected = true;
+      fs.writeFileSync(dest, 'partial staged copy');
+      throw new Error('simulated temporary-file copy failure');
+    }
     return copy(source, dest, ...rest);
   };
   let failed;
@@ -66,6 +72,7 @@ try {
   assert.equal(injected, true);
   assert.deepEqual(hashes(), patched);
   assert.deepEqual(fs.readFileSync(path.join(res, '.claude_chinese_meta.json')), previousMeta);
+  assert.equal(fs.existsSync(path.join(res, '.claude_chinese_transaction.json')), false);
 
   // An official update left old backups behind; both reinstallation and restore
   // must preserve the NEW official version rather than reverting to 4.29.
@@ -83,6 +90,41 @@ try {
   const latest = hashes();
   assert.equal(restorePatch({ customPath: root }).success, true);
   assert.deepEqual(hashes(), latest, 'Restore must not downgrade an official update');
+
+  // Terminate after the first archive replacement, bypassing all JS finally blocks.
+  const crashScript = [
+    'const fs=require("node:fs"),cp=require("node:child_process");',
+    'const target=' + JSON.stringify(path.join(res,'ion-dist.asar')) + ';',
+    'const originalCopy=cp.execFileSync,originalRename=fs.renameSync;',
+    'cp.execFileSync=(file,args,options)=>{const result=originalCopy(file,args,options);if(file==="powershell.exe"&&options?.input&&JSON.parse(options.input).destination===target)process.exit(73);return result;};',
+    'fs.renameSync=(from,to)=>{const result=originalRename(from,to);if(to===target)process.exit(73);return result;};',
+    'const patcher=require(' + JSON.stringify(require.resolve('../core/patcher')) + ');',
+    'const result=patcher.applyPatch({customPath:' + JSON.stringify(root) + '});',
+    'process.exit(result.success?0:1);'
+  ].join('\n');
+  const child = spawnSync(process.execPath, ['-e', crashScript], {
+    encoding:'utf8', env:{...process.env,LOCALAPPDATA:path.join(root,'child-local')}
+  });
+  assert.equal(child.status, 73, 'Child must stop only after replacing the first archive');
+  const pointer = path.join(res,'.claude_chinese_transaction.json');
+  assert(fs.existsSync(pointer), 'Interrupted commit must leave a recovery pointer');
+  const recovery = JSON.parse(fs.readFileSync(pointer,'utf8'));
+  const record = JSON.parse(fs.readFileSync(recovery.record,'utf8'));
+  assert.equal(record.resources,res);
+  assert(record.snapshots.length >= 7);
+  assert.equal(applyPatch({customPath:root}).success,false,'Do not start a second transaction over an interrupted one');
+  for(const snapshot of record.snapshots) {
+    assert(path.resolve(snapshot.backup).startsWith(path.resolve(recovery.work)+path.sep));
+    if(snapshot.present) {
+      assert.equal(hashFile(snapshot.backup),snapshot.hash);
+      fs.copyFileSync(snapshot.backup,snapshot.file); // Test-owned fixture recovery.
+    } else if(fs.existsSync(snapshot.file)) fs.unlinkSync(snapshot.file);
+  }
+  assert.deepEqual(hashes(),latest,'The precommitted journal can recover the original complete set');
+  fs.unlinkSync(pointer);
+  assert(path.basename(recovery.work).startsWith('claude-cn-transaction-'));
+  assert.equal(path.dirname(recovery.work),os.tmpdir());
+  fs.rmSync(recovery.work,{recursive:true,force:true});
 
   // One found PE hash cannot hide another missing PE hash, and failure writes nothing.
   const exe = path.join(root, 'claude.exe');

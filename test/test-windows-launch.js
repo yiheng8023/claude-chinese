@@ -13,6 +13,9 @@ const { withLaunchLock } = require('../core/launch-lock');
   try {
     const lock = path.join(root,'launch.lock');
     withLaunchLock(()=>{
+      let nested = false;
+      withLaunchLock(() => { nested = true; }, lock);
+      assert(nested, 'The same synchronous launch can call install without deadlocking');
       const contender = spawnSync(process.execPath,['-e',`require(${JSON.stringify(require.resolve('../core/launch-lock'))}).withLaunchLock(()=>{throw Error('must not enter')},${JSON.stringify(lock)});`],{encoding:'utf8'});
       assert.notEqual(contender.status,0);
       assert.match(contender.stderr,/启动锁已存在/);
@@ -24,6 +27,19 @@ const { withLaunchLock } = require('../core/launch-lock');
     fs.mkdirSync(lock);
     assert.throws(()=>withLaunchLock(()=>assert.fail('Do not reclaim an unknown or stale lock automatically'),lock),/启动锁已存在/);
     fs.rmdirSync(lock);
+    const mutationHome = path.join(root, 'mutation-home');
+    const mutationLock = path.join(mutationHome, 'claude-chinese', 'launch.lock');
+    withLaunchLock(() => {
+      const contender = spawnSync(process.execPath, ['-e', [
+        'const p=require(' + JSON.stringify(require.resolve('../core/patcher')) + ');',
+        'console.log(JSON.stringify([p.applyPatch({customPath:process.argv[1]}),p.restorePatch({customPath:process.argv[1]})]));'
+      ].join(''), root], {encoding:'utf8', env:{...process.env,LOCALAPPDATA:mutationHome}});
+      assert.equal(contender.status, 0, contender.stderr);
+      for (const result of JSON.parse(contender.stdout)) {
+        assert.equal(result.success, false);
+        assert.match(result.error, /启动锁已存在/, 'Install and restore must share the launch lock before writing');
+      }
+    }, mutationLock);
     const oldRoot = path.join(root, 'Claude_4.16336.0.0_x64__pzs8sxrjxfjjc');
     const newRoot = path.join(root, 'Claude_4.23118.0.0_x64__pzs8sxrjxfjjc');
     const oldRes = path.join(oldRoot, 'app', 'resources');

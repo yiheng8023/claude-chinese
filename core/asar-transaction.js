@@ -3,16 +3,50 @@ const path = require('node:path');
 const os = require('node:os');
 const crypto = require('node:crypto');
 const asar = require('@electron/asar');
+const { hashFile, flushFile, replaceFile } = require('./file-replacement');
 
-function hashFile(file) {
-  const hash = crypto.createHash('sha256');
-  const fd = fs.openSync(file, 'r');
-  const buffer = Buffer.alloc(1024 * 1024);
-  try {
-    let size;
-    while ((size = fs.readSync(fd, buffer, 0, buffer.length, null))) hash.update(buffer.subarray(0, size));
-    return hash.digest('hex');
-  } finally { fs.closeSync(fd); }
+function transactionPointer(resources) {
+  return path.join(resources, '.claude_chinese_transaction.json');
+}
+
+function assertNoPendingTransaction(resources) {
+  const pointer = transactionPointer(resources);
+  if (fs.existsSync(pointer)) throw new Error(`发现未完成的汉化事务。请先检查 ${pointer} 中的恢复记录，原版备份已保留。`);
+}
+
+function saveRecovery(resources, work, snapshots) {
+  for (const item of snapshots) {
+    if (item.present) {
+      flushFile(item.backup);
+      item.hash = hashFile(item.backup);
+    }
+  }
+  const record = path.join(work, 'recovery.json');
+  fs.writeFileSync(record, JSON.stringify({ resources, snapshots }, null, 2), { flag: 'wx' });
+  flushFile(record);
+  const pointer = transactionPointer(resources);
+  fs.writeFileSync(pointer, JSON.stringify({ work, record }, null, 2), { flag: 'wx' });
+  flushFile(pointer);
+}
+
+function clearRecovery(resources, work) {
+  const pointer = transactionPointer(resources);
+  if (JSON.parse(fs.readFileSync(pointer, 'utf8')).work !== work) throw new Error('事务恢复记录已变化，已保留现场。');
+  fs.unlinkSync(pointer);
+}
+
+function rollbackSnapshots(snapshots) {
+  const failures = [];
+  for (const item of [...snapshots].reverse()) {
+    try {
+      if (item.present) {
+        if (fs.existsSync(item.file) && hashFile(item.file) === item.hash) continue;
+        replaceFile(item.backup, item.file);
+        if (hashFile(item.file) !== item.hash) throw new Error('恢复哈希不符');
+      } else if (fs.existsSync(item.file)) fs.unlinkSync(item.file);
+    } catch { failures.push(item.file); }
+  }
+  return failures;
 }
 
 function headerHash(file) {
@@ -112,6 +146,7 @@ function baselineArtifacts(resources, meta) {
 /** Stage the complete EXE/ASAR set; rollback all writes if any replacement fails. */
 function applyAsarTransaction(info, options, applyStaged) {
   const resources = info.resourcesPath;
+  try { assertNoPendingTransaction(resources); } catch (error) { return { success:false, error:error.message }; }
   const metaPath = path.join(resources, '.claude_chinese_meta.json');
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-cn-transaction-'));
   const stage = path.join(work, 'app');
@@ -158,33 +193,32 @@ function applyAsarTransaction(info, options, applyStaged) {
     }
     if ((fs.existsSync(metaPath) ? hashFile(metaPath) : null) !== metaBefore) throw new Error('准备期间补丁记录发生变化，已取消安装。');
     snapshot(metaPath);
+    keepRecovery = true;
+    saveRecovery(resources, work, snapshots);
     try {
       for (const item of artifacts) {
-        if (item.source !== item.file + '.orig.bak') fs.copyFileSync(item.source, item.file + '.orig.bak');
+        if (item.source !== item.file + '.orig.bak') replaceFile(item.source, item.file + '.orig.bak');
       }
       for (const item of artifacts) {
         const staged = item.name === 'claude.exe' ? path.join(stage, item.name) : path.join(stageRes, item.name);
-        fs.copyFileSync(staged, item.file);
+        replaceFile(staged, item.file);
       }
-      fs.copyFileSync(path.join(stageRes, '.claude_chinese_meta.json'), metaPath);
+      replaceFile(path.join(stageRes, '.claude_chinese_meta.json'), metaPath);
       for (const item of artifacts) {
         if (hashFile(item.file) !== meta.archives[item.name].patchedHash) throw new Error(`写入校验失败: ${item.name}`);
       }
       verifyIntegrity(resources, path.join(path.dirname(resources), 'claude.exe'));
+      clearRecovery(resources, work);
+      keepRecovery = false;
     } catch (error) {
-      const failures = [];
-      for (const item of snapshots.reverse()) {
-        try {
-          if (item.present) fs.copyFileSync(item.backup, item.file);
-          else if (fs.existsSync(item.file)) fs.unlinkSync(item.file);
-        } catch (_) { failures.push(item.file); }
-      }
+      const failures = rollbackSnapshots(snapshots);
       asar.uncacheAll();
       if (failures.length) {
         keepRecovery = true;
-        fs.writeFileSync(path.join(work, 'recovery.json'), JSON.stringify({ snapshots, failures }, null, 2));
         throw new Error(`${error.message}；部分文件未能回滚，恢复副本保留在 ${work}`);
       }
+      clearRecovery(resources, work);
+      keepRecovery = false;
       throw new Error(`${error.message}；已恢复安装前文件。`);
     }
     asar.uncacheAll();
@@ -199,6 +233,7 @@ function applyAsarTransaction(info, options, applyStaged) {
 
 function restoreAsarTransaction(info) {
   const resources = info.resourcesPath;
+  try { assertNoPendingTransaction(resources); } catch (error) { return { success:false, error:error.message }; }
   const metaPath = path.join(resources, '.claude_chinese_meta.json');
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-cn-restore-'));
   const snapshots = [];
@@ -224,9 +259,12 @@ function restoreAsarTransaction(info) {
       if (hashFile(item.file) !== item.hash || hashFile(item.source) !== item.sourceHash) throw new Error('还原准备期间客户端文件发生变化，已取消还原。');
     }
     if ((fs.existsSync(metaPath) ? hashFile(metaPath) : null) !== metaBefore) throw new Error('还原准备期间补丁记录发生变化，已取消还原。');
+    keepRecovery = true;
+    saveRecovery(resources, work, snapshots);
     try {
       for (const item of artifacts) {
-        if (item.source !== item.file) fs.copyFileSync(item.source, item.file);
+        if (item.source !== item.file) replaceFile(item.source, item.file);
+        if (hashFile(item.file) !== item.sourceHash) throw new Error(`还原后的完整文件哈希不符：${item.name}`);
       }
       verifyIntegrity(resources, path.join(path.dirname(resources), 'claude.exe'));
       for (const item of artifacts) {
@@ -234,19 +272,16 @@ function restoreAsarTransaction(info) {
         if (fs.existsSync(backup)) fs.unlinkSync(backup);
       }
       if (fs.existsSync(metaPath)) fs.unlinkSync(metaPath);
+      clearRecovery(resources, work);
+      keepRecovery = false;
     } catch (error) {
-      const failures = [];
-      for (const item of snapshots.reverse()) {
-        try {
-          if (item.present) fs.copyFileSync(item.backup, item.file);
-          else if (fs.existsSync(item.file)) fs.unlinkSync(item.file);
-        } catch (_) { failures.push(item.file); }
-      }
+      const failures = rollbackSnapshots(snapshots);
       if (failures.length) {
         keepRecovery = true;
-        fs.writeFileSync(path.join(work, 'recovery.json'), JSON.stringify({ snapshots, failures }, null, 2));
         throw new Error(`${error.message}；部分文件未能回滚，恢复副本保留在 ${work}`);
       }
+      clearRecovery(resources, work);
+      keepRecovery = false;
       throw new Error(`${error.message}；已恢复还原前文件。`);
     }
     return { success: true };

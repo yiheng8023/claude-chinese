@@ -10,6 +10,7 @@ const translatedDocs = require('../dict/long-docs-zh-CN.json');
 const fixture = require('./fixtures/inference-help-4.4212.json');
 const currentFixture = require('./fixtures/inference-help-4.16336.json');
 const latestFixture = require('./fixtures/inference-help-4.23118.json');
+const v5Fixture = require('./fixtures/inference-help-5.1231.json');
 
 function protectedParts(text) {
   const blocks = [...text.matchAll(/```[^\n]*\n[\s\S]*?```/g)].map(m => m[0]);
@@ -50,7 +51,17 @@ try {
   assert.equal(fixture.documents.length, 124);
   assert.equal(currentFixture.documents.length, 129);
   assert.equal(latestFixture.documents.length, 132);
-  for (const english of new Set([...fixture.documents, ...currentFixture.documents, ...latestFixture.documents])) {
+  assert.equal(v5Fixture.helpReferences, 141);
+  assert.equal(v5Fixture.documents.length, 139);
+  // Identical English labels can have different meanings in distinct components.
+  assert.equal(zh['IG5n0mukdA'], '键');
+  assert.equal(zh['EcglP9ZtIw'], '密钥');
+  assert.equal(zh['UAxIHLpY5k'], '进行中');
+  assert.equal(zh['Dn82ALx/+V'], '实时');
+  assert.equal(zh['IxbsWX4wj4'], '添加标头');
+  assert.equal(zh['79IWiafC91'], '标头');
+  assert.equal(zh['vUjsX7qaCx'], '页眉');
+  for (const english of new Set([...fixture.documents, ...currentFixture.documents, ...latestFixture.documents, ...v5Fixture.documents])) {
     assert(Object.hasOwn(translatedDocs, english), `Missing complete help body: ${english.split('\n')[0]}`);
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');
@@ -69,5 +80,5 @@ try {
   fs.writeFileSync(schema, '// Upstream help changed after the recorded review.\n');
   packAsarSync(changedSource, path.join(resources, 'ion-dist.asar'));
   assert.throws(() => auditInferenceHelp({ resourcesPath: resources, version: '4.4213.0' }), /源码.*不一致/, 'Changed installed help must require a new review instead of passing an old snapshot');
-  console.log('PASS: reported labels and reviewed 4.4212/4.16336/4.23118 inference help render Chinese with code and links preserved');
+  console.log('PASS: scoped labels and reviewed 4.x/5.1231 inference help render Chinese with code and links preserved');
 } finally { fs.rmSync(root, { recursive: true, force: true }); }
