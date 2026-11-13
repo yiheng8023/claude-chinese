@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.97**, targeting **5.1231.2** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.98**, targeting **5.11492.2** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -23,8 +23,8 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
-- **Four catalog layers**: 1,629 Shell entries (1,279 current English baseline entries), 32,069 Web UI entries, 52 dynamic entries and 350 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
-- **Expanded help checks** cover 141 references and 139 distinct bodies. The original 5.1231.2 documentation modules were reviewed, with 28 new or revised bodies translated and the 4.4212, 4.16336 and 4.23118 regression snapshots retained. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
+- **Four catalog layers**: 1,664 Shell entries (1,310 current English baseline entries), 32,246 Web UI entries, 52 dynamic entries and 362 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Expanded help checks** cover 147 references and 145 distinct bodies. The original 5.11492.2 documentation modules were reviewed, with 12 new or revised bodies translated and the 4.4212, 4.16336, 4.23118 and 5.1231 regression snapshots retained. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable, then stage complete files beside each target before replacement; persist recovery records before the first write, verify full hashes after rollback, and retain matching original backups.
 - **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
@@ -37,7 +37,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This update targets Windows **5.1231.2** installed through the official website installer (system package **5.1231.2.0**). macOS/Linux support existing loose-resource layouts. Synchronization of dual ASAR archives and executable integrity is implemented and verified on Windows.
+This update targets Windows **5.11492.2** installed through the official website installer (system package **5.11492.2.0**). macOS/Linux support existing loose-resource layouts. Synchronization of dual ASAR archives and executable integrity is implemented and verified on Windows.
 
 ---
 
@@ -71,19 +71,19 @@ The toolkit keeps the official updater. Before a manual update, you can run `npm
 
 The website-distributed Windows app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. It avoids versioned paths, but cannot complete a pending Windows registration. This update reproduced a startup failure where the new package was deployed, registration was deferred while the old package was in use, and the old ASARs were emptied.
 
-When `launch.bat` or its localization shortcut finds damaged archives in the registered package, it checks Windows deployment records for a newer package in the same family. It verifies the identity, original executable signature and ASAR integrity before completing registration, applying localization as needed and starting Claude. A running client stops recovery with a save-and-exit message. Without a trusted complete newer package, it preserves backups and directs the user to the official installer instead of restoring an older package. This handles already-deployed Windows updates and does not replace the official updater.
+When `launch.bat` or its localization shortcut finds damaged archives in the registered package, it checks Windows deployment records for a newer package in the same family. It verifies the identity, original executable signature and ASAR integrity before completing registration, applying localization as needed and starting Claude. If only unpacked native files differ because of signing after ASAR packaging, it instead recovers through the full official MSIX: verify release-feed size and SHA-256, the complete package signature and manifest identity, then compare the installed executable, both ASARs and every unpacked file against that package. These files are never simply skipped. Full-package recovery currently requires Windows x64 and network access. A running client stops recovery with a save-and-exit message. Without a trusted complete newer package, it preserves backups and directs the user to the official installer instead of restoring an older package. This handles already-deployed Windows updates and does not replace the official updater.
 
-Signature checks use Windows PowerShell's built-in system modules to avoid inheriting PowerShell 7's module search path. If package signing changes file bytes recorded in an ASAR header, the launcher directs you to complete the update using the full official installer. This installation recovery path was verified on 5.1231.2.
+Signature checks use Windows PowerShell's built-in system modules to avoid inheriting PowerShell 7's module search path. Signing native files after ASAR packaging changes their bytes. The complete official package is used to verify these files rather than accepting any valid signature alone. The full official installation and installed-file comparison against its signed source were checked on 5.11492.2; isolated regressions cover the failure branch.
 
 ```bat
 node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude Chinese.lnk"
 ```
 
-You can also specify an existing `.lnk`, including Unicode directory and file names. Before replacement, the command keeps a `.before-claude-chinese.bak` backup and preserves the existing icon. The shortcut points to `launch.bat` in this toolkit directory: keep the directory in place, or recreate the shortcut after moving it. Automatic localization still needs write access to the installation directory; if denied, follow the prompt to run the installer as administrator.
+You can also specify an existing `.lnk`, including Unicode directory and file names. By default, replacement keeps a `.before-claude-chinese.bak` backup and preserves the existing icon. Add `--no-backup` when no backup is wanted; this does not delete an existing backup. The shortcut points to `launch.bat` in this toolkit directory: keep the directory in place, or recreate the shortcut after moving it. A check window appears during launch and retains errors on failure. A native AppsFolder-only shortcut does not execute toolkit recovery and cannot complete deferred registration of a damaged old package. For website-distributed Windows packages, a normal launch does not request elevation when only localization write access is missing: after checking for incomplete transactions, readable archives and matching executable integrity records, it opens the existing client and reports that localization still needs installation. Damaged or missing files and other patch errors still stop startup. Exit the client and run `install.bat` as administrator to complete localization.
 
 A per-user shared lock covers install, restore, detection, registration, localization and the launch request to prevent concurrent recovery from repeated clicks. Normal returns and errors release it. Forcefully terminating the launcher or losing power can leave the lock behind; it is never taken over automatically. Follow the error message and confirm no installation or launch is in progress before cleaning it up. Completing Windows registration can still stop background processes associated with the old package, so use recovery after tasks have finished.
 
-Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. The official desktop feed describes 5.1231.2 as `Production Release - No Notes`. The latest in-app entry is 4.23118.1 dated 2026-11-09, with a notice that these notes may lag by one release; product release notes do not map directly to desktop builds. This update first verified the signed full package and restored original startup, then compared the original resources: Shell +162/-13 and Ion +1,623/-485, with the dynamic English catalog unchanged. Identical English is reviewed by message ID and component context rather than replaced globally.
+Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. The official desktop feed describes 5.11492.2 as `Production Release - No Notes`. The latest in-app entry is 5.1231.0 dated 2026-11-10, with a notice that these notes may lag by one release; product release notes do not map directly to desktop builds. This update first verified the signed full package and restored original startup, then compared the original resources: Shell +35/-4 and Ion +657/-272, with the dynamic English catalog unchanged. Identical English is reviewed by message ID and component context rather than replaced globally.
 
 ## 🚀 Quick Start
 
@@ -150,11 +150,11 @@ npm run audit
 npm run audit:deps
 ```
 
-The current release retains `@electron/asar@4.3.1` and overrides its dependency tree with the paired `glob@14.0.5` and `minimatch@11.0.8` to address GHSA-3g3m-2fjr-6pw4, GHSA-g3hv-75wg-m249 and [GHSA-cf2h-pxjq-68xw](https://github.com/isaacs/minimatch/security/advisories/GHSA-cf2h-pxjq-68xw). This is a temporary bridge while upstream constraints remain unchanged: review and remove or adjust the override when upgrading ASAR, and do not upgrade minimatch alone. `npm test` covers traversal cancellation, preprocessing limits, long-wildcard compilation work, archive inventories, hidden files and multiple unpacked paths; macOS/Linux CI covers symbolic links.
+The current release uses `@electron/asar@4.3.2`, whose upstream dependency ranges now accept the newer glob/minimatch releases; obsolete temporary overrides have been removed. The lockfile resolves `glob@14.0.6` and `minimatch@11.0.8`, covering GHSA-3g3m-2fjr-6pw4, GHSA-g3hv-75wg-m249, GHSA-cf2h-pxjq-68xw and [GHSA-qxr8-q827-836c](https://github.com/isaacs/node-glob/security/advisories/GHSA-qxr8-q827-836c). Packaging enumerates from inside the source directory so braces or brackets in parent paths are not interpreted as globs. Tests cover traversal cancellation, pattern and ignore expansion limits, long-wildcard compilation work, special directory names, archive inventories, hidden files and multiple unpacked paths; macOS/Linux CI covers symbolic links.
 
 Both regular CI and the daily sentinel run `npm run audit:deps`. `npm run audit` remains a localization audit and does not replace dependency security checks. The security check depends on the npm advisory service; query failures also block the check and do not by themselves indicate a new vulnerability.
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (1,279 current Shell baseline keys).
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (1,310 current Shell baseline keys).
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Parse all messages and compare against actual installed English catalogs when available; explicitly mark missing upstream sources as skipped.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
@@ -187,9 +187,9 @@ claude-chinese/
 │       ├── ci.yml                    # Cross-platform (Windows/macOS/Linux) CI test pipeline
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
-│   ├── zh-CN.json                    # Shell layer translation dictionary (1,629 entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (32,069 entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (350 documents)
+│   ├── zh-CN.json                    # Shell layer translation dictionary (1,664 entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (32,246 entries)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (362 documents)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing

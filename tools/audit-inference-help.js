@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const asar = require('@electron/asar');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { baselineArtifacts, readMeta } = require('../core/asar-transaction');
-const fixtures = [require('../test/fixtures/inference-help-4.4212.json'), require('../test/fixtures/inference-help-4.16336.json'), require('../test/fixtures/inference-help-4.23118.json'), require('../test/fixtures/inference-help-5.1231.json')];
+const fixtures = [require('../test/fixtures/inference-help-4.4212.json'), require('../test/fixtures/inference-help-4.16336.json'), require('../test/fixtures/inference-help-4.23118.json'), require('../test/fixtures/inference-help-5.1231.json'), require('../test/fixtures/inference-help-5.11492.json')];
 const translations = require('../dict/long-docs-zh-CN.json');
 
 function auditInferenceHelp(info = getClaudeInstallation()) {

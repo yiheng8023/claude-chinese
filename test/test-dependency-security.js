@@ -93,9 +93,22 @@ function checkWildcardCompileWork() {
   }
 }
 
+function checkIgnoreExpansionLimit() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-ignore-limit-'));
+  try {
+    fs.writeFileSync(path.join(root,'file.txt'),'fixture');
+    const { globSync } = fromAsar('glob');
+    const payload = Array.from({length:14},(_,i)=>'**/../x'+i+'/y'+i).join('/');
+    const limitError = /optimizationLevel 2: too many patterns/;
+    assert.throws(()=>globSync(payload,{cwd:root,platform:'posix'}),limitError);
+    assert.throws(()=>globSync('*',{cwd:root,platform:'posix',ignore:[payload]}),limitError,
+      'GHSA-qxr8-q827-836c: ignore patterns must enforce the same expansion limit');
+  } finally { fs.rmSync(root,{recursive:true,force:true}); }
+}
+
 (async () => {
   const failures = [];
-  for (const [name, check] of [['glob cancellation', checkCancellation], ['minimatch preprocessing', checkPatternLimit], ['wildcard compile work', checkWildcardCompileWork]]) {
+  for (const [name, check] of [['glob cancellation', checkCancellation], ['minimatch preprocessing', checkPatternLimit], ['wildcard compile work', checkWildcardCompileWork], ['ignore expansion limit', checkIgnoreExpansionLimit]]) {
     try { await check(); console.log(`PASS: ${name}`); }
     catch (error) { failures.push(error); console.error(`FAIL: ${name}: ${error.message}`); }
   }

@@ -85,6 +85,29 @@ const { withLaunchLock } = require('../core/launch-lock');
       return [candidate];
     }}),/内容校验失败/);
     fs.writeFileSync(path.join(newRes,'ion-dist.asar'),intact);
+    // Simulate post-ASAR signing without accepting the changed native file on trust.
+    fs.mkdirSync(path.join(source, 'native'));
+    fs.writeFileSync(path.join(source, 'native', 'binding.node'), 'native before signing');
+    await asar.createPackageWithOptions(source, path.join(newRes, 'app.asar'), {unpackDir:'native'});
+    fs.appendFileSync(path.join(newRes, 'app.asar.unpacked', 'native', 'binding.node'), ' signing bytes');
+    asar.uncacheAll();
+    const signedRecords = ['app.asar', 'ion-dist.asar'].map(file => ({file,alg:'SHA256',value:crypto.createHash('sha256').update(asar.getRawHeader(path.join(newRes,file)).headerString).digest('hex')}));
+    fs.writeFileSync(path.join(newRoot, 'app', 'claude.exe'), signedRecords.map(record => JSON.stringify(record)).join('\n'));
+    const proofFiles = ['app/claude.exe','app/resources/app.asar','app/resources/ion-dist.asar','app/resources/app.asar.unpacked/native/binding.node'];
+    const hashes = Object.fromEntries(proofFiles.map(file => [file,crypto.createHash('sha256').update(fs.readFileSync(path.join(newRoot,file))).digest('hex')]));
+    const proof = {packageFullName:candidate.packageFullName,installPath:newRoot,hashes};
+    const repairActions = [];
+    const repairedOptions = {...options,runPackageAction:request=>{repairActions.push(request.action);return request.action==='discover'?[candidate]:proof}};
+    assert.equal(recoverPendingUpdate(oldInfo,repairedOptions),newInfo);
+    assert.deepEqual(repairActions,['discover','repair'],'Signing differences require the complete official package, never direct registration');
+    for (const badProof of [{...proof,hashes:{}},{...proof,hashes:Object.fromEntries(proofFiles.slice(0,3).map(file=>[file,hashes[file]]))},{...proof,hashes:{...hashes,[proofFiles[3]]:'0'.repeat(64)}},{...proof,packageFullName:candidate.packageFullName.replace('_x64__','_arm64__')}]) {
+      assert.throws(()=>recoverPendingUpdate(oldInfo,{...options,runPackageAction:request=>request.action==='discover'?[candidate]:badProof}),/官方完整包恢复/);
+    }
+    assert.throws(()=>recoverPendingUpdate(oldInfo,{...options,runPackageAction:request=>{if(request.action==='discover')return[candidate];throw Error('official source unavailable')}}),/official source unavailable/);
+    const packedTamper = Buffer.from(intact); packedTamper[packedTamper.length-1]^=1;
+    fs.writeFileSync(path.join(newRes,'ion-dist.asar'),packedTamper);
+    asar.uncacheAll();
+    assert.throws(()=>recoverPendingUpdate(oldInfo,{...options,runPackageAction:request=>{assert.equal(request.action,'discover','Packed tampering must not trigger repair or registration');return[candidate]}}),/内容校验失败/);
     fs.writeFileSync(path.join(newRes,'ion-dist.asar'),'');
     assert.throws(()=>recoverPendingUpdate(oldInfo,{...options,runPackageAction:request=>{
       assert.notEqual(request.action,'register','Reject a damaged candidate before any registration');
@@ -97,6 +120,13 @@ const { withLaunchLock } = require('../core/launch-lock');
         '$tokens=$null; $parseErrors=$null; $source=Get-Content -LiteralPath ([Console]::In.ReadToEnd()) -Raw -Encoding UTF8; [System.Management.Automation.Language.Parser]::ParseInput($source,[ref]$tokens,[ref]$parseErrors)|Out-Null; if($parseErrors.Count){throw ($parseErrors|Out-String)}'],
       {input:nativeSource,encoding:'utf8',windowsHide:true});
       assert.equal(parse.status,0,parse.stderr);
+      const repairScript = fs.readFileSync(path.join(__dirname,'../core/windows-official-repair.ps1'),'utf8');
+      const repairPaths = spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',
+        "function Get-AppxPackage { throw 'STOP_BEFORE_NETWORK' };try{. ([scriptblock]::Create([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('"+Buffer.from(repairScript,'utf8').toString('base64')+"'))))}catch{if($_.Exception.Message -ne 'STOP_BEFORE_NETWORK'){throw}};"+
+        "$seen=@{};$p=Resolve-OfficialEntryPath 'app/resources/app.asar.unpacked/node_modules/%40ant/b.node' $seen;if($p -ne 'app/resources/app.asar.unpacked/node_modules/@ant/b.node'){throw 'Decode failed'};"+
+        "foreach($bad in @('app/resources/app.asar.unpacked/%2e%2e/evil','app/resources/app.asar.unpacked/a%5cb','app/resources/app.asar.unpacked/node_modules/@ant/b.node')){try{Resolve-OfficialEntryPath $bad $seen;throw 'Unexpected acceptance'}catch{if($_.Exception.Message -notmatch 'Unsafe|Duplicate'){throw}}};'PASS: MSIX decoded paths and duplicate/traversal rejection'"],
+      {input:'{}',encoding:'utf8',windowsHide:true});
+      assert.equal(repairPaths.status,0,repairPaths.stderr);
       const incomplete = path.join(root,'Claude_4.30000.0.0_x64__pzs8sxrjxfjjc');
       fs.mkdirSync(incomplete);
       for (const [directory,version] of [[oldRoot,'4.16336.0.0'],[newRoot,'4.23118.0.0']]) {
@@ -176,6 +206,13 @@ if($length -eq 0){throw 'Could not inspect fixture path'}
       const first = fs.readFileSync(shortcut);
       create(shortcut);
       assert.deepEqual(fs.readFileSync(shortcut+'.before-claude-chinese.bak'),first,'Preserve a replaced shortcut');
+      const noBackup = path.join(shortcutRoot,'No backup 中文.lnk');
+      fs.copyFileSync(shortcut,noBackup);
+      create(noBackup,{backup:false});
+      assert(!fs.existsSync(noBackup+'.before-claude-chinese.bak'),'Explicit no-backup must not create an adjacent backup');
+      fs.writeFileSync(noBackup+'.before-claude-chinese.bak','keep user backup');
+      create(noBackup,{backup:false});
+      assert.equal(fs.readFileSync(noBackup+'.before-claude-chinese.bak','utf8'),'keep user backup','No-backup does not delete an existing backup');
       for(const explicitIcon of [true,false]) {
       const seed = path.join(root,'existing.lnk');
       const initialized=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',`

@@ -55,14 +55,14 @@ public static class ClaudeShortcut {
         } finally { Marshal.FinalReleaseComObject(instance); }
     }
 
-    public static string[] Save(string output, string target, string directory) {
+    public static string[] Save(string output, string target, string directory, bool backupEnabled) {
         object instance = new ClaudeShellLink();
         try {
             var file = (IPersistFile)instance;
             if (File.Exists(output)) {
                 file.Load(output, 0);
                 string backup = output + ".before-claude-chinese.bak";
-                if (!File.Exists(backup)) File.Copy(output, backup, false);
+                if (backupEnabled && !File.Exists(backup)) File.Copy(output, backup, false);
             }
             var link = (IClaudeShellLinkW)instance;
             if (File.Exists(output)) {
@@ -91,5 +91,5 @@ public static class ClaudeShortcut {
     }
 }
 '@
-$saved = [ClaudeShortcut]::Save($request.output, $request.target, $request.root)
+$saved = [ClaudeShortcut]::Save($request.output, $request.target, $request.root, $request.backup -ne $false)
 @{output=$request.output;target=$saved[0];workingDirectory=$saved[2];iconPath=$saved[3];iconIndex=$saved[4]} | ConvertTo-Json -Compress

@@ -293,4 +293,4 @@ function restoreAsarTransaction(info) {
   }
 }
 
-module.exports = { hashFile, integrityRecords, verifyIntegrity, artifactPaths, assertReadableArchives, readMeta, baselineArtifacts, applyAsarTransaction, restoreAsarTransaction };
+module.exports = { hashFile, integrityRecords, verifyIntegrity, artifactPaths, assertReadableArchives, assertNoPendingTransaction, readMeta, baselineArtifacts, applyAsarTransaction, restoreAsarTransaction };

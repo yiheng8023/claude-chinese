@@ -6,7 +6,7 @@ const asar = require('@electron/asar');
 const { packAsarSync } = require('../core/patcher');
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-asar-deps-'));
-const source = path.join(root, 'source with spaces 中文');
+const source = path.join(root, 'source with spaces 中文{literal,root}[directory]');
 const archive = path.join(root, 'payload.asar');
 const extracted = path.join(root, 'extracted');
 const contents = new Map([
@@ -46,7 +46,7 @@ try {
     assert(fs.lstatSync(path.join(extracted, link)).isSymbolicLink());
     assert.deepEqual(fs.readFileSync(path.join(extracted, link)), contents.get('package.json'));
   }
-  console.log('PASS: ASAR file inventory, hidden/Unicode/spaced paths, multiple unpacked files and byte-exact extraction');
+  console.log('PASS: ASAR file inventory, literal glob/hidden/Unicode/spaced paths, multiple unpacked files and byte-exact extraction');
   console.log(process.platform === 'win32' ? 'SKIP: symlink fixture requires Unix (covered by macOS/Linux CI)' : 'PASS: ASAR symlink round trip');
 } finally {
   asar.uncacheAll();

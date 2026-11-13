@@ -17,17 +17,19 @@ const { validatePair, validateSyntax } = require('../tools/icu-validator');
 const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
 
 /**
- * 借助 Node.js 子进程同步执行 ASAR 打包，规避复杂异步改动并免疫路径空格
+ * 借助 Node.js 子进程同步执行 ASAR 打包；从源目录枚举，避免上级路径被当成 glob。
  */
 function packAsarSync(srcDir, destFile, options = {}) {
   const unpackPattern = options.unpack ? options.unpack : '';
   const code = unpackPattern
-    ? 'const asar = require("@electron/asar"); (async () => { try { await asar.createPackageWithOptions(process.argv[1], process.argv[2], { unpack: process.argv[3] }); } catch (err) { console.error(err); process.exit(1); } })();'
-    : 'const asar = require("@electron/asar"); (async () => { try { await asar.createPackage(process.argv[1], process.argv[2]); } catch (err) { console.error(err); process.exit(1); } })();';
+    ? 'const asar = require(process.argv[1]); (async () => { try { await asar.createPackageWithOptions(".", process.argv[2], { unpack: process.argv[3] }); } catch (err) { console.error(err); process.exit(1); } })();'
+    : 'const asar = require(process.argv[1]); (async () => { try { await asar.createPackage(".", process.argv[2]); } catch (err) { console.error(err); process.exit(1); } })();';
+  const asarModule = require.resolve('@electron/asar');
+  const destination = path.resolve(destFile);
   const args = unpackPattern
-    ? ['-e', code, srcDir, destFile, unpackPattern]
-    : ['-e', code, srcDir, destFile];
-  execFileSync(process.execPath, args, { stdio: 'pipe' });
+    ? ['-e', code, asarModule, destination, unpackPattern]
+    : ['-e', code, asarModule, destination];
+  execFileSync(process.execPath, args, { stdio: 'pipe', cwd: path.resolve(srcDir) });
   if (typeof asar.uncacheAll === 'function') asar.uncacheAll();
 }
 
@@ -660,6 +662,7 @@ function applyPatchUnlocked(options) {
     if (info.distribution === 'store') return { success: false, error: '暂不支持 Microsoft Store 分发版本，请使用官网安装器。' };
     if (!fs.existsSync(path.join(path.dirname(info.resourcesPath), 'claude.exe'))) return { success: false, error: '此 ASAR 布局缺少可验证的 Windows 主程序，暂不支持注入；其他平台仅保留散装资源布局支持。' };
     if (!canWriteDirectory(info.resourcesPath) || !canWriteDirectory(path.dirname(info.resourcesPath))) {
+      if (options.allowElevation === false) return { success: false, code: 'WRITE_PERMISSION_REQUIRED', error: '目录写权限不足，请以管理员身份运行安装脚本。' };
       if (!grantPermissions(info.resourcesPath)) return { success: false, error: '目录写权限不足，请以管理员身份运行安装脚本。' };
     }
     return applyAsarTransaction(info, options, applyPatchDirect);
@@ -703,15 +706,19 @@ function applyPatchDirect(options = {}) {
   const appDir = path.dirname(resDir);
   const exePath = path.join(appDir, 'claude.exe');
 
+  const needsWritePermission = () => !canWriteDirectory(resDir) ||
+    (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir)) ||
+    (!isAsarMode && fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir));
+  if (options.allowElevation === false && needsWritePermission()) {
+    return { success: false, code: 'WRITE_PERMISSION_REQUIRED', error: '目录写权限不足，请以管理员身份运行安装脚本。' };
+  }
+
   // 3. 独立安全权限收敛：无论当前目录是否可写，均无条件先行清理历史版本可能残留的高危 Users 组显式权限
   sanitizePermissions(resDir);
 
   // 4. 检查并提权（同时覆盖 app 目录与 resources 目录，确保可修改 claude.exe 与 ion-dist.asar）
-  const needsPerm = !canWriteDirectory(resDir) ||
-                    (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir)) ||
-                    (!isAsarMode && fs.existsSync(assetsDir) && !canWriteDirectory(assetsDir));
-
-  if (needsPerm) {
+  if (needsWritePermission()) {
+    if (options.allowElevation === false) return { success: false, code: 'WRITE_PERMISSION_REQUIRED', error: '目录写权限不足，请以管理员身份运行安装脚本。' };
     grantPermissions(resDir);
     if (!canWriteDirectory(resDir) || (isAsarMode && fs.existsSync(exePath) && !canWriteDirectory(appDir))) {
       return {

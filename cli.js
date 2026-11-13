@@ -67,7 +67,7 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
   restore        还原为官方英文原版
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         自愈式启动 Claude (检测并自动补齐汉化后启动)
-  shortcut       创建 Windows 汉化启动快捷方式 (--output <.lnk 文件>)
+  shortcut       创建 Windows 汉化启动快捷方式 (--output <.lnk 文件> [--no-backup])
   watch          启动热重载与自愈守护进程 (监听字典与版本变化)
   help           显示此帮助信息
 `);
@@ -244,7 +244,7 @@ function handleLaunchUnlocked() {
   const customPath = getCustomPath();
   let info = getClaudeInstallation(customPath);
   if (!customPath) {
-    try { info = require('./core/windows-package').recoverPendingUpdate(info); }
+    try { info = require('./core/windows-package').recoverPendingUpdate(info, {onProgress:message=>console.log(`ℹ️ ${message}`)}); }
     catch (error) {
       console.error(`❌ 启动恢复失败: ${error.message}`);
       process.exitCode = 1;
@@ -259,12 +259,28 @@ function handleLaunchUnlocked() {
       process.exitCode = 1;
       return;
     }
-    const result = applyPatch({ customPath });
+    // A normal shortcut must not require UAC merely to open a healthy client.
+    const result = applyPatch({ customPath, allowElevation: false });
     if (!result.success) {
-      console.error(`❌ 汉化失败，未继续启动: ${result.error}`);
-      process.exitCode = 1;
-      return;
+      if (process.platform !== 'win32' || customPath || info.type !== 'msix' || result.code !== 'WRITE_PERMISSION_REQUIRED') {
+        console.error(`❌ 汉化失败，未继续启动: ${result.error}`);
+        process.exitCode = 1;
+        return;
+      }
+      console.warn('⚠️ 本次未更新汉化：安装目录需要管理员写权限。先启动现有客户端；请退出后以管理员身份运行 install.bat 完成汉化。');
     }
+  }
+
+  if (process.platform === 'win32' && info.type === 'msix') {
+    info = getClaudeInstallation(customPath);
+    const { assertNoPendingTransaction, assertReadableArchives, verifyIntegrity } = require('./core/asar-transaction');
+    if (info.type !== 'msix' || !info.resourcesPath || !info.packageFamilyName) throw new Error('客户端安装状态已变化，未继续启动。');
+    assertNoPendingTransaction(info.resourcesPath);
+    for (const file of ['app.asar', 'ion-dist.asar', '../claude.exe']) {
+      if (!fs.statSync(path.join(info.resourcesPath, file)).isFile()) throw new Error('客户端文件不完整，未继续启动。');
+    }
+    assertReadableArchives(info.resourcesPath);
+    verifyIntegrity(info.resourcesPath, path.join(path.dirname(info.resourcesPath), 'claude.exe'));
   }
 
   console.log('🚀 正在启动 Claude 客户端...');
@@ -300,7 +316,7 @@ function handleShortcut() {
     return;
   }
   try {
-    const result = require('./core/windows-shortcut').createLaunchShortcut(args[index + 1]);
+    const result = require('./core/windows-shortcut').createLaunchShortcut(args[index + 1], { backup: !args.includes('--no-backup') });
     console.log(`✅ 已创建汉化启动快捷方式：${result.output}`);
     console.log('请保留当前工具目录；移动目录后需重新创建快捷方式。');
   } catch (error) {
