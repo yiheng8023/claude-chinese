@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.98**, targeting **5.11492.2** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.99**, targeting **5.11492.5** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -23,8 +23,8 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
-- **Four catalog layers**: 1,664 Shell entries (1,310 current English baseline entries), 32,246 Web UI entries, 52 dynamic entries and 362 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
-- **Expanded help checks** cover 147 references and 145 distinct bodies. The original 5.11492.2 documentation modules were reviewed, with 12 new or revised bodies translated and the 4.4212, 4.16336, 4.23118 and 5.1231 regression snapshots retained. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
+- **Four catalog layers**: 1,664 Shell entries (1,310 current English baseline entries), 32,246 Web UI entries, 52 dynamic entries and 363 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Expanded help checks** cover 147 references and 145 distinct bodies. The original 5.11492.5 documentation modules were reviewed, with one revised body translated and the 4.4212, 4.16336, 4.23118 and 5.1231 regression snapshots retained. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable, then stage complete files beside each target before replacement; persist recovery records before the first write, verify full hashes after rollback, and retain matching original backups.
 - **Update detection**: verify file SHA-256, toolkit version and dictionary digest. Prefer a coherent new official installation over stale backups; reject mixed versions and unknown modifications.
@@ -37,7 +37,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This update targets Windows **5.11492.2** installed through the official website installer (system package **5.11492.2.0**). macOS/Linux support existing loose-resource layouts. Synchronization of dual ASAR archives and executable integrity is implemented and verified on Windows.
+This update targets Windows **5.11492.5** installed through the official website installer (system package **5.11492.5.0**). macOS/Linux support existing loose-resource layouts. Synchronization of dual ASAR archives and executable integrity is implemented and verified on Windows.
 
 ---
 
@@ -67,23 +67,27 @@ If English remains after restart, select Chinese (Simplified) in the client’s 
 
 Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
 
+For daily use, open Claude through the system application entry or an ordinary client shortcut. An ordinary shortcut should only start Claude and should not invoke this toolkit. Choose localization explicitly through an installation script, the CLI, the `launch.bat` self-healing entry or `watch`. This project does not require creating or changing a Claude shortcut.
+
 The toolkit keeps the official updater. Before a manual update, you can run `npm run restore` to restore official files, then exit the updated client and reapply localization. If an update leaves the client unable to start and `app.asar` or `ion-dist.asar` is empty or has an unreadable header, repair it with the full official website installer before applying localization. Preflight reports this corruption and preserves backups instead of accepting empty files as originals.
 
-The website-distributed Windows app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. It avoids versioned paths, but cannot complete a pending Windows registration. This update reproduced a startup failure where the new package was deployed, registration was deferred while the old package was in use, and the old ASARs were emptied.
+The website-distributed Windows app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. An ordinary launch-only shortcut can use it to avoid versioned paths; it performs no localization or repair. A previously reproduced startup failure involved a deployed new package, deferred registration while the old package was in use, and emptied old ASARs. Such failures require completing the official update or explicitly running toolkit recovery.
 
-When `launch.bat` or its localization shortcut finds damaged archives in the registered package, it checks Windows deployment records for a newer package in the same family. It verifies the identity, original executable signature and ASAR integrity before completing registration, applying localization as needed and starting Claude. If only unpacked native files differ because of signing after ASAR packaging, it instead recovers through the full official MSIX: verify release-feed size and SHA-256, the complete package signature and manifest identity, then compare the installed executable, both ASARs and every unpacked file against that package. These files are never simply skipped. Full-package recovery currently requires Windows x64 and network access. A running client stops recovery with a save-and-exit message. Without a trusted complete newer package, it preserves backups and directs the user to the official installer instead of restoring an older package. This handles already-deployed Windows updates and does not replace the official updater.
+When explicitly running `launch.bat` or `node cli.js launch`, the toolkit checks Windows deployment records for a newer package in the same family if the registered archives are damaged. It verifies the identity, original executable signature and ASAR integrity before completing registration, applying localization as needed and starting Claude. If only unpacked native files differ because of signing after ASAR packaging, it instead recovers through the full official MSIX: verify release-feed size and SHA-256, the complete package signature and manifest identity, then compare the installed executable, both ASARs and every unpacked file against that package. These files are never simply skipped. Full-package recovery currently requires Windows x64 and network access. A running client stops recovery with a save-and-exit message. Without a trusted complete newer package, it preserves backups and directs the user to the official installer instead of restoring an older package. This handles already-deployed Windows updates and does not replace the official updater.
 
 Signature checks use Windows PowerShell's built-in system modules to avoid inheriting PowerShell 7's module search path. Signing native files after ASAR packaging changes their bytes. The complete official package is used to verify these files rather than accepting any valid signature alone. The full official installation and installed-file comparison against its signed source were checked on 5.11492.2; isolated regressions cover the failure branch.
 
 ```bat
-node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude Chinese.lnk"
+node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude Localization Tool.lnk"
 ```
 
-You can also specify an existing `.lnk`, including Unicode directory and file names. By default, replacement keeps a `.before-claude-chinese.bak` backup and preserves the existing icon. Add `--no-backup` when no backup is wanted; this does not delete an existing backup. The shortcut points to `launch.bat` in this toolkit directory: keep the directory in place, or recreate the shortcut after moving it. A check window appears during launch and retains errors on failure. A native AppsFolder-only shortcut does not execute toolkit recovery and cannot complete deferred registration of a damaged old package. For website-distributed Windows packages, a normal launch does not request elevation when only localization write access is missing: after checking for incomplete transactions, readable archives and matching executable integrity records, it opens the existing client and reports that localization still needs installation. Damaged or missing files and other patch errors still stop startup. Exit the client and run `install.bat` as administrator to complete localization.
+The `shortcut` command above is only for an optional **localization-tool shortcut**. It points to `launch.bat` in the toolkit directory and runs the same recovery, localization and startup flow as the explicit self-healing entry. It is not an ordinary Claude launch shortcut or a prerequisite for using this project. Do not use it to replace a daily launch-only Claude shortcut. Unicode paths are supported; by default it preserves the icon and a `.before-claude-chinese.bak` backup. Add `--no-backup` to skip creating a new backup; it does not delete an existing one. Keep the toolkit directory in place or recreate the tool shortcut after moving it.
+
+The explicit self-healing entry displays a check window and retains errors on failure. For website-distributed Windows packages, this tool entry does not request elevation when only localization write access is missing: after checking for incomplete transactions, readable archives and matching executable integrity records, it opens the existing client and reports that localization still needs installation. Damaged or missing files and other patch errors still stop startup. Exit the client and complete localization through an installation script or the CLI, as administrator when needed.
 
 A per-user shared lock covers install, restore, detection, registration, localization and the launch request to prevent concurrent recovery from repeated clicks. Normal returns and errors release it. Forcefully terminating the launcher or losing power can leave the lock behind; it is never taken over automatically. Follow the error message and confirm no installation or launch is in progress before cleaning it up. Completing Windows registration can still stop background processes associated with the old package, so use recovery after tasks have finished.
 
-Maintenance starts with the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed and in-app changelog, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle and global consistency checks, and aligned versions, catalog counts, support scope and release notes. The official desktop feed describes 5.11492.2 as `Production Release - No Notes`. The latest in-app entry is 5.1231.0 dated 2026-11-10, with a notice that these notes may lag by one release; product release notes do not map directly to desktop builds. This update first verified the signed full package and restored original startup, then compared the original resources: Shell +35/-4 and Ion +657/-272, with the dynamic English catalog unchanged. Identical English is reviewed by message ID and component context rather than replaced globally.
+Maintenance checks the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed, [configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog) and available in-app notes, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle, global consistency and aligned documentation. The official desktop feed describes 5.11492.5 as `Production Release - No Notes`; its configuration changelog reports no configuration-key changes. Compared with 5.11492.2, the Shell, Ion and dynamic English catalogs have no added, removed or revised IDs. Of 147 help references, one body adds the machine-wide managed-setting override for the Auto mode review model; the other 144 distinct bodies are unchanged. Current source fingerprints were updated, historical translations retained for compatibility, and a duplicate full hotfix snapshot avoided. Identical English is reviewed by message ID and component context rather than replaced globally.
 
 ## 🚀 Quick Start
 
@@ -91,10 +95,10 @@ Maintenance starts with the [official product release notes](https://support.cla
 
 #### Windows
 - **Install Patch**: Right-click and run [`install.bat`](install.bat) as Administrator
-- **Self-Healing Launch**: Double-click [`launch.bat`](launch.bat) (Auto-detects upstream updates, re-patches, and launches)
+- **Explicit Self-Healing and Launch**: Run [`launch.bat`](launch.bat) when choosing the localization-tool entry (recovers and localizes as needed before starting Claude)
 - **Restore English**: Double-click [`uninstall.bat`](uninstall.bat)
 
-To keep English after restoring, use the original system entry point; the localization shortcut reapplies translations as needed. If you replaced an existing `.lnk`, copy its adjacent `.before-claude-chinese.bak` backup back to the original shortcut location.
+After restoration, use the system entry or an ordinary client shortcut to keep English; running the self-healing tool again can reapply localization. If a tool entry replaced an original `.lnk`, restore its backup or recreate an ordinary shortcut from the system application identity.
 
 #### macOS / Linux
 - **Install Patch**: Run `./install.sh` in terminal
@@ -189,7 +193,7 @@ claude-chinese/
 ├── dict/                             # Core Chinese dictionaries
 │   ├── zh-CN.json                    # Shell layer translation dictionary (1,664 entries)
 │   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (32,246 entries)
-│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (362 documents)
+│   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (363 documents)
 │   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing

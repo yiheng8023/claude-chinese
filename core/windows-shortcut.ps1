@@ -80,7 +80,7 @@ public static class ClaudeShortcut {
             link.SetPath(target);
             link.SetArguments("");
             link.SetWorkingDirectory(directory);
-            link.SetDescription("Claude 中文启动器：检测待注册更新并按需重新汉化");
+            link.SetDescription("Claude 汉化工具：显式恢复更新、按需汉化并启动");
             file.Save(output, true);
         } finally { Marshal.FinalReleaseComObject(instance); }
         var saved = Read(output);
