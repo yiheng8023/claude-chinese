@@ -13,6 +13,7 @@ const { patchShellLocale } = require('./shell-locale');
 const { applyAsarTransaction, restoreAsarTransaction } = require('./asar-transaction');
 const { localizationFingerprint } = require('./localization-state');
 const { validatePair, validateSyntax } = require('../tools/icu-validator');
+const { scopedUiPatches, matchesFile } = require('./scoped-ui');
 
 const getHash = (str) => crypto.createHash('sha256').update(str).digest('hex');
 
@@ -504,12 +505,13 @@ const JS_LITERAL_PATCHES = [
     intlLayer: 'dynamic'
   }
 ];
+JS_LITERAL_PATCHES.push(...scopedUiPatches);
 
 /**
  * 遍历注入指定目录下的所有 JS 文件 (语言白名单放宽、硬编码补丁、折叠长文档拦截与 AST 语法自检)
  */
 function patchJsFiles(assetsDirectory, patchHits, options = {}) {
-  const { isAsarMode = false, fileManifest = {} } = options;
+  const { isAsarMode = false, fileManifest = {}, scopedFiles = new Set() } = options;
   if (!assetsDirectory || !fs.existsSync(assetsDirectory)) return { count: 0, error: null };
 
   const jsFiles = fs.readdirSync(assetsDirectory).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
@@ -524,6 +526,7 @@ function patchJsFiles(assetsDirectory, patchHits, options = {}) {
   let jsPatchedCount = 0;
 
   for (const file of jsFiles) {
+    scopedFiles.add(file);
     const fullPath = path.join(assetsDirectory, file);
     const bakPath = `${fullPath}.orig.bak`;
     const current = fs.readFileSync(fullPath, 'utf8');
@@ -544,6 +547,7 @@ function patchJsFiles(assetsDirectory, patchHits, options = {}) {
                            current.includes(',"zh-CN"]') ||
                            current.includes('var __ZH_DOCS__=') ||
                            JS_LITERAL_PATCHES.some(p => {
+                             if (!matchesFile(p, file)) return false;
                              const guard = p.zhGuard || p.enGuard;
                              if (guard && !current.includes(guard)) return false;
                              return safeTest(p.zhPattern, current);
@@ -573,6 +577,7 @@ function patchJsFiles(assetsDirectory, patchHits, options = {}) {
 
     // 2. 结构化硬编码补丁注入与命中统计
     for (const patch of JS_LITERAL_PATCHES) {
+      if (!matchesFile(patch, file)) continue;
       const hasEnGuard = !patch.enGuard || newContent.includes(patch.enGuard);
       const hasZhGuard = !patch.zhGuard || newContent.includes(patch.zhGuard);
       if (!hasEnGuard && !hasZhGuard) {
@@ -731,6 +736,7 @@ function applyPatchDirect(options = {}) {
   try {
     let jsPatchedCount = 0;
     const patchHits = {};
+    const scopedFiles = new Set();
     for (const p of JS_LITERAL_PATCHES) {
       patchHits[p.id] = 0;
     }
@@ -825,7 +831,7 @@ function applyPatchDirect(options = {}) {
 
         // 3. 注入前端 JS 资源
         const tmpAssets = path.join(tmpExtractDir, 'assets', 'v1');
-        const patchRes = patchJsFiles(tmpAssets, patchHits, { isAsarMode: true });
+        const patchRes = patchJsFiles(tmpAssets, patchHits, { isAsarMode: true, scopedFiles });
         if (patchRes.error) {
           return { success: false, error: patchRes.error };
         }
@@ -989,7 +995,7 @@ function applyPatchDirect(options = {}) {
       // 方案 B: 散装目录模式 (Claude 3.x 散装目录向后兼容)
       // -------------------------------------------------------------
       if (fs.existsSync(assetsDir)) {
-        const patchRes = patchJsFiles(assetsDir, patchHits, { isAsarMode: false, fileManifest });
+        const patchRes = patchJsFiles(assetsDir, patchHits, { isAsarMode: false, fileManifest, scopedFiles });
         if (patchRes.error) {
           return { success: false, error: patchRes.error };
         }
@@ -1010,6 +1016,7 @@ function applyPatchDirect(options = {}) {
 
     const warnings = [];
     for (const patch of JS_LITERAL_PATCHES) {
+      if (patch.file && !scopedFiles.has(patch.file)) continue;
       if (patchHits[patch.id] === 0 && !patch.intlKey) {
         warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
       }
@@ -1199,6 +1206,7 @@ function restorePatchUnlocked(options) {
                                current.includes(',"zh-CN"]') ||
                                current.includes('var __ZH_DOCS__=') ||
                                JS_LITERAL_PATCHES.some(p => {
+                                 if (!matchesFile(p, file)) return false;
                                  const guard = p.zhGuard || p.enGuard;
                                  if (guard && !current.includes(guard)) return false;
                                  return safeTest(p.zhPattern, current);
@@ -1213,7 +1221,7 @@ function restorePatchUnlocked(options) {
           let content = fs.readFileSync(fullPath, 'utf8');
           const hasAnyZhFeature = content.includes(',"zh-CN"]') ||
                                   content.includes('__ZH_DOCS__') ||
-                                  JS_LITERAL_PATCHES.some(p => p.zhGuard && content.includes(p.zhGuard));
+                                  JS_LITERAL_PATCHES.some(p => matchesFile(p, file) && p.zhGuard && content.includes(p.zhGuard));
           if (!hasAnyZhFeature) {
             continue;
           }
@@ -1224,6 +1232,7 @@ function restorePatchUnlocked(options) {
             modified = true;
           }
           for (const patch of JS_LITERAL_PATCHES) {
+            if (!matchesFile(patch, file)) continue;
             if ((!patch.zhGuard || content.includes(patch.zhGuard)) && safeTest(patch.zhPattern, content)) {
               content = content.replace(patch.zhPattern, patch.restoreEn);
               modified = true;

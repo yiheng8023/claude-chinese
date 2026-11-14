@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.99**, targeting **5.11492.5** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, code version **v1.2.100**, targeting **5.11492.5** in this update. It maintains incremental native i18n overlays and preserves reviewed translations and terminology.
 
 ---
 
@@ -23,7 +23,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**, cod
 
 - **Native i18n overlays**: generate Chinese catalogs incrementally while keeping official English catalogs as fallback.
 - **Reviewed terminology**: distinguish Diff from Change and Branch from Fork; preserve configuration keys, model IDs and protocol names where appropriate.
-- **Four catalog layers**: 1,664 Shell entries (1,310 current English baseline entries), 32,246 Web UI entries, 52 dynamic entries and 363 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
+- **Four catalog layers**: 1,664 Shell entries (1,310 current English baseline entries), 33,472 Web UI entries, 52 dynamic entries and 363 long documents. Counts include historical compatibility entries and intentionally retained English, not a current-screen translation percentage.
 - **Expanded help checks** cover 147 references and 145 distinct bodies. The original 5.11492.5 documentation modules were reviewed, with one revised body translated and the 4.4212, 4.16336, 4.23118 and 5.1231 regression snapshots retained. `npm run audit` checks complete help bodies, code, links, and the installed package's original module fingerprints.
 - **Resilient locale registration**: recognize the main-process locale-map structure without depending on minified symbol names; fail explicitly if registration cannot be verified.
 - **Recoverable installation**: stage and verify both ASARs and the executable, then stage complete files beside each target before replacement; persist recovery records before the first write, verify full hashes after rollback, and retain matching original backups.
@@ -88,6 +88,8 @@ The explicit self-healing entry displays a check window and retains errors on fa
 A per-user shared lock covers install, restore, detection, registration, localization and the launch request to prevent concurrent recovery from repeated clicks. Normal returns and errors release it. Forcefully terminating the launcher or losing power can leave the lock behind; it is never taken over automatically. Follow the error message and confirm no installation or launch is in progress before cleaning it up. Completing Windows registration can still stop background processes associated with the old package, so use recovery after tasks have finished.
 
 Maintenance checks the [official product release notes](https://support.claude.com/en/articles/12138966-release-notes), desktop release feed, [configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog) and available in-app notes, followed by incremental translation against the actual package, context menus at different locations, archive lifecycle, global consistency and aligned documentation. The official desktop feed describes 5.11492.5 as `Production Release - No Notes`; its configuration changelog reports no configuration-key changes. Compared with 5.11492.2, the Shell, Ion and dynamic English catalogs have no added, removed or revised IDs. Of 147 help references, one body adds the machine-wide managed-setting override for the Auto mode review model; the other 144 distinct bodies are unchanged. Current source fingerprints were updated, historical translations retained for compatibility, and a duplicate full hotfix snapshot avoided. Identical English is reviewed by message ID and component context rather than replaced globally.
+
+v1.2.100 reviews third-party inference configuration, imports/exports, Unified/Code sessions, connector and model menus, files/sidebar menus and tool status text. It adds 1,226 entries and corrects 66 existing translations. `npm run audit:ui` binds the 54 reviewed modules and 4,128 messages to original source fingerprints, catching existing omissions, unreviewed English fallback and source changes; CI also checks the snapshot. Hardcoded UI text uses module- and source-context-limited patches, preserving user content and configuration values. This scope does not cover every client feature or account-delivered message; runtime model descriptions still require actual UI verification. Feature names such as `Ultracode` intentionally remain in English.
 
 ## 🚀 Quick Start
 
@@ -192,9 +194,10 @@ claude-chinese/
 │       └── upstream-matrix-sentinel.yml # Preflight compatibility & mutation fuzzing daily sentinel
 ├── dict/                             # Core Chinese dictionaries
 │   ├── zh-CN.json                    # Shell layer translation dictionary (1,664 entries)
-│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (32,246 entries)
+│   ├── ion-zh-CN.json                # Web/Ion core UI dictionary (33,472 entries)
 │   ├── long-docs-zh-CN.json          # Full foldable deep documentation guides (363 documents)
-│   └── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
+│   ├── dynamic-zh-CN.json            # Dynamic features & reasoning placeholders dictionary
+│   └── scoped-ui-zh-CN.json          # Module- and source-context-limited UI text patches
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing
 │   ├── msix-detector.js              # MSIX container detector & cross-platform layout resolver
@@ -205,12 +208,14 @@ claude-chinese/
 │   ├── test-icu.js                   # 31,000+ entries ICU placeholder and terminology protection
 │   ├── test-restore-cycle.js         # Install/restore lifecycle & silent update anti-downgrade assertions
 │   ├── test-cross-platform-live.js   # 0-argument path detection & sandbox injection tests
-│   └── test-ast-syntax.js            # AST syntax integrity and crash prevention assertions
+│   ├── test-ast-syntax.js            # AST syntax integrity and crash prevention assertions
+│   └── test-ui-coverage.js           # Message coverage, source drift, retained text and rich-text regressions
 ├── tools/                            # Automation engineering and compatibility toolchains
 │   ├── upstream-compatibility-matrix.js # Preflight multi-version compatibility matrix & mutation fuzzer
 │   ├── drift-detector.js             # Upstream text diff extraction & drift detector (scan:drift)
 │   ├── comprehensive-audit.js        # Full-dimension localization quality & technical enum audit (audit)
 │   ├── ultimate-consistency-audit.js # Global terminology, ICU variables & HTML symmetry deep audit
+│   ├── audit-ui-coverage.js          # Reviewed UI module coverage against original client sources
 │   └── compile-zh-dict.js            # Baseline incremental merge & dictionary compilation tool
 ├── docs/assets/sponsoring/           # Sponsorship & community assets
 ├── cli.js                            # Cross-platform CLI lifecycle entry point

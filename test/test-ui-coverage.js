@@ -1,0 +1,37 @@
+const assert = require('node:assert/strict');
+const { collectMessages, validateReview, validateSources, hash } = require('../tools/ui-coverage');
+// Quotes inside regexes used to hide later messages from the regex inventory.
+const source = String.raw`const re=/["']/; const ignored="A"; const x={id:'not-in-catalog',defaultMessage:'Unchanged UI text'}; format({defaultMessage:'Menu label',id:'menu'}); format({id:'known'}); const t={id:'template',defaultMessage:\`Static label\`}; // 'comment'` .replaceAll('\\`', '`');
+const catalog = { known: 'Existing label' };
+const actual = collectMessages(source, catalog);
+assert.deepEqual(actual, { known: 'Existing label', menu: 'Menu label', 'not-in-catalog': 'Unchanged UI text', template: 'Static label' });
+const review = { sourceFiles: [{ file: 'assets/v1/review.js', sha256: hash(source), ids: Object.keys(actual) }],
+  messages: Object.fromEntries(Object.entries(actual).map(([id, english]) => [id, { english }])) };
+const zh = { known: '现有标签', menu: '菜单标签', 'not-in-catalog': '既有界面文字', template: '静态标签' };
+validateReview(review, zh);
+validateSources(review, () => source, catalog);
+assert.throws(() => validateReview({ sourceFiles: [], messages: {} }, {}), /Empty/);
+assert.throws(() => validateReview(review, { ...zh, menu: undefined }), /Empty/);
+assert.throws(() => validateReview(review, { ...zh, menu: '   ' }), /Empty/);
+assert.throws(() => validateReview(review, { ...zh, menu: actual.menu + ' ' }), /non-Chinese/);
+const missing = { ...zh }; delete missing['not-in-catalog'];
+assert.throws(() => validateReview(review, missing), /Missing UI translation/);
+assert.throws(() => validateReview(review, { ...zh, menu: actual.menu }), /English fallback/);
+const added = source + '\nformat({id:"new",defaultMessage:"New field"});';
+assert.throws(() => validateSources(review, () => added, catalog), /source changed/);
+assert.throws(() => validateSources({ ...review, sourceFiles: [{ ...review.sourceFiles[0], sha256: hash(added) }] }, () => added, catalog), /message set changed/);
+assert.throws(() => collectMessages('format({id:"known",defaultMessage:"Changed"})', catalog), /disagreement/);
+assert.throws(() => collectMessages('const a={id:"same",defaultMessage:"One"};const b={id:"same",defaultMessage:"Two"}'), /Conflicting/);
+assert.throws(() => collectMessages('const broken = '), SyntaxError);
+assert.throws(() => collectMessages('format({defaultMessage:"Unkeyed new field"})'), /Unkeyed/);
+const rich = { sourceFiles: [{ ...review.sourceFiles[0], ids: ['rich'] }], messages: { rich: { english: '<link>More</link>' } } };
+assert.throws(() => validateReview(rich, { rich: '更多' }), /markup/);
+const nested = { ...rich, messages: { rich: { english: '<strong><link>More</link></strong>' } } };
+assert.throws(() => validateReview(nested, { rich: '<strong><link>更多</strong></link>' }), /markup/);
+const plural = { sourceFiles: [{ ...review.sourceFiles[0], ids: ['plural'] }], messages: { plural: { english: '{count, plural, one {# file} other {# files}}' } } };
+validateReview(plural, { plural: '{count, plural, other {# 个文件}}' });
+const pluralLinks = { ...plural, messages: { plural: { english: '{count, plural, one {<link>one file</link>} other {<link># files</link>}}' } } };
+validateReview(pluralLinks, { plural: '{count, plural, other {<link># 个文件</link>}}' });
+validateReview(require('./fixtures/desktop-ui-5.11492.json'), require('../dict/ion-zh-CN.json'));
+assert.equal(require('../dict/ion-zh-CN.json')['e/PjhY7W0C'], '复制到剪贴板（已脱敏）', 'Redacted export must describe secret masking, not generic editing');
+console.log('PASS: AST UI inventory catches unchanged omissions, unknown catalog IDs, regex quotes, English fallback and source drift');
