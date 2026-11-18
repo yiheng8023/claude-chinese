@@ -203,6 +203,30 @@ if($length -eq 0){throw 'Could not inspect fixture path'}
       assert.equal(saved.output,shortcut);
       assert.equal(saved.target.toLowerCase(), path.join(process.env.SystemRoot,'explorer.exe').toLowerCase());
       assert.equal(saved.arguments, 'shell:AppsFolder\\Claude_pzs8sxrjxfjjc!Claude');
+      const squirrel = path.join(shortcutRoot, 'AnthropicClaude');
+      fs.mkdirSync(path.join(squirrel, 'packages'), {recursive:true});
+      fs.writeFileSync(path.join(squirrel, 'Update.exe'), '');
+      for (const version of ['5.9.0', '5.10.0', '5.100.0']) {
+        const app = path.join(squirrel, 'app-' + version);
+        fs.mkdirSync(path.join(app, 'resources'), {recursive:true});
+        fs.writeFileSync(path.join(app, 'Claude.exe'), '');
+      }
+      const { detectSquirrel } = require('../core/squirrel-installation');
+      const index = path.join(squirrel, 'packages', 'RELEASES');
+      const entry = version => `${'a'.repeat(40)} AnthropicClaude-${version}-full.nupkg 100\n`;
+      fs.writeFileSync(index, entry('5.9.0') + entry('5.10.0'));
+      assert.equal(detectSquirrel(squirrel).version, '5.10.0', 'Use the newest indexed release');
+      const link = create(path.join(shortcutRoot, 'Claude Win32.lnk'), {squirrelRoot:squirrel});
+      assert.equal(link.target, fs.realpathSync.native(path.join(squirrel, 'Update.exe')));
+      assert.equal(link.arguments, '--processStart Claude.exe');
+      fs.writeFileSync(path.join(squirrel, 'Claude.exe'), '');
+      const stubLink = create(path.join(shortcutRoot, 'Claude stable.lnk'), {squirrelRoot:squirrel});
+      assert.equal(stubLink.target, fs.realpathSync.native(path.join(squirrel, 'Claude.exe')));
+      assert.equal(stubLink.arguments, '');
+      fs.writeFileSync(index, entry('5.10.0') + entry('5.100.0'));
+      assert.equal(detectSquirrel(squirrel).version, '5.100.0', 'Resolve the next indexed release without changing the shortcut');
+      fs.unlinkSync(path.join(squirrel, 'app-5.100.0', 'Claude.exe'));
+      assert.match(detectSquirrel(squirrel).error, /文件不完整/, 'Avoid patching the previous release if the active one is incomplete');
       const first = fs.readFileSync(shortcut);
       create(shortcut);
       assert.deepEqual(fs.readFileSync(shortcut+'.before-claude-chinese.bak'),first,'Preserve a replaced shortcut');

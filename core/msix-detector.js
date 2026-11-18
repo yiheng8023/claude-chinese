@@ -6,6 +6,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const { hashFile } = require('./asar-transaction');
 const { localizationFingerprint } = require('./localization-state');
+const { detectSquirrel } = require('./squirrel-installation');
 
 function getClaudeInstallation(customPath = null) {
   const result = {
@@ -18,8 +19,12 @@ function getClaudeInstallation(customPath = null) {
     packageFamilyName: null
   };
 
+  const customSquirrel = process.platform === 'win32' && customPath ? detectSquirrel(path.resolve(customPath)) : null;
+
   // 0. 支持用户手动指定路径
-  if (customPath) {
+  if (customSquirrel) {
+    Object.assign(result, customSquirrel);
+  } else if (customPath) {
     if (!fs.existsSync(customPath) || !fs.statSync(customPath).isDirectory()) {
       result.error = '指定的安装目录不存在或不是目录。';
       return result;
@@ -66,7 +71,11 @@ function getClaudeInstallation(customPath = null) {
       // 忽略 PowerShell 错误，继续检测 Win32 路径
     }
 
-    // 2. 检测标准 Win32 / Squirrel 安装路径 (%LOCALAPPDATA%\Programs\Claude)
+    if (!result.installPath && process.env.LOCALAPPDATA) {
+      Object.assign(result, detectSquirrel(path.join(process.env.LOCALAPPDATA, 'AnthropicClaude')));
+    }
+
+    // 2. 检测既有的散装 Win32 安装路径
     if (!result.installPath) {
       const win32Path = path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Claude');
       if (fs.existsSync(win32Path)) {

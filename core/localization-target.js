@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const protectedMessage = 'Windows 注册包由系统管理，汉化工具不会写入。请从系统入口启动和更新 Claude，或使用 --path 指向独立测试副本。';
+const protectedMessage = 'Windows 注册包由系统管理，汉化工具不会写入。可以指定 --path 指向已安装的 Squirrel 版根目录或独立测试副本。';
 
 function localizationTargetError(info) {
   if (info.platform !== 'win32') return null;

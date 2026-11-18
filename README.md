@@ -38,14 +38,14 @@
 
 本项目专注客户端界面汉化。四层资源分别是 Shell 原生菜单、Ion/Web UI、动态模型说明与折叠长文档。第三方推理配置页面属于汉化范围；模型路由、凭据管理和账号功能继续由客户端及 CC Switch 等原有工具负责。
 
-本轮基于官网 Windows **6.6395.0**（系统包版本 **6.6395.0.0**）资源适配，双 ASAR 写入与还原在独立副本中验证。macOS/Linux 沿用既有散装资源布局。
+本轮适配 Windows **6.6395.0**，已在官网 Squirrel 版实机验证原界面汉化。官网注册包 **6.6395.0.0** 用于原版资源核对。macOS/Linux 沿用既有散装资源布局。
 
 ---
 
 ## 📋 前置环境与要求 (Prerequisites)
 
 1. **操作系统支持**：
-   - **Windows**：Windows 10 / 11 (x64)。汉化支持兼容的散装布局和独立测试副本。
+   - **Windows**：Windows 10 / 11 (x64)。汉化支持 Squirrel 安装、兼容的散装布局和独立测试副本。
    - **macOS**：macOS 12+（Apple Silicon M 系列及 Intel 芯片）
    - **Linux**：主流发行版（x64 / ARM64）
 2. **Node.js 基础运行环境**：
@@ -62,19 +62,30 @@
 
 补丁会修改 ASAR 及 Windows 主程序内的完整性记录，**原发布者数字签名会因此失效**，安全软件或设备策略可能拒绝此操作。本项目保留 Electron Fuse 4，不关闭系统防护；无法写入时不创建第二个客户端。已覆盖临时写入失败、替换被拒、回滚及单文件替换后的进程中止测试。多个文件并非原子提交；发现未完成事务时会停止后续修改并保留恢复记录。断电、替换系统调用中止或外部进程同时写入不属于已验证的自动回滚保证。请保留原版备份。
 
-兼容副本安装汉化后，可在副本的语言选择中选“中文（简体）”。
+安装汉化后，可在目标客户端的语言选择中选“中文（简体）”。
 
 安装依赖使用 `npm ci`，此步骤不再自动修改已安装的 Claude；汉化请显式运行 `node cli.js install` 或 `npm run patch`。
 
-Windows 官网目前由 Windows 注册 MSIX 包。项目的汉化安装、还原和监听会在写入前拒绝官网和商店的注册包。若旧版补丁已修改官方目录，请使用官网完整安装器恢复原版。保留签名的原版可照常通过 Windows 搜索或普通快捷方式启动，更新继续由官方管理。当前版本未找到从用户目录加载完整简体中文的接口。[Microsoft MSIX 包存储文档](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
+官网的 `ClaudeSetup.exe` 可部署带 Cowork 服务的 MSIX 包。项目的汉化安装、还原和监听会在写入前拒绝官网和商店的注册包。若旧版补丁已修改官方目录，请使用官网完整安装器恢复原版。保留签名的原版可照常通过 Windows 搜索或普通快捷方式启动，更新继续由官方管理。当前版本未找到从用户目录加载完整简体中文的接口。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) [Microsoft MSIX 包存储文档](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
 
-**Windows 官网注册版的当前状态。** 6.6395.0 的词库已适配，安装和还原已在独立副本中验证。官网注册版的界面语言继续由官方客户端管理。此前的原位汉化会替换安装目录里的 `app.asar`、`ion-dist.asar` 和 `Claude.exe`。
+**Windows Win32 安装。** Anthropic 还分发 [x64 Squirrel 完整安装器](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)。安装根目录是 `%LOCALAPPDATA%\AnthropicClaude`，其中的 `packages\RELEASES` 指向已安装的 `app-<版本>`。此渠道支持原位汉化。桌面 Cowork 需要 MSIX 安装的虚拟机服务。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
 
 Windows 官网安装的应用标识为 `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`。可选的 `shortcut` 命令将已注册的应用作为启动目标，支持 Unicode 路径，启用 `--no-backup` 时跳过创建新备份。
 
 ```bat
 node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
 ```
+
+Win32 版与 MSIX 并装时，默认入口识别 MSIX。显式指定 Win32 根目录可以选择汉化目标，并创建单独的纯启动快捷方式：
+
+```bat
+install.bat --path "%LOCALAPPDATA%\AnthropicClaude"
+node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude Win32.lnk" --no-backup
+```
+
+Win32 快捷方式使用 Squirrel 根目录的官方启动入口。Squirrel 将新版本放到新的 `app-<版本>` 目录，并更新发行索引。汉化只写当前版本的资源与主程序，更新后可对新版再次运行 `install.bat`。
+
+实机在 5.11492.5 已汉化的情况下，用原版 Squirrel 更新程序应用预先下载并校验的 6.6395.0 官方包。同一个 Win32 快捷方式成功启动新版。再次运行 `install.bat` 后，已核对实际中文界面，并观察到客户端发起官方自动更新检查。
 
 如果官方更新已部署新版但注册失败，先退出 Claude，再单独运行 `node cli.js repair`。此命令查找同包族新版并验证身份、原始主程序签名和资源归档。必要时会下载并验证官网完整 MSIX；完整包恢复目前支持联网的 Windows x64。若找不到可信的新版，请使用官网完整安装器。
 
@@ -88,7 +99,7 @@ node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
 
 #### Windows
 
-直接从 Windows 搜索或普通快捷方式打开、更新官方客户端。用于资源测试时，先将兼容的客户端文件逐文件复制到独立目录，再运行 `install.bat --path "<副本目录>"`。还原该副本使用 `uninstall.bat --path "<副本目录>"`。副本测试只验证资源写入与还原。
+Win32 单独安装时可运行 `install.bat`。并装时按上文选择 Win32 根目录，恢复使用相同路径执行 `uninstall.bat`。MSIX 仍通过 Windows 搜索或普通快捷方式启动，并由官方更新。用于资源测试时，也可将兼容文件逐文件复制到独立目录，再将该目录传给安装或还原脚本。
 
 #### macOS / Linux
 * **一键安装**：在终端运行 `./install.sh`
@@ -105,7 +116,7 @@ node cli.js status
 # 2. 执行前置环境全维健康预检 (Node 弹性版本、客户端安装、进程锁定与权限)
 node cli.js check
 
-# 3. 对可写散装布局安装汉化（Windows 独立副本加 --path）
+# 3. 安装汉化（Windows 并装或使用独立副本时加 --path）
 node cli.js install
 
 # 4. 可选：监听资源与词库变化（运行中不强制退出客户端；ASAR 更新后需重启）
@@ -158,7 +169,7 @@ npm run audit:deps
 
 ---
 
-对已应用汉化的 Windows 独立副本，运行 `npm run verify:client -- "<副本目录>"` 可核对 ASAR、主程序、备份、英文原始字节和熔丝状态。
+对已应用汉化的 Windows 安装或独立副本，运行 `npm run verify:client -- "<安装根目录>"` 可核对 ASAR、主程序、备份、英文原始字节和熔丝状态。
 
 ## 🔄 自动化演进闭环 (Self-Evolving Pipeline)
 

@@ -8,7 +8,7 @@ const { applyPatch, restorePatch, isClaudeRunning, closeClaude } = require('./co
 const { runPreflightCheck } = require('./core/preflight');
 const { localizationTargetError } = require('./core/localization-target');
 const { runDriftDetection } = require('./tools/drift-detector');
-const { execSync, spawn } = require('child_process');
+const { execFileSync, execSync, spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -69,7 +69,7 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
   repair         修复 Windows 官网客户端的待注册更新，完成后可用原入口启动
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         启动 Claude（Windows 注册包通过系统入口打开）
-  shortcut       可选：创建 Windows 注册应用快捷方式 (--output <.lnk 文件> [--no-backup])
+  shortcut       可选：创建 Windows 启动快捷方式 (--output <.lnk 文件> [--no-backup])
   watch          启动热重载与自愈守护进程 (监听字典与版本变化)
   help           显示此帮助信息
 `);
@@ -107,7 +107,7 @@ function handleStatus() {
   try { require('./core/asar-transaction').assertReadableArchives(info.resourcesPath); }
   catch (error) {
     console.error(`❌ 客户端资源异常: ${error.message}`);
-    if (info.distribution === 'website') console.error('若系统已部署新版但仍登记旧版，可运行 node cli.js repair 恢复官方启动。');
+    if (info.type === 'msix' && info.distribution === 'website') console.error('若系统已部署新版但仍登记旧版，可运行 node cli.js repair 恢复官方启动。');
     process.exitCode = 1;
     return;
   }
@@ -322,6 +322,14 @@ function handleLaunchUnlocked() {
     process.exitCode = 1;
     return;
   }
+  if (info.squirrelRoot) {
+    if (!info.resourcesPath) throw new Error(info.error || 'Squirrel 客户端资源不完整。');
+    const { squirrelLaunchCommand } = require('./core/windows-shortcut');
+    const launch = squirrelLaunchCommand(info.squirrelRoot);
+    execFileSync(launch.target, launch.args, { cwd: info.squirrelRoot, windowsHide: true });
+    console.log('🚀 已通过 Squirrel 启动 Claude。');
+    return;
+  }
   if (!info.isPatched || info.needsUpdate) {
     console.log('⚡ 检测到汉化尚未挂载，正在执行静默自愈注入...');
     if (isClaudeRunning(info)) {
@@ -368,10 +376,12 @@ function handleShortcut() {
     return;
   }
   try {
-    const info = getClaudeInstallation();
-    if (info.type !== 'msix' || !info.packageFamilyName) throw new Error('未找到已注册的 Windows Claude 应用。');
+    const info = getClaudeInstallation(getCustomPath());
+    if (!(info.type === 'msix' && info.packageFamilyName) && !(info.squirrelRoot && info.resourcesPath)) {
+      throw new Error('未找到已注册的 Claude 或可用的官方 Squirrel 安装。');
+    }
     const result = require('./core/windows-shortcut').createLaunchShortcut(args[index + 1], {
-      backup: !args.includes('--no-backup'), packageFamilyName: info.packageFamilyName
+      backup: !args.includes('--no-backup'), packageFamilyName: info.packageFamilyName, squirrelRoot: info.squirrelRoot
     });
     console.log(`✅ 已创建 Claude 原生启动快捷方式：${result.output}`);
   } catch (error) {

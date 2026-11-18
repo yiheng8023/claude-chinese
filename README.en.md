@@ -37,14 +37,14 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. Thi
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This checkout uses the website Windows **6.6395.0** resources (system package **6.6395.0.0**). Archive changes and restoration were verified in a separate copy. Existing loose-resource layouts on macOS/Linux remain supported.
+This release supports Windows **6.6395.0**. In-place localization was verified on an installed Squirrel client, with the registered **6.6395.0.0** package used to cross-check the original resources. Existing loose-resource layouts on macOS/Linux remain supported.
 
 ---
 
 ## 📋 Prerequisites
 
 1. **Supported Operating Systems**:
-   - **Windows**: Windows 10 / 11 (x64). Localization supports compatible loose layouts and independent test copies.
+   - **Windows**: Windows 10 / 11 (x64). Localization supports Squirrel installations, compatible loose layouts, and independent test copies.
    - **macOS**: macOS 12+ (Apple Silicon M-series & Intel chips)
    - **Linux**: Major distributions (Ubuntu, Debian, Fedora, Arch, etc., x64 / ARM64)
 2. **Node.js Runtime Environment**:
@@ -61,19 +61,30 @@ This checkout uses the website Windows **6.6395.0** resources (system package **
 
 Patching changes ASAR files and integrity records in the Windows executable, **invalidating the original publisher signature**. Security software or device policy may reject the operation. Electron Fuse 4 stays enabled; the toolkit does not disable protection or create a second client. Tests cover incomplete staging, replacement denial, rollback and process termination after a single file replacement. Multi-file commits are not atomic; an unfinished transaction blocks later writes and retains recovery records. Power loss, termination inside a replacement system call and concurrent external writers are outside the verified automatic rollback guarantee. Retain original backups.
 
-After localizing a compatible copy, select Chinese (Simplified) in that copy's language picker.
+After installing the localization, select Chinese (Simplified) in the target client's language picker.
 
 Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
 
-The current website installer registers an MSIX package. The localization installer, restorer and watcher refuse writes to registered Claude packages from either distribution channel. For an official installation modified by an earlier toolkit release, restore it with the complete official installer. The signed installation opens normally through Windows Search or an ordinary shortcut and uses the official updater. This version has no identified user-directory entry point for full Simplified Chinese resources. [Microsoft MSIX package storage documentation](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
+The website's `ClaudeSetup.exe` can deploy an MSIX package with the Cowork service. The localization installer, restorer and watcher refuse writes to registered Claude packages from either distribution channel. For an official installation modified by an earlier toolkit release, restore it with the complete official installer. The signed installation opens normally through Windows Search or an ordinary shortcut and uses the official updater. This version has no identified user-directory entry point for full Simplified Chinese resources. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) [Microsoft MSIX package storage documentation](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
 
-**Current status for the registered Windows client.** The 6.6395.0 catalogs are adapted, and application and restoration were tested in an independent copy. The website-installed package uses the official client's display languages. The earlier in-place install replaced `app.asar`, `ion-dist.asar` and `Claude.exe` inside the deployed package.
+**Windows Win32 installation.** Anthropic also distributes a [full x64 Squirrel installer](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect). The installation root is `%LOCALAPPDATA%\AnthropicClaude`, and its `packages\RELEASES` points to an installed `app-<version>` directory. This edition supports in-place localization. Desktop Cowork requires the virtual machine service installed by MSIX. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
 
 The website app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. The optional `shortcut` command uses the registered application as its launch target, supports Unicode paths and skips creating a backup with `--no-backup`.
 
 ```bat
 node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
 ```
+
+When Win32 and MSIX are installed side by side, the default entry selects MSIX. Pass the Win32 root explicitly to select the localization target and create a separate launch shortcut:
+
+```bat
+install.bat --path "%LOCALAPPDATA%\AnthropicClaude"
+node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude Win32.lnk" --no-backup
+```
+
+The Win32 shortcut uses the official Squirrel launch entry in the installation root. Squirrel puts each update in a new `app-<version>` directory and updates its release index. Localization writes the resources and executable of the current version. Run `install.bat` again to localize an updated version.
+
+On a Windows test machine, the stock Squirrel updater applied a pre-downloaded and verified 6.6395.0 package over a localized 5.11492.5 installation. The same Win32 shortcut opened the new version. After rerunning `install.bat`, we verified the Chinese UI and observed the client starting its automatic update check.
 
 If an official update deploys a new package but registration fails, exit Claude and run `node cli.js repair` separately. It locates the newer version in the same family and checks identity, the original executable signature and archive integrity. It can download and verify the complete official MSIX when required. Full-package recovery requires Windows x64 and network access. If no trusted deployed update is available, use the complete official installer.
 
@@ -87,7 +98,7 @@ The 6.6395.0 maintenance pass checked official release notes and packaged resour
 
 #### Windows
 
-Open and update the official client through Windows Search or an ordinary shortcut. For resource testing, copy the compatible client files into an independent directory and run `install.bat --path "<copy directory>"`. To restore the copy, run `uninstall.bat --path "<copy directory>"`. Copy testing covers resource changes and restoration.
+Run `install.bat` when Win32 is the only edition installed. For a side-by-side install, use the Win32 root shown above. Use the same path with `uninstall.bat` to restore the files. MSIX uses Windows Search or an ordinary shortcut and updates through its official updater. For resource testing, you can pass an independent directory containing copied compatible files to either script.
 
 #### macOS / Linux
 - **Install Patch**: Run `./install.sh` in terminal
@@ -104,7 +115,7 @@ node cli.js status
 # 2. Run comprehensive pre-flight health checks (Node version, client paths, file locks, and ACLs)
 node cli.js check
 
-# 3. Install on a writable loose layout (add --path for a Windows test copy)
+# 3. Install the localization (use --path for a side-by-side Windows install or test copy)
 node cli.js install
 
 # 4. Optional resource/dictionary watcher (exit the client before patching; restart after ASAR changes)
@@ -147,7 +158,7 @@ The current release uses `@electron/asar@4.3.2`, whose upstream dependency range
 
 Both regular CI and the daily sentinel run `npm run audit:deps`. `npm run audit` remains a localization audit and does not replace dependency security checks. The security check depends on the npm advisory service; query failures also block the check and do not by themselves indicate a new vulnerability.
 
-- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (1,310 current Shell baseline keys).
+- **Dictionary Integrity (`test/verify-dict.js`)**: Verifies baseline dictionary syntax, key-value integrity, and format specs (1,368 current Shell baseline keys).
 - **ICU Syntax Firewall (`test/test-icu.js`)**: Parse all messages and compare against actual installed English catalogs when available; explicitly mark missing upstream sources as skipped.
 - **Lifecycle & Anti-Downgrade Verification (`test/test-restore-cycle.js`)**: Tests isolated install -> status assertion -> double-install idempotence -> pristine restoration, plus dedicated circuit breaker assertions preventing silent upstream update overwrites.
 - **Cross-Platform Live Detector (`test/test-cross-platform-live.js`)**: Validates 0-argument system path detection and real sandbox injection/restore across Windows, macOS, and Linux runners.
@@ -157,7 +168,7 @@ Both regular CI and the daily sentinel run `npm run audit:deps`. `npm run audit`
 
 ---
 
-For a localized Windows test copy, run `npm run verify:client -- "<copy directory>"` to check the archives, executable integrity, original backups, English catalog bytes and fuse state.
+For a localized Windows installation or test copy, run `npm run verify:client -- "<installation root>"` to check the archives, executable integrity, original backups, English catalog bytes and fuse state.
 
 ## 🔄 Self-Evolving Pipeline
 
