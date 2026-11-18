@@ -1,7 +1,7 @@
 {
   "name": "claude-chinese",
   "version": "1.3.0",
-  "description": "Claude Desktop 中文汉化与 Windows 中文界面辅助 (Chinese Localization for Claude Desktop)",
+  "description": "Claude Desktop 中文汉化工具包 (Chinese Localization for Claude Desktop)",
   "main": "cli.js",
   "engines": {
     "node": ">=20.0.0"
@@ -10,7 +10,7 @@
     "claude-cn": "./cli.js"
   },
   "scripts": {
-    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-icu-structure.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js && node test/test-ast-syntax.js && node test/test-asar-lifecycle.js && node test/test-shell-locale.js && node test/test-file-replacement.js && node test/test-asar-transaction.js && node test/test-corrupt-archives.js && node test/test-windows-launch.js && node test/test-dependency-security.js && node test/test-asar-dependency-compat.js && node test/test-long-docs-safety.js && node test/test-reported-localization.js && node test/test-ui-coverage.js && node test/test-scoped-ui.js && node test/test-cli-safety.js && node test/test-assist.js",
+    "test": "node test/verify-dict.js && node test/test-icu.js && node test/test-icu-structure.js && node test/test-restore-cycle.js && node test/test-cross-platform-live.js && node test/test-ast-syntax.js && node test/test-asar-lifecycle.js && node test/test-shell-locale.js && node test/test-file-replacement.js && node test/test-asar-transaction.js && node test/test-corrupt-archives.js && node test/test-windows-launch.js && node test/test-dependency-security.js && node test/test-asar-dependency-compat.js && node test/test-long-docs-safety.js && node test/test-reported-localization.js && node test/test-ui-coverage.js && node test/test-scoped-ui.js && node test/test-cli-safety.js",
     "test:dict": "node test/verify-dict.js",
     "test:icu": "node test/test-icu.js",
     "test:ast": "node test/test-ast-syntax.js",

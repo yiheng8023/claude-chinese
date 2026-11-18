@@ -67,11 +67,7 @@ Install dependencies with `npm ci`; dependency installation no longer patches an
 
 The current website installer registers an MSIX package. The localization installer, restorer and watcher refuse writes to registered Claude packages from either distribution channel. For an official installation modified by an earlier toolkit release, restore it with the complete official installer. The signed installation opens normally through Windows Search or an ordinary shortcut and uses the official updater. This version has no identified user-directory entry point for full Simplified Chinese resources. [Microsoft MSIX package storage documentation](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
 
-### Chinese interface companion for official Windows installs
-
-On Windows x64, double-click [`assist.bat`](assist.bat), then open Claude normally. The companion was verified with the website installation of 6.6395.0. Chinese labels appear beside supported navigation and menu items. Hover over supported long explanations in third-party inference settings to read the translation. Pause, resume or exit from the tray icon. The first run needs Node.js and compiles the companion locally.
-
-The companion uses Windows UI Automation to identify interface labels and draws click-through hints over the foreground Claude window. It uses a local dictionary and preserves user content and official keyboard shortcuts. Coverage includes reviewed navigation, menu and file-panel labels and some configuration help text. It runs in the current Windows session.
+**Current status for the registered Windows client.** The 6.6395.0 catalogs are adapted, and application and restoration were tested in an independent copy. The website-installed package uses the official client's display languages. The earlier in-place install replaced `app.asar`, `ion-dist.asar` and `Claude.exe` inside the deployed package.
 
 The website app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. The optional `shortcut` command uses the registered application as its launch target, supports Unicode paths and skips creating a backup with `--no-backup`.
 

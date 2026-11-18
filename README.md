@@ -68,11 +68,7 @@
 
 Windows 官网目前由 Windows 注册 MSIX 包。项目的汉化安装、还原和监听会在写入前拒绝官网和商店的注册包。若旧版补丁已修改官方目录，请使用官网完整安装器恢复原版。保留签名的原版可照常通过 Windows 搜索或普通快捷方式启动，更新继续由官方管理。当前版本未找到从用户目录加载完整简体中文的接口。[Microsoft MSIX 包存储文档](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
 
-### 官方 Windows 客户端的中文界面辅助
-
-在 Windows x64 上双击 [`assist.bat`](assist.bat) 启动辅助程序，然后照常打开 Claude。本轮实测官网安装的 6.6395.0。常用导航和菜单旁会显示中文。鼠标停在第三方推理的长说明上可以看译文。托盘图标可暂停、恢复或退出辅助。首次启动需安装 Node.js，由 Windows 本地编译辅助程序。
-
-辅助使用 Windows UI Automation 识别界面文案，只在前台 Claude 窗口上绘制可穿透点击的提示。译文来自本地词库，保留用户内容与官方快捷键。覆盖已审核的导航、菜单、文件面板及部分配置正文，其他位置保持官方界面。辅助程序在当前 Windows 会话中运行。
+**Windows 官网注册版的当前状态。** 6.6395.0 的词库已适配，安装和还原已在独立副本中验证。官网注册版的界面语言继续由官方客户端管理。此前的原位汉化会替换安装目录里的 `app.asar`、`ion-dist.asar` 和 `Claude.exe`。
 
 Windows 官网安装的应用标识为 `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`。可选的 `shortcut` 命令将已注册的应用作为启动目标，支持 Unicode 路径，启用 `--no-backup` 时跳过创建新备份。
 

@@ -70,7 +70,6 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
   drift          执行上游版本文本漂移分析 (Drift Detection)
   launch         启动 Claude（Windows 注册包通过系统入口打开）
   shortcut       可选：创建 Windows 注册应用快捷方式 (--output <.lnk 文件> [--no-backup])
-  assist         启动 Windows 中文界面辅助（从任务栏托盘暂停或退出）
   watch          启动热重载与自愈守护进程 (监听字典与版本变化)
   help           显示此帮助信息
 `);
@@ -594,9 +593,6 @@ switch (command) {
     break;
   case 'shortcut':
     handleShortcut();
-    break;
-  case 'assist':
-    require('./assist/windows/start.cjs').runCommand();
     break;
   case 'watch':
   case 'daemon':
