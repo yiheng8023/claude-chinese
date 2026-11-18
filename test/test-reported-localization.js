@@ -37,7 +37,12 @@ const labels = {
   uXinBOnUV7: '计划', Q2QyZ42lOG: '移至会话下',
   '4bX1PIcQOm': '与界面一致', s6OueH6eJQ: '回复字体',
   'MzMg+gIepF': '默认 · {font}', ghSj3dz9nV: '系统',
-  GzzPVMOYC7: '减少应用中的动效，或跟随系统设置。', wwA2NzN0nb: 'Unified Claude'
+  GzzPVMOYC7: '减少应用中的动效，或跟随系统设置。', wwA2NzN0nb: 'Unified Claude',
+  Dbc6XaCcol: '定时任务', HN0DVKPD6z: '定时任务',
+  ZTK8vIOPS5: '新建定时任务', 'nqu1699+6Q': '暂无定时任务。',
+  '/2UegjsIBr': '总结和后续建议', 'biG+krWPOa': '搜索文件夹…',
+  '3Wav1LT0EM': '无法使用 SSH。模型提供商的端点在此计算机上，远程主机无法访问。',
+  fz0z4cb6fQ: '套餐', 'P6EE/aQ7SS': 'Token 用量', ZON8uMn14w: '个 Token'
 };
 for (const [id, text] of Object.entries(labels)) assert.equal(zh[id], text, `Reported UI label ${id}`);
 const menuBadge = JS_LITERAL_PATCHES.find(patch => patch.id === 'effort-menu-recommended-badge');
@@ -54,13 +59,13 @@ try {
   assert.equal(result.error, null);
   const context = vm.createContext({});
   vm.runInContext(fs.readFileSync(path.join(root, 'factory.js'), 'utf8'), context);
-  assert.equal(fixture.documents.length, 124);
-  assert.equal(currentFixture.documents.length, 129);
-  assert.equal(latestFixture.documents.length, 132);
+  assert.equal(resolveFixtureDocuments(fixture).length, 124);
+  assert.equal(resolveFixtureDocuments(currentFixture).length, 129);
+  assert.equal(resolveFixtureDocuments(latestFixture).length, 132);
   assert.equal(v5Fixture.helpReferences, 141);
-  assert.equal(v5Fixture.documents.length, 139);
+  assert.equal(resolveFixtureDocuments(v5Fixture).length, 139);
   assert.equal(v5LatestFixture.helpReferences, 147);
-  assert.equal(v5LatestFixture.documents.length, 145);
+  assert.equal(resolveFixtureDocuments(v5LatestFixture).length, 145);
   assert.equal(v6Fixture.helpReferences, 156);
   assert.equal(resolveFixtureDocuments(v6Fixture).length, 152);
   // Identical English labels can have different meanings in distinct components.

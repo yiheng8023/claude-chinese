@@ -17,7 +17,7 @@
 
 A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. The verified Windows client version is **6.6395.0**.
 
-> **Windows 10 / 11 (x64)** users only need the [official Claude Desktop Win32 (Squirrel) installer](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect). Then follow the [Windows quick start](#windows) to add the localization.
+> **Windows 10 / 11 (x64)** users can [download Claude Desktop Win32 (Squirrel) from Anthropic](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect) and follow the [Windows quick start](#windows) to install the localization.
 
 ---
 
@@ -54,7 +54,7 @@ This release supports Windows **6.6395.0**. In-place localization was verified o
    - Run `node -v` to verify. If not installed, download the LTS release from [Node.js Official Website](https://nodejs.org/).
    - ⚠️ **Engine Dependency Compatibility Note**:
      - **Recommended Baseline (Zero Warning)**: **Node.js ≥ 22.12.0** (Node 22 LTS or Node 24+). The underlying archive dependency `@electron/asar` declares `engines.node: ">=22.12.0"`, providing a native, zero-warning installation and execution environment.
-     - **Compatibility Status**: CI includes **Node.js 20.x**, but dependency installation may emit `EBADENGINE` and may fail with `engine-strict=true`. Passing Node 20 CI does not establish compatibility with every earlier minor version. Prefer Node 22.12+.
+     - **CI compatibility**: CI covers Node.js 20, 22, and 24. Below Node.js 22.12.0, dependency installation may emit `EBADENGINE` or fail with `engine-strict=true`.
 3. **Official Claude Desktop installed**. On Windows, use the Win32 (Squirrel) installer above. Its installation root is `%LOCALAPPDATA%\AnthropicClaude`. The general-purpose `ClaudeSetup.exe` and Microsoft Store can deploy MSIX, which this toolkit does not localize in place. Unified Claude combines Chat and Cowork in one interface. Windows features that depend on the virtual machine service follow Anthropic's deployment requirements. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) · [Desktop configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog)
 
 ---
@@ -63,7 +63,7 @@ Patching changes ASAR files and integrity records in the Windows executable, **i
 
 After installing the localization, select Chinese (Simplified) in the target client's language picker.
 
-Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
+The install scripts run `npm ci --ignore-scripts` when dependencies are missing. Before using the CLI directly for the first time, run `npm ci`, then apply the localization with `node cli.js install` or `npm run patch`.
 
 On a Windows test machine, the stock Squirrel updater applied a pre-downloaded and verified 6.6395.0 package over a localized 5.11492.5 installation. The same Win32 shortcut opened the new version. After rerunning `install.bat`, we verified the Chinese UI and observed the client starting its automatic update check.
 
@@ -71,7 +71,9 @@ We also launched a Cowork task from the unified Claude entry on Windows x64 Win3
 
 The 6.6395.0 maintenance pass checked official release notes and packaged resources, including managed policy for local MCP servers, SSH/WSL file downloads and update messages. Compared with 5.11492.5, the upstream Shell added 58 entries and Ion added 2,321. This pass translates 58 Shell entries, 110 Ion messages and 20 third-party inference help bodies, and rebinds 58 context-specific strings to the new modules. Older regression snapshots remain useful for compatibility. Identical English text is reviewed by message ID and component context. [Desktop changelog](https://claude.com/docs/cowork/changelog#v6-6395-0) [Configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
-The follow-up adds 266 catalog entries across permission modes, session nesting, general and privacy settings, system storage, MCP status, and third-party inference validation. `npm run audit:ui` checks 62 modules and 4,471 UI messages against their original source fingerprints. Account, model and service-delivered messages depend on the runtime environment. Official feature names such as `Unified Claude` and `Ultracode` are kept in English.
+Follow-up translations cover permission modes, session menus, general and Code settings, system storage, MCP status, environment selection, and third-party inference. `npm run audit:ui` checks 68 modules and 4,697 UI messages against their original source fingerprints. Account, model and service-delivered messages depend on the runtime environment. Official feature names such as `Unified Claude` and `Ultracode` are kept in English.
+
+Claude Code formerly called Scheduled tasks “Routines.” Labels, actions, and notices for the same feature now use the same Chinese term, 定时任务. The translation preserves distinctions between local and cloud tasks and between trigger types. [Claude Code scheduled tasks](https://code.claude.com/docs/en/routines)
 
 ## 🚀 Quick Start
 
@@ -101,7 +103,7 @@ node cli.js check
 # 3. Install the localization (use --path for a side-by-side Windows install or test copy)
 node cli.js install
 
-# 4. Optional resource/dictionary watcher (exit the client before patching; restart after ASAR changes)
+# 4. Optionally watch the current resource directory and catalogs (rerun install.bat after a Squirrel upgrade)
 node cli.js watch
 
 # 5. Launch the client (uses the official entry for the Windows Squirrel build)
@@ -118,7 +120,7 @@ node cli.js restore
 
 ## 🧪 Automated Testing & Quality Assurance
 
-The project introduces rigorous end-to-end automated testing, mutation fuzzing, and a cross-platform CI pipeline (Windows / macOS / Ubuntu):
+CI checks resource layouts, installation, restoration, catalogs, and source code on Windows, macOS, and Ubuntu. A local Claude installation enables additional source checks and live verification.
 
 ```bash
 # Run all core automated test suites (including ASAR rollback, update and restore regressions)
@@ -181,7 +183,8 @@ claude-chinese/
 │   └── scoped-ui-zh-CN.json          # Module- and source-context-limited UI text patches
 ├── core/                             # Core injection & architecture engine
 │   ├── patcher.js                    # Multi-signature long docs engine, JS whitelist & baseline healing
-│   ├── msix-detector.js              # MSIX container detector & cross-platform layout resolver
+│   ├── msix-detector.js              # Detects registered packages and other installation layouts
+│   ├── squirrel-installation.js      # Resolves the current app from Squirrel's local release index
 │   ├── permissions.js                # Windows ACL security permissions and elevation utility
 │   └── preflight.js                  # Comprehensive environment health checker (Node/Client/Locks)
 ├── test/                             # Automated regression test suites
@@ -201,7 +204,7 @@ claude-chinese/
 ├── docs/assets/sponsoring/           # Sponsorship & community assets
 ├── cli.js                            # Cross-platform CLI lifecycle entry point
 ├── install.bat / install.sh          # One-click installation scripts
-├── launch.bat                        # Self-healing launcher script
+├── launch.bat                        # Windows launcher script
 ├── uninstall.bat / uninstall.sh      # One-click restore scripts
 ├── package.json                      # Project configuration & npm scripts
 ├── LICENSE                           # MIT License

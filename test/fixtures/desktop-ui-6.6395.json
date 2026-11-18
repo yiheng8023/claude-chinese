@@ -1045,6 +1045,56 @@
       ]
     },
     {
+      "file": "assets/v1/c2b3e8506-BbF2c3ch.js",
+      "sha256": "8c120d760d5c89d49916eb22968b408f97fae2fee14f1bafbb0705ce7adc4e63",
+      "ids": [
+        "2HvOgfu+gN",
+        "47FYwba+bI",
+        "4WosAJhkMe",
+        "4iBasmCCzp",
+        "5DwcWFzd7B",
+        "5GtfkgA6Kt",
+        "7Aqe2/LqFL",
+        "8ILyTUAKTa",
+        "94EBYJJHoA",
+        "96GJ5wSQam",
+        "A8GDlh2QW4",
+        "BXPH+XA/TM",
+        "C1IFDydllb",
+        "CPq3A/vUJC",
+        "HAlOn1ZsuY",
+        "JWZG3Uf9Nv",
+        "K7AkdLoAj6",
+        "NhY6yQh7x4",
+        "TKow6oooWR",
+        "TqmgGJ+28h",
+        "UJxDlySCTy",
+        "UUv4h15eKo",
+        "UzaI/12mvX",
+        "V3UhnzboW0",
+        "XH2/OEz6th",
+        "YjjTU9NztP",
+        "YsScAYZTjo",
+        "ZRLnx2Phqf",
+        "acrOozm08x",
+        "axjlmjG7D8",
+        "bGi+HWN9QB",
+        "dUCA4Khx0S",
+        "e6G9JxS3ne",
+        "haeb1azTW4",
+        "jyqEyQ4qSu",
+        "lhYeghbH/7",
+        "lr3QX/nctD",
+        "pUw3V25bbE",
+        "ua1r0z/qwn",
+        "vZpnjXZ5aQ",
+        "xVS5KdLa2U",
+        "y/bmsG8rnv",
+        "z+Zrlndc2U",
+        "z9dRCCzyuv"
+      ]
+    },
+    {
       "file": "assets/v1/c3105a4b3-D7LaVnYN.js",
       "sha256": "b795e6c037e931eebfe91d8ba4f9d333f5178b13272e01cb8f515ff9cab437c0",
       "ids": [
@@ -3330,6 +3380,52 @@
       ]
     },
     {
+      "file": "assets/v1/c8b630735-wbd3Lgs1.js",
+      "sha256": "625fc1ceed68ef8ad84feaceca49ba1d75ba0c759eb2113d7c367d2baf49bdd3",
+      "ids": [
+        "0IQeTnXtHC",
+        "0NkANphHwB",
+        "18n2DsPCUH",
+        "3SBJtWgrE1",
+        "5oTa1gWQsk",
+        "7Aqe2/LqFL",
+        "9ealLcIajw",
+        "A5jaDnwkAN",
+        "BipinL/AAU",
+        "EJDdYg2Lv+",
+        "FgbOME4HwP",
+        "Fycjnepb7X",
+        "Gc29hRlX+O",
+        "HG5KdMNuqG",
+        "HOH5mdam48",
+        "I2OIhGgGfr",
+        "I4Pns1jqKm",
+        "IjR36HJptk",
+        "IoqC8Soln9",
+        "KgSix/c4Nx",
+        "LgOn+eqbzQ",
+        "M/TDplXStW",
+        "OvzONl52rs",
+        "P8gP5mOyCi",
+        "R7mR0aUYag",
+        "T4VxQNSBvZ",
+        "YlYBASRBOt",
+        "a2x7WBrCii",
+        "cBE0Jgy5fu",
+        "dnMG5c8GDx",
+        "dsoj3T5PrP",
+        "du1laW45Py",
+        "eI3zYFFnpz",
+        "eJ5KSCy4t3",
+        "fTtpfK7jTX",
+        "lKjjJ7PIFW",
+        "muG6nXGjxD",
+        "oidrNJRDGq",
+        "xcWsw2T0kk",
+        "y3gym+4SMI"
+      ]
+    },
+    {
       "file": "assets/v1/c8d529bdd-D_5dyGTT.js",
       "sha256": "4d5eacc1c83e7b9c63a7d4bf8a1cf63f7756fd2d2d4b4deefc63c81a9cf936ea",
       "ids": [
@@ -4216,6 +4312,25 @@
       ]
     },
     {
+      "file": "assets/v1/c9e1458cd-CCXh-EXF.js",
+      "sha256": "fc47eb2c4fd384894556f85e98256471fdac0ef1cdbadf4b640188ac831c04e2",
+      "ids": [
+        "+AUEyt7/zN",
+        "62nsdyMyIO",
+        "HAlOn1ZsuY",
+        "NZmMEEjudP",
+        "NzwFG18Qfx",
+        "ZTK8vIOPS5",
+        "Zu5P0uugHi",
+        "iJQuB40J2h",
+        "phwMzMW3iO",
+        "rI0dCyuer6",
+        "rKQPgfPvWS",
+        "sOWHpEEjCw",
+        "tJkdpReMoK"
+      ]
+    },
+    {
       "file": "assets/v1/ca25db325-BT_6vjqZ.js",
       "sha256": "c9f82de08425433fbfdc1fbffe7fb366e39fe5c10d7d72297dfe9023ff094b4f",
       "ids": [
@@ -4437,6 +4552,48 @@
       ]
     },
     {
+      "file": "assets/v1/cb61e8e6c-B7j9qAd-.js",
+      "sha256": "d5de24eae9e846c8073e62717125325e26166b0871aae51fced0bf428788caea",
+      "ids": [
+        "+jxqj0BCXU",
+        "/+WjRhGY9p",
+        "/0Nbgemp7C",
+        "/3iRRNfC/T",
+        "0BmsDuKmXx",
+        "21lfYfOCKS",
+        "2HdJ3H52A7",
+        "2L6XHrHX3B",
+        "2M5tmqcvyl",
+        "2YChxhwK1R",
+        "2quuFTad/n",
+        "3zPUfULNSQ",
+        "4jGhXwI2RH",
+        "5XJ1dOTHZD",
+        "5hcSRQVQ7G",
+        "5lU0AsuNui",
+        "6pNQyD+JCw",
+        "7uDozdO5Rc",
+        "8ezEaPfOww",
+        "9OUgawV+3D",
+        "9Z2CcgkCp+",
+        "9ealLcIajw",
+        "EbK+xUjBAt",
+        "HH/bLSGM/Y",
+        "IStNSe/rhY",
+        "ORGv1Q6rL/",
+        "P//U8osL8e",
+        "P0gQiUc0+j",
+        "QIhlmz+kPo",
+        "W42/BNvKWG",
+        "e/C8Gxlwxz",
+        "eRlIsu2NG/",
+        "f6mDTY3ZR+",
+        "ke/5wpsWdJ",
+        "q8Rmn+iae5",
+        "um5I+OmbZQ"
+      ]
+    },
+    {
       "file": "assets/v1/cc183b3ab-DT9U8WTi.js",
       "sha256": "19f5b5a94ca5539b5be394951cf6b7f3b69ea4beace3a0fa7209e8eaf7ce181d",
       "ids": [
@@ -4538,6 +4695,77 @@
         "T4jcqWdAUR",
         "bitWyNJKXh",
         "kcQzEk8MkX"
+      ]
+    },
+    {
+      "file": "assets/v1/cd19fedd2-DKRzMZvW.js",
+      "sha256": "28477d21ea64af2a00f41fa4c678632664642b94364154e685d16fbaf23e312c",
+      "ids": [
+        "/+WjRhGY9p",
+        "/2UegjsIBr",
+        "/GQqZR3fSJ",
+        "/jFmdFrLzq",
+        "0BmsDuKmXx",
+        "0IQeTnXtHC",
+        "0hZQWbevIb",
+        "0iG6KVJuYc",
+        "0stXsMnc5S",
+        "11dcmEUnD8",
+        "1E0BfOWkua",
+        "26kOE02+JO",
+        "27JV/WKOdz",
+        "2YChxhwK1R",
+        "450Fty8ldn",
+        "4d3Z8BUrOA",
+        "5VswgHgAVi",
+        "6/sAAh+NIB",
+        "7vas0HJwrr",
+        "9ealLcIajw",
+        "Cs33xZFR6o",
+        "CxP7pGz7eL",
+        "DZ53wWxu3B",
+        "E4l5E2QoYp",
+        "EcEP8qH6+A",
+        "FAZpmxbq/W",
+        "Go5gcp7twi",
+        "IwE1hujUut",
+        "KV/9HvLgtb",
+        "L3orNe9gpJ",
+        "N6ISBJGFvY",
+        "OIHwK7PmyT",
+        "OQGjpEvqQY",
+        "P0gQiUc0+j",
+        "StvyQfdEqi",
+        "TjBfy6q7V2",
+        "V0eXqTFDC+",
+        "Va2aVQRIyJ",
+        "XZuN8Fgklz",
+        "a1css8EFX4",
+        "aFCUCfaD+M",
+        "cU7ff1IrXY",
+        "cZjj9B8v/L",
+        "fdJ9TUy4Q4",
+        "gLJ1/EERCS",
+        "kmJEqpMcAS",
+        "lmAgsGUN9g",
+        "moEfZ8i+n2",
+        "nBnf08cIsu",
+        "nWcwwjH6U2",
+        "nlukReE26U",
+        "oIN0FTiMLG",
+        "oogxH3q75G",
+        "ovJ26CKo4Q",
+        "pmIAmFOt1l",
+        "qo/94GeBdH",
+        "sLed/DhFoo",
+        "ti6aQl5Lr/",
+        "u1ju9/4+XS",
+        "vKKtEds9sW",
+        "vc8werC57E",
+        "ygPbfAR2kQ",
+        "yv8cErb+k7",
+        "z4UQ6irU/7",
+        "zuxfd4yd/M"
       ]
     },
     {
@@ -5107,6 +5335,93 @@
         "Vu8t3l8URu",
         "iFsDVRnIHW",
         "laDQTSjAjY"
+      ]
+    },
+    {
+      "file": "assets/v1/shared-3-B-XVRXcq.js",
+      "sha256": "09d1b01bbbf9303b31d720f4d3b969a1f27d56967cb67cd37b543349ad94bf65",
+      "ids": [
+        "+MH0VdRCHz",
+        "+iRdoEt8q3",
+        "/8Llou1D/4",
+        "/JTT/2DU15",
+        "/Zj5Ed1O1a",
+        "/jSW/M8Eqw",
+        "/wplYZLxtL",
+        "3dgy02jMxX",
+        "5vDqi+KGvG",
+        "6220v8aaf6",
+        "62nsdyMyIO",
+        "6L9Y5wO1ji",
+        "7EIRa9V3Xp",
+        "7NDZA/bFon",
+        "8dcRa4i+v2",
+        "9QpIaEAMM6",
+        "AaYiSOA0wl",
+        "BamLJxwxTM",
+        "CP/OX3oa8/",
+        "CpMRp3wiD7",
+        "Dbc6XaCcol",
+        "EThtbMV0N+",
+        "F9QQuMdr9i",
+        "FF0beQ+syu",
+        "FPVUv0D9gN",
+        "IAxBhl6i8Q",
+        "JBoY5JANUb",
+        "JS6yTejrTs",
+        "JiMBqP+f6o",
+        "Jn87LwyCGH",
+        "K3r6DQW7h+",
+        "KlJN0MemFl",
+        "LEzHnJNO9Z",
+        "MpsZ34EpZH",
+        "NjmznFVXuK",
+        "O6OPwZlzlS",
+        "PrsfFM1lyK",
+        "WA3PxYvEFF",
+        "WS58wIfy5t",
+        "WWilu3pYVm",
+        "Wgins8THpZ",
+        "WlpxIfOq3x",
+        "YtNBbkMUN2",
+        "Z0+1ECO8jY",
+        "Z3HEddbrtL",
+        "ZTK8vIOPS5",
+        "Zapoj2wX1I",
+        "ZygvlMnrRg",
+        "bPy1nEj+5C",
+        "bqdZ9H2z/Z",
+        "c+OAnBWakK",
+        "fiPvwYljok",
+        "gZvh4BnHgf",
+        "ghktDkVy+/",
+        "hTHMH+UTdk",
+        "hYbuk57KUB",
+        "hiKixV91j4",
+        "iePW5084V8",
+        "imJkk+xTs0",
+        "jTXSpX3Ikw",
+        "jyIaaSJ6u+",
+        "lWfN0KOW6X",
+        "lnSx2ahO9a",
+        "ndYmZr+XBl",
+        "nqu1699+6Q",
+        "oQgie7BDAi",
+        "sOxe0GRL7O",
+        "sS42/B0p76",
+        "sy7vzf+1SO",
+        "tzMNF3jWoU",
+        "u4f7h0ylkl",
+        "vKMj39KhGw",
+        "vpWHJr3qCI",
+        "wBCKFK1Dsr",
+        "wKWOUozPA3",
+        "waUHa40VD6",
+        "yCKRJ0HpNo",
+        "yRMDg4l20z",
+        "ys3SwMG0/3",
+        "z/h36DeWys",
+        "zQvVDJ+j59"
       ]
     }
   ],
@@ -7138,6 +7453,681 @@
     },
     "zfBB0xiNUF": {
       "english": "Not on allowed list"
+    },
+    "2HvOgfu+gN": {
+      "english": "press {keys} to remove default"
+    },
+    "4iBasmCCzp": {
+      "english": "press {keys} to set as default"
+    },
+    "4WosAJhkMe": {
+      "english": "Sort by"
+    },
+    "5DwcWFzd7B": {
+      "english": "Filter and sort"
+    },
+    "5GtfkgA6Kt": {
+      "english": "Shared by others"
+    },
+    "7Aqe2/LqFL": {
+      "english": "Default"
+    },
+    "8ILyTUAKTa": {
+      "english": "Folders"
+    },
+    "94EBYJJHoA": {
+      "english": "Attach"
+    },
+    "axjlmjG7D8": {
+      "english": "Showing first {n}. Keep typing to narrow."
+    },
+    "bGi+HWN9QB": {
+      "english": "No recent projects. Search to find one."
+    },
+    "BXPH+XA/TM": {
+      "english": "This file leaves your device and is processed on your organization’s infrastructure."
+    },
+    "CPq3A/vUJC": {
+      "english": "{name} set as default"
+    },
+    "e6G9JxS3ne": {
+      "english": "You’ve allowed this folder before. Continue to add it to this session."
+    },
+    "haeb1azTW4": {
+      "english": "Claude can edit, delete, and share these files with connected tools."
+    },
+    "JWZG3Uf9Nv": {
+      "english": "Another app wants Claude to work in “{directory}”"
+    },
+    "jyqEyQ4qSu": {
+      "english": "Another app wants to attach “{directory}”"
+    },
+    "lhYeghbH/7": {
+      "english": "Add folder"
+    },
+    "lr3QX/nctD": {
+      "english": "Always allow"
+    },
+    "NhY6yQh7x4": {
+      "english": "Attach “{directory}” to this session?"
+    },
+    "pUw3V25bbE": {
+      "english": "Choose a different folder"
+    },
+    "TKow6oooWR": {
+      "english": "Remove default"
+    },
+    "TqmgGJ+28h": {
+      "english": "No projects yet."
+    },
+    "ua1r0z/qwn": {
+      "english": "Files Claude uses from this folder leave your device and are processed on your organization’s infrastructure."
+    },
+    "UJxDlySCTy": {
+      "english": "Last edited"
+    },
+    "UUv4h15eKo": {
+      "english": "Search folders"
+    },
+    "UzaI/12mvX": {
+      "english": "Allow Claude to change files in “{directory}”?"
+    },
+    "vZpnjXZ5aQ": {
+      "english": "Another app attached “{directory}”"
+    },
+    "XH2/OEz6th": {
+      "english": "New project"
+    },
+    "xVS5KdLa2U": {
+      "english": "{name} is no longer the default"
+    },
+    "YjjTU9NztP": {
+      "english": "Choose a folder"
+    },
+    "YsScAYZTjo": {
+      "english": "Recent activity"
+    },
+    "z+Zrlndc2U": {
+      "english": "Set as default"
+    },
+    "z9dRCCzyuv": {
+      "english": "Claude will be able to read this file and may share its contents with third-party tools it connects to. Be careful about exposing sensitive information."
+    },
+    "ZRLnx2Phqf": {
+      "english": "Date created"
+    },
+    "0IQeTnXtHC": {
+      "english": "Runs commands from Claude Code in an isolated sandbox. Applies to new sessions."
+    },
+    "0NkANphHwB": {
+      "english": "On this computer"
+    },
+    "18n2DsPCUH": {
+      "english": "Badge only"
+    },
+    "3SBJtWgrE1": {
+      "english": "Flash the taskbar button when Claude needs your attention and the app isn’t focused."
+    },
+    "9ealLcIajw": {
+      "english": "How Claude structures its responses in Code sessions. Applies to new sessions; the session menu can override it for a single session."
+    },
+    "a2x7WBrCii": {
+      "english": "Doesn’t block commands while the sandbox can’t start on this computer."
+    },
+    "A5jaDnwkAN": {
+      "english": "Turning this on asks for administrator permission once."
+    },
+    "BipinL/AAU": {
+      "english": "Your organization turns on strict sandbox mode for sessions started from this app."
+    },
+    "dnMG5c8GDx": {
+      "english": "Where to store Git worktrees for isolated coding sessions on this computer. SSH sessions use the Worktree folder setting on each SSH connection."
+    },
+    "dsoj3T5PrP": {
+      "english": "{type} notification level"
+    },
+    "du1laW45Py": {
+      "english": "Never"
+    },
+    "eI3zYFFnpz": {
+      "english": "Inside project"
+    },
+    "eJ5KSCy4t3": {
+      "english": "Doesn’t block commands while the sandbox can’t start on this computer, so they run outside it. Kept on for sessions started from this app."
+    },
+    "EJDdYg2Lv+": {
+      "english": "Managed by Claude Code"
+    },
+    "FgbOME4HwP": {
+      "english": "Show a suggested next prompt in the message box after Claude replies. Suggestions add a little to your usage."
+    },
+    "fTtpfK7jTX": {
+      "english": "Sandbox setup is managed by your organization."
+    },
+    "Gc29hRlX+O": {
+      "english": "Kept on by the app’s configuration. When {egressHosts} is set, commands can reach only the hosts it lists. When it isn’t, they may have no network. Change it and {folders} under Capabilities in <link>Setup</link>."
+    },
+    "HG5KdMNuqG": {
+      "english": "Sessions"
+    },
+    "HOH5mdam48": {
+      "english": "Bounce the Dock icon when Claude needs your attention and the app isn’t focused."
+    },
+    "I2OIhGgGfr": {
+      "english": "Suggestions stay hidden while Claude’s summary and next steps are showing."
+    },
+    "I4Pns1jqKm": {
+      "english": "Available when Permission requests or Questions isn’t set to Off."
+    },
+    "IjR36HJptk": {
+      "english": "Available when Local sandbox is on"
+    },
+    "IoqC8Soln9": {
+      "english": "Blocks commands that can’t run inside the sandbox (ssh, for example) instead of running them outside it or asking you. Applies to every Claude Code session on this computer, including the terminal, unless a project’s own settings override it."
+    },
+    "KgSix/c4Nx": {
+      "english": "Flash the app icon when Claude needs your attention and the app isn’t focused."
+    },
+    "M/TDplXStW": {
+      "english": "Banners"
+    },
+    "muG6nXGjxD": {
+      "english": "Blocks commands that can’t run inside the sandbox (ssh, for example) instead of running them outside it or asking you. Kept on for sessions started from this app."
+    },
+    "oidrNJRDGq": {
+      "english": "The sandbox isn’t available on this computer."
+    },
+    "P8gP5mOyCi": {
+      "english": "Setting up..."
+    },
+    "R7mR0aUYag": {
+      "english": "Setup didn’t finish."
+    },
+    "xcWsw2T0kk": {
+      "english": "{count, plural, one {# day} other {# days}}"
+    },
+    "YlYBASRBOt": {
+      "english": "Bypass all permission checks and let Claude work uninterrupted. This works well for workflows like fixing lint errors or generating boilerplate code. Letting Claude run arbitrary commands is risky and can result in data loss, system corruption, or data exfiltration (e.g., via prompt injection attacks). <link>See best practices for safe usage</link>"
+    },
+    "+AUEyt7/zN": {
+      "english": "You’re offline. This page will load when you’re back online."
+    },
+    "iJQuB40J2h": {
+      "english": "Couldn’t load this routine"
+    },
+    "NZmMEEjudP": {
+      "english": "Rename {name}"
+    },
+    "NzwFG18Qfx": {
+      "english": "Couldn’t load this scheduled task"
+    },
+    "phwMzMW3iO": {
+      "english": "This scheduled task couldn’t be found"
+    },
+    "rI0dCyuer6": {
+      "english": "This routine couldn’t be found"
+    },
+    "sOWHpEEjCw": {
+      "english": "New local routine"
+    },
+    "tJkdpReMoK": {
+      "english": "New local scheduled task"
+    },
+    "ZTK8vIOPS5": {
+      "english": "New routine"
+    },
+    "Zu5P0uugHi": {
+      "english": "Page tools"
+    },
+    "/0Nbgemp7C": {
+      "english": "Inline visualizations enabled"
+    },
+    "/3iRRNfC/T": {
+      "english": "Required for code execution and file creation"
+    },
+    "+jxqj0BCXU": {
+      "english": "Sessions compact more often since tools are always there."
+    },
+    "0BmsDuKmXx": {
+      "english": "Automatically archive local sessions after a period of no activity. Sessions that are running or have background work are never archived, and a worktree with uncommitted changes is kept on disk for a while."
+    },
+    "21lfYfOCKS": {
+      "english": "All domains"
+    },
+    "2HdJ3H52A7": {
+      "english": "Chats compact less since tools aren’t pre-loaded."
+    },
+    "2quuFTad/n": {
+      "english": "Controls how connector tools are loaded in new conversations."
+    },
+    "2YChxhwK1R": {
+      "english": "Prevent your computer from sleeping while a Code session is running, so long tasks can finish. Your display can still turn off. Closing the laptop lid will still put it to sleep."
+    },
+    "3zPUfULNSQ": {
+      "english": "Domain allowlist"
+    },
+    "4jGhXwI2RH": {
+      "english": "Claude can execute code on a server and create and edit docs, spreadsheets, presentations, PDFs, and data reports. Required for skills."
+    },
+    "5hcSRQVQ7G": {
+      "english": "Please contact another administrator to deprovision your account."
+    },
+    "5XJ1dOTHZD": {
+      "english": "Allow network egress"
+    },
+    "7uDozdO5Rc": {
+      "english": "Claude uses this browser by default unless you ask otherwise."
+    },
+    "8ezEaPfOww": {
+      "english": "Generate code, documents, and designs in a dedicated window alongside your conversation."
+    },
+    "9OUgawV+3D": {
+      "english": "Automatically archive desktop sessions when the associated pull request is merged or closed. Archiving also cleans up the session’s worktree. Uncommitted edits stay for a while, but files Git doesn’t track can be deleted."
+    },
+    "9Z2CcgkCp+": {
+      "english": "Sessions compact less since tools aren’t pre-loaded."
+    },
+    "EbK+xUjBAt": {
+      "english": "Application"
+    },
+    "eRlIsu2NG/": {
+      "english": "Build apps and interactive documents that use Claude inside the artifact."
+    },
+    "f6mDTY3ZR+": {
+      "english": "Show Claude’s entire thinking trace instead of a truncated preview. Applies to new messages."
+    },
+    "IStNSe/rhY": {
+      "english": "Allow Claude to remember relevant context from your chats and Cowork sessions. Memory includes your entire chat history with Claude. <a>Learn more</a>."
+    },
+    "ORGv1Q6rL/": {
+      "english": "Created"
+    },
+    "P//U8osL8e": {
+      "english": "Let Claude search the connector directory and surface ones relevant to your conversation."
+    },
+    "P0gQiUc0+j": {
+      "english": "Where to store Git worktrees for isolated coding sessions on this computer."
+    },
+    "q8Rmn+iae5": {
+      "english": "Visuals"
+    },
+    "QIhlmz+kPo": {
+      "english": "Package managers only"
+    },
+    "/2UegjsIBr": {
+      "english": "Summary and next steps"
+    },
+    "/GQqZR3fSJ": {
+      "english": "Default transcript view"
+    },
+    "0hZQWbevIb": {
+      "english": "concise"
+    },
+    "0stXsMnc5S": {
+      "english": "Ask me"
+    },
+    "11dcmEUnD8": {
+      "english": "monospace"
+    },
+    "1E0BfOWkua": {
+      "english": "terse"
+    },
+    "26kOE02+JO": {
+      "english": "editor font size"
+    },
+    "27JV/WKOdz": {
+      "english": "Connect new sessions to Remote Control"
+    },
+    "4d3Z8BUrOA": {
+      "english": "line length"
+    },
+    "5VswgHgAVi": {
+      "english": "Code font size"
+    },
+    "6/sAAh+NIB": {
+      "english": "Claude needs your approval to use a tool."
+    },
+    "7vas0HJwrr": {
+      "english": "Permission requests"
+    },
+    "a1css8EFX4": {
+      "english": "taskbar flash"
+    },
+    "aFCUCfaD+M": {
+      "english": "Claude finished and is waiting for your input."
+    },
+    "cU7ff1IrXY": {
+      "english": "Worktree location"
+    },
+    "CxP7pGz7eL": {
+      "english": "brief"
+    },
+    "cZjj9B8v/L": {
+      "english": "dock bounce"
+    },
+    "DZ53wWxu3B": {
+      "english": "Switch models when a message is flagged"
+    },
+    "E4l5E2QoYp": {
+      "english": "Claude is asking you to choose between options."
+    },
+    "EcEP8qH6+A": {
+      "english": "Keep computer awake while Claude works"
+    },
+    "FAZpmxbq/W": {
+      "english": "Allow bypass permissions mode"
+    },
+    "fdJ9TUy4Q4": {
+      "english": "Always do it here"
+    },
+    "gLJ1/EERCS": {
+      "english": "Always start a new session"
+    },
+    "Go5gcp7twi": {
+      "english": "The view sessions open in. Picking a view from a session’s Transcript view menu changes only that session."
+    },
+    "IwE1hujUut": {
+      "english": "Show Claude’s short summary and suggested next steps after Claude finishes. Applies to new sessions."
+    },
+    "kmJEqpMcAS": {
+      "english": "Notification sound"
+    },
+    "KV/9HvLgtb": {
+      "english": "Questions"
+    },
+    "L3orNe9gpJ": {
+      "english": "Draw attention on notifications"
+    },
+    "lmAgsGUN9g": {
+      "english": "When you ask for an unrelated task"
+    },
+    "moEfZ8i+n2": {
+      "english": "Strict sandbox mode"
+    },
+    "N6ISBJGFvY": {
+      "english": "terminal font size"
+    },
+    "nBnf08cIsu": {
+      "english": "Switch models in Claude Code on this computer"
+    },
+    "nlukReE26U": {
+      "english": "editor font"
+    },
+    "nWcwwjH6U2": {
+      "english": "System sound"
+    },
+    "OIHwK7PmyT": {
+      "english": "Played when an OS banner is shown."
+    },
+    "oIN0FTiMLG": {
+      "english": "Code font"
+    },
+    "oogxH3q75G": {
+      "english": "Thinking"
+    },
+    "OQGjpEvqQY": {
+      "english": "A task that isn’t part of what a session is doing can run in its own linked session. Choose whether Claude asks each time, keeps it in the session you typed it in, or opens a linked session for it."
+    },
+    "pmIAmFOt1l": {
+      "english": "Task complete"
+    },
+    "qo/94GeBdH": {
+      "english": "line width"
+    },
+    "sLed/DhFoo": {
+      "english": "Keep awake on battery power"
+    },
+    "StvyQfdEqi": {
+      "english": "Let Claude run multiple agents in parallel for complex tasks. Workflows can use a lot of your usage limit quickly."
+    },
+    "ti6aQl5Lr/": {
+      "english": "Verbose"
+    },
+    "TjBfy6q7V2": {
+      "english": "Sessions you start on this computer connect to Remote Control automatically, so you can continue them from other devices."
+    },
+    "u1ju9/4+XS": {
+      "english": "Applies to open files, diffs, code blocks, command output, and the terminal."
+    },
+    "V0eXqTFDC+": {
+      "english": "Dynamic workflows"
+    },
+    "Va2aVQRIyJ": {
+      "english": "Archive inactive sessions"
+    },
+    "vKKtEds9sW": {
+      "english": "Set a custom monospace font for code and terminal."
+    },
+    "XZuN8Fgklz": {
+      "english": "Local sandbox"
+    },
+    "ygPbfAR2kQ": {
+      "english": "When a message is flagged, switch without asking. When off, Claude asks first, or stops if it can’t ask."
+    },
+    "yv8cErb+k7": {
+      "english": "Normal"
+    },
+    "z4UQ6irU/7": {
+      "english": "column width"
+    },
+    "zuxfd4yd/M": {
+      "english": "response style"
+    },
+    "/8Llou1D/4": {
+      "english": "Delete “{taskName}”? Any sessions from this scheduled task will be archived, except those still in use."
+    },
+    "/jSW/M8Eqw": {
+      "english": "Loading scheduled tasks"
+    },
+    "/JTT/2DU15": {
+      "english": "Loading routines"
+    },
+    "/wplYZLxtL": {
+      "english": "Local routines only run while your computer is awake and online."
+    },
+    "/Zj5Ed1O1a": {
+      "english": "One-time"
+    },
+    "+iRdoEt8q3": {
+      "english": "No routines match your search and filters."
+    },
+    "3dgy02jMxX": {
+      "english": "Schedule"
+    },
+    "5vDqi+KGvG": {
+      "english": "Due {date}"
+    },
+    "6220v8aaf6": {
+      "english": "Exit full screen to respond to the pending prompt first"
+    },
+    "6L9Y5wO1ji": {
+      "english": "On GitHub event"
+    },
+    "7EIRa9V3Xp": {
+      "english": "Scheduled task didn’t run"
+    },
+    "7NDZA/bFon": {
+      "english": "Analyze data and build slides with Claude alongside you."
+    },
+    "8dcRa4i+v2": {
+      "english": "{count, plural, one {# completed routine hidden} other {# completed routines hidden}}"
+    },
+    "9QpIaEAMM6": {
+      "english": "Delete routine?"
+    },
+    "AaYiSOA0wl": {
+      "english": "Couldn’t load routines"
+    },
+    "BamLJxwxTM": {
+      "english": "Hand off tasks to Claude so you can focus on other work."
+    },
+    "bPy1nEj+5C": {
+      "english": "{count, plural, =0 {Filter routines} one {Filter routines, # filter active} other {Filter routines, # filters active}}"
+    },
+    "bqdZ9H2z/Z": {
+      "english": "Your free messages return at {time}."
+    },
+    "c+OAnBWakK": {
+      "english": "routines"
+    },
+    "CP/OX3oa8/": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} Your local MCP server {server} has more than {toolLimit, number} tools, which is more than cloud tasks support. {surface, select, attach {Turn it off or remove it in Settings → This computer to attach your other connectors.} other {Turn it off or remove it in Settings → This computer and try again.}}"
+    },
+    "CpMRp3wiD7": {
+      "english": "{date} at {approx, select, yes {~} other {}}{time}"
+    },
+    "Dbc6XaCcol": {
+      "english": "Routines"
+    },
+    "EThtbMV0N+": {
+      "english": "Run started."
+    },
+    "F9QQuMdr9i": {
+      "english": "Delete “{taskName}”? Any sessions from this routine will be archived, except those still in use."
+    },
+    "FF0beQ+syu": {
+      "english": "Scheduled task couldn’t be deleted. Try again."
+    },
+    "FPVUv0D9gN": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} The {plugin} plugin’s {server} server has more than {toolLimit, number} tools, which is more than cloud tasks support. {surface, select, attach {Turn off the plugin in Customize → Plugins to attach your other connectors.} other {Turn off the plugin in Customize → Plugins and try again.}}"
+    },
+    "ghktDkVy+/": {
+      "english": "(unnamed)"
+    },
+    "gZvh4BnHgf": {
+      "english": "No scheduled tasks yet."
+    },
+    "hiKixV91j4": {
+      "english": "Couldn’t load the usage credits request."
+    },
+    "hTHMH+UTdk": {
+      "english": "“{name}” couldn’t start."
+    },
+    "hYbuk57KUB": {
+      "english": "Next run {date}"
+    },
+    "IAxBhl6i8Q": {
+      "english": "Couldn’t load scheduled tasks"
+    },
+    "iePW5084V8": {
+      "english": "yesterday at {time}"
+    },
+    "imJkk+xTs0": {
+      "english": "Claude navigates, clicks buttons, and fills forms in your browser."
+    },
+    "JBoY5JANUb": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} {server} has more than {toolLimit, number} tools, which is more than cloud tasks support. {surface, select, attach {Disconnect it in Customize → Connectors to attach your other connectors.} other {Disconnect it in Customize → Connectors and try again.}}"
+    },
+    "JiMBqP+f6o": {
+      "english": "No routines match your search."
+    },
+    "Jn87LwyCGH": {
+      "english": "Respond to the prompt above to continue"
+    },
+    "JS6yTejrTs": {
+      "english": "Couldn’t load the See Pro plan button."
+    },
+    "jTXSpX3Ikw": {
+      "english": "Delete scheduled task?"
+    },
+    "jyIaaSJ6u+": {
+      "english": "End the voice session to continue"
+    },
+    "KlJN0MemFl": {
+      "english": "Auto-disabled"
+    },
+    "LEzHnJNO9Z": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} Several servers have more than {toolLimit, number} tools each, which is more than cloud tasks support: {servers}. {surface, select, attach {Turn them off to attach your other connectors.} other {Turn them off and try again.}}"
+    },
+    "lnSx2ahO9a": {
+      "english": "Microsoft Office",
+      "retainReason": "Microsoft Office 产品名。"
+    },
+    "lWfN0KOW6X": {
+      "english": "yesterday at {approx, select, yes {~} other {}}{time}"
+    },
+    "MpsZ34EpZH": {
+      "english": "Local"
+    },
+    "ndYmZr+XBl": {
+      "english": "Active"
+    },
+    "NjmznFVXuK": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} The {plugin} plugin has {count, plural, one {# server} other {# servers}} with more than {toolLimit, number} tools, which is more than cloud tasks support. {surface, select, attach {Turn off the plugin in Customize → Plugins to attach your other connectors.} other {Turn off the plugin in Customize → Plugins and try again.}}"
+    },
+    "nqu1699+6Q": {
+      "english": "No routines yet."
+    },
+    "O6OPwZlzlS": {
+      "english": "Include completed"
+    },
+    "oQgie7BDAi": {
+      "english": "Need more usage?"
+    },
+    "PrsfFM1lyK": {
+      "english": "No routines match these filters."
+    },
+    "sOxe0GRL7O": {
+      "english": "Local scheduled tasks only run while your computer is awake and online."
+    },
+    "sS42/B0p76": {
+      "english": "Chrome",
+      "retainReason": "Chrome 产品名。"
+    },
+    "u4f7h0ylkl": {
+      "english": "Manual"
+    },
+    "vpWHJr3qCI": {
+      "english": "routine"
+    },
+    "WA3PxYvEFF": {
+      "english": "Routine couldn’t be deleted. Try again."
+    },
+    "waUHa40VD6": {
+      "english": "SSH",
+      "retainReason": "SSH 协议名。"
+    },
+    "wBCKFK1Dsr": {
+      "english": "{count, plural, one {# completed scheduled task hidden} other {# completed scheduled tasks hidden}}"
+    },
+    "wKWOUozPA3": {
+      "english": "Recurring"
+    },
+    "WlpxIfOq3x": {
+      "english": "the {plugin} plugin"
+    },
+    "WS58wIfy5t": {
+      "english": "Your free messages return {day} at {time}."
+    },
+    "WWilu3pYVm": {
+      "english": "tomorrow at {approx, select, yes {~} other {}}{time}"
+    },
+    "yCKRJ0HpNo": {
+      "english": "{surface, select, attach {Couldn’t attach connectors to this task.} other {Couldn’t start this task.}} The plugin server {server} has more than {toolLimit, number} tools, which is more than cloud tasks support. {surface, select, attach {Turn off the plugin in Customize → Plugins to attach your other connectors.} other {Turn off the plugin in Customize → Plugins and try again.}}"
+    },
+    "yRMDg4l20z": {
+      "english": "today at {approx, select, yes {~} other {}}{time}"
+    },
+    "ys3SwMG0/3": {
+      "english": "Loading this chat’s settings tools…"
+    },
+    "YtNBbkMUN2": {
+      "english": "Runs on"
+    },
+    "z/h36DeWys": {
+      "english": "today at {time}"
+    },
+    "Z0+1ECO8jY": {
+      "english": "Routine didn’t run"
+    },
+    "Z3HEddbrtL": {
+      "english": "Build, debug, and ship by describing what you need."
+    },
+    "Zapoj2wX1I": {
+      "english": "Via API"
+    },
+    "ZygvlMnrRg": {
+      "english": "Search routines"
     }
   }
 }

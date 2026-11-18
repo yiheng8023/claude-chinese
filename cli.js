@@ -26,7 +26,7 @@ function confirmCloseClient(appName = 'Claude') {
 
   if (!process.stdin.isTTY) {
     console.error(`\n⚠️ 检测到 ${appName} 客户端当前正在运行！`);
-    console.error(`为保护未保存的工作，安装器已安全暂停。请先手动退出客户端，或附加 --force 参数执行。`);
+    console.error('请保存工作并退出 Claude 后重试。也可在保存后使用 --force 关闭客户端并继续。');
     return false;
   }
 
@@ -56,21 +56,21 @@ function getCustomPath() {
 
 function showHelp() {
   console.log(`
-Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
+Claude Desktop 可恢复中文汉化工具包 (claude-chinese)
 
 用法:
   node cli.js [命令] [--path <自定义安装路径>]
 
 可用命令:
   status         检查 Claude 客户端安装与汉化补丁状态
-  check          执行前置环境全维预检 (Node 弹性版本、客户端安装、进程锁定与权限)
-  install        对兼容的独立副本或散装资源安装汉化
+  check          检查 Node.js、客户端资源、进程占用和写入权限
+  install        为 Windows Squirrel 版或其他兼容安装应用汉化
   restore        还原为官方英文原版
   repair         修复 Windows 官网客户端的待注册更新，完成后可用原入口启动
   drift          执行上游版本文本漂移分析 (Drift Detection)
-  launch         启动 Claude（Windows 注册包通过系统入口打开）
+  launch         启动 Claude（Windows Squirrel 和注册包使用官方入口）
   shortcut       可选：创建 Windows 启动快捷方式 (--output <.lnk 文件> [--no-backup])
-  watch          启动热重载与自愈守护进程 (监听字典与版本变化)
+  watch          监听词库与当前资源目录，退出客户端后可应用汉化变更
   help           显示此帮助信息
 `);
 }
@@ -86,7 +86,7 @@ function handlePreflight() {
   }
 
   if (preflight.allPassed) {
-    console.log('\n🎉 所有核心前置条件 100% 就绪，可直接执行安装！');
+    console.log('\n✅ 必需的预检项目已通过。请按上方提示处理运行状态和写入权限。');
   } else {
     console.log('\n❌ 部分核心前置条件未满足，请根据上方提示调整环境后再试。');
     process.exitCode = 1;
@@ -130,7 +130,7 @@ function handleStatus() {
     if (targetError) console.log(`💡 ${targetError}`);
     else {
       if (info.patchStale) console.log('⚠️ 已有补丁记录与当前文件不符，请核对目标版本后重新安装汉化。');
-      console.log('💡 运行 "node cli.js install" 或双击 "install.bat" 安装汉化。');
+      console.log(`💡 运行 node cli.js install 安装汉化。${customPath ? '请传入相同的 --path。' : ''}`);
     }
   }
 }
@@ -178,7 +178,7 @@ function handleInstall() {
       console.log('\n📦 [3/3] 汉化挂载完成！');
       console.log('✅ 增量汉化补丁挂载成功（保留官方原版英文为纯净兜底）！');
       console.log(`📦 适配版本: ${result.info.version}`);
-      console.log(`🇨🇳 已汉化词条数: ${result.info.entriesCount}`);
+      console.log(`🇨🇳 Ion 词库条目数（含历史兼容条目）: ${result.info.entriesCount}`);
       if (result.info.warnings && result.info.warnings.length > 0) {
         console.log('\n⚠️ 注意 (存在潜在代码漂移项):');
         result.info.warnings.forEach(w => console.log(`   - ${w}`));
@@ -391,7 +391,7 @@ function handleShortcut() {
 }
 
 function handleWatch() {
-  console.log('=== 启动 Claude 中文汉化热重载与自愈守护进程 (Hot-Reload Daemon) ===\n');
+  console.log('=== 启动 Claude 汉化资源监听 ===\n');
   const customPath = getCustomPath();
   const info = getClaudeInstallation(customPath);
   const targetError = localizationTargetError(info);
@@ -428,7 +428,7 @@ function handleWatch() {
   console.log(`📁 监听客户端资源: ${info.resourcesPath}`);
   console.log('💡 守护特性已激活:');
   console.log('   1. 监听词库与当前资源目录；客户端运行时仅提示，不强制退出。');
-  console.log('   2. 独立副本的 ASAR 变更后请重启。\n');
+  console.log('   2. ASAR 变更后请重启 Claude。Squirrel 安装升级后请重新运行 install.bat。\n');
   console.log('👀 守护进程运行中 (按 Ctrl+C 退出)...');
 
   let debounceTimer = null;
@@ -500,7 +500,7 @@ function handleWatch() {
     const current = getClaudeInstallation(customPath);
     if (current.isPatched && !current.needsUpdate) return;
     if (isClaudeRunning(current)) {
-      console.warn('⚠️ 检测到更新，但客户端仍在运行；请退出后运行 install 或 launch，未强制关闭客户端。');
+      console.warn('⚠️ 检测到资源变更。请保存工作并退出 Claude，然后运行 node cli.js install。使用了 --path 时请传入相同路径。');
       return;
     }
     console.log(`\n🔔 [${new Date().toLocaleTimeString()}] 检测到变动: ${reason}`);
@@ -508,7 +508,7 @@ function handleWatch() {
     try {
       const result = applyPatch({ customPath, autoClose: false });
       if (result.success) {
-        console.log(result.nativeSupported ? result.message : `🎉 汉化更新完成 (已挂载 ${result.info.entriesCount} 词条)，请重新启动 Claude。`);
+        console.log(result.nativeSupported ? result.message : '✅ 汉化更新完成，请重新启动 Claude。');
       } else console.error(`❌ 汉化更新失败: ${result.error}`);
     } catch (err) {
       console.error('⚠️ 热重载同步异常:', err.message);

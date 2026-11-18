@@ -664,6 +664,13 @@
     "after": "J=\"Anthropic 精选\""
   },
   {
+    "english": "Plan",
+    "translation": "计划",
+    "file": "assets/v1/c8dbdda48-DUXM2gkb.js",
+    "before": "plan:E({defaultMessage:\"Plan\",id:\"fz0z4cb6fQ\"})",
+    "after": "plan:E({defaultMessage:\"Plan\",id:\"uXinBOnUV7\"})"
+  },
+  {
     "kind": "diagnostic",
     "contextType": "VariableDeclarator",
     "english": "must be a local absolute path (Windows: C:/... or C:\\...) with no ~, .., UNC or \\??\\ prefix, not containing \" % CR LF NUL, and not ending with a dot or space",

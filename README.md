@@ -18,7 +18,7 @@
 
 用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。Windows 实机适配版本为 **6.6395.0**。
 
-> **Windows 10 / 11（x64）** 只需安装 [Claude Desktop Win32（Squirrel）官方版](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)，然后按 [Windows 快速开始](#windows) 安装汉化。
+> **Windows 10 / 11（x64）** 请从 [Anthropic 下载 Claude Desktop Win32（Squirrel）版](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)，然后按 [Windows 快速开始](#windows) 安装汉化。
 
 ---
 
@@ -55,7 +55,7 @@
    - 验证方式：在终端运行 `node -v`。若未安装，请前往 [Node.js 官方网站](https://nodejs.org/) 下载安装 LTS 版本。
    - ⚠️ **引擎依赖兼容性声明 (Compatibility Note)**：
      - **推荐基线（零警告原生支持）**：**Node.js ≥ 22.12.0**（如 Node 22 LTS 或 Node 24+）。项目底层核心打包依赖 `@electron/asar` 声明 `engines.node: ">=22.12.0"`，在 Node 22+ 下可获得零引擎警告（`EBADENGINE`）的最佳体验；
-     - **兼容状态说明**：CI 包含 **Node.js 20.x**，但安装依赖时可能提示 `EBADENGINE`；启用 `engine-strict=true` 时可能阻断安装。Node 20 的 CI 结果不代表所有较早小版本均兼容，建议优先使用 Node 22.12+。
+     - **CI 兼容范围**：CI 覆盖 Node.js 20、22 和 24。低于 Node.js 22.12.0 时，依赖安装可能提示 `EBADENGINE`，启用 `engine-strict=true` 时可能阻断安装。
 3. **已安装官方 Claude Desktop**。Windows 请使用上方的 Win32（Squirrel）安装器，安装根目录为 `%LOCALAPPDATA%\AnthropicClaude`。官网通用 `ClaudeSetup.exe` 和微软商店可部署 MSIX，MSIX 不支持本项目的原位汉化。`Unified Claude` 将 Chat 和 Cowork 合并到同一界面。Windows 上需要虚拟机服务的功能依照 Anthropic 的部署要求。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) · [桌面配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog)
 
 ---
@@ -64,7 +64,7 @@
 
 安装汉化后，可在目标客户端的语言选择中选“中文（简体）”。
 
-安装依赖使用 `npm ci`，此步骤不再自动修改已安装的 Claude；汉化请显式运行 `node cli.js install` 或 `npm run patch`。
+安装脚本会在缺少依赖时执行 `npm ci --ignore-scripts`。首次直接使用 CLI 前，请运行 `npm ci`，然后用 `node cli.js install` 或 `npm run patch` 安装汉化。
 
 实机在 5.11492.5 已汉化的情况下，用原版 Squirrel 更新程序应用预先下载并校验的 6.6395.0 官方包。同一个 Win32 快捷方式成功启动新版。再次运行 `install.bat` 后，已核对实际中文界面，并观察到客户端发起官方自动更新检查。
 
@@ -72,7 +72,9 @@
 
 维护核对了 6.6395.0 的官方日志与实际资源，包含本地 MCP 的托管策略、SSH/WSL 文件下载和更新提示。对比 5.11492.5，官方 Shell 新增 58 项，Ion 新增 2,321 项。本轮补译 58 项 Shell、110 项 Ion 文案及 20 篇第三方推理折叠说明，并为新版模块重新绑定 58 处限定文案。旧版回归快照仍有兼容用途。相同英文按词条 ID 和组件上下文分别审查。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-6395-0) [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
-后续新增 266 个界面词条，涉及权限模式、会话层级菜单、常规与隐私设置、系统存储、MCP 状态和第三方推理配置校验。`npm run audit:ui` 核查 62 个模块、4,471 条界面消息及原始源码指纹。账号、模型与服务端下发文案取决于运行环境。`Unified Claude` 和 `Ultracode` 等官方功能名保留英文。
+后续补译涉及权限模式、会话菜单、常规和 Code 设置、系统存储、MCP 状态、环境选择及第三方推理。`npm run audit:ui` 核查 68 个模块、4,697 条界面消息及原始源码指纹。账号、模型与服务端下发文案取决于运行环境。`Unified Claude` 和 `Ultracode` 等官方功能名保留英文。
+
+Code 的 `Routines` 是 `Scheduled tasks` 的旧名，同一功能的标题、操作和提示统一译为“定时任务”。原文区分本地、云端或不同触发方式时，译文保留这些区别。[Claude Code 定时任务](https://code.claude.com/docs/en/routines)
 
 ## 🚀 快速开始
 
@@ -102,7 +104,7 @@ node cli.js check
 # 3. 安装汉化（Windows 并装或使用独立副本时加 --path）
 node cli.js install
 
-# 4. 可选：监听资源与词库变化（运行中不强制退出客户端；ASAR 更新后需重启）
+# 4. 可选：监听当前资源目录和词库（Squirrel 升级后请重新运行 install.bat）
 node cli.js watch
 
 # 5. 启动客户端（Windows Squirrel 版通过官方入口启动）
@@ -119,7 +121,7 @@ node cli.js restore
 
 ## 🧪 自动化测试与质量保证 (Testing & Verification)
 
-本项目引入严格的端到端自动化测试与跨平台 CI 流水线（Windows / macOS / Ubuntu），避免人工经验验证带来的遗漏：
+CI 在 Windows、macOS 和 Ubuntu 上运行资源布局、安装与还原、词库和源码检查。已安装的宿主可用于额外的源码核对和实机验收。
 
 ```bash
 # 运行全套自动化测试套件（含完整 ASAR 生命周期与失败回滚回归）
@@ -182,7 +184,8 @@ claude-chinese/
 │   └── scoped-ui-zh-CN.json          # 限定模块与源码上下文的界面文案补丁
 ├── core/                             # 核心注入与架构引擎
 │   ├── patcher.js                    # 拓扑多签名长文档引擎、JS 白名单与出厂基线自愈
-│   ├── msix-detector.js              # MSIX 容器探测与跨平台多布局解析
+│   ├── msix-detector.js              # 探测注册包及其他平台安装布局
+│   ├── squirrel-installation.js      # 依据 Squirrel 本地发行索引识别当前安装
 │   ├── permissions.js                # Windows ACL 权限安全授予与提权工具
 │   └── preflight.js                  # 前置环境全维健康预检器 (Node/客户端/进程锁)
 ├── test/                             # 自动化全真回归测试套件

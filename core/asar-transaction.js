@@ -138,8 +138,9 @@ function baselineArtifacts(resources, meta) {
   return states.map(s => {
     const source = useBackups ? s.file + '.orig.bak' : s.file;
     if (!fs.existsSync(source)) throw new Error(`缺少可恢复的原版备份: ${s.name}`);
-    if (useBackups && s.record && hashFile(source) !== s.record.originalHash) throw new Error(`原版备份校验失败: ${s.name}`);
-    return { ...s, source, sourceHash: hashFile(source) };
+    const sourceHash = useBackups ? hashFile(source) : s.hash;
+    if (useBackups && s.record && sourceHash !== s.record.originalHash) throw new Error(`原版备份校验失败: ${s.name}`);
+    return { ...s, source, sourceHash };
   });
 }
 
@@ -187,7 +188,7 @@ function applyAsarTransaction(info, options, applyStaged) {
 
     // Check for an upstream update or another writer while staging was in progress.
     for (const item of artifacts) {
-      if (hashFile(item.file) !== item.hash || hashFile(item.source) !== item.sourceHash) throw new Error('准备期间客户端文件或备份发生变化，已取消安装，请重新运行。');
+      if (hashFile(item.file) !== item.hash || (item.source !== item.file && hashFile(item.source) !== item.sourceHash)) throw new Error('准备期间客户端文件或备份发生变化，已取消安装，请重新运行。');
       snapshot(item.file);
       snapshot(item.file + '.orig.bak');
     }
@@ -256,7 +257,7 @@ function restoreAsarTransaction(info) {
       snapshots.push({ file, present, backup });
     }
     for (const item of artifacts) {
-      if (hashFile(item.file) !== item.hash || hashFile(item.source) !== item.sourceHash) throw new Error('还原准备期间客户端文件发生变化，已取消还原。');
+      if (hashFile(item.file) !== item.hash || (item.source !== item.file && hashFile(item.source) !== item.sourceHash)) throw new Error('还原准备期间客户端文件或备份发生变化，已取消还原。');
     }
     if ((fs.existsSync(metaPath) ? hashFile(metaPath) : null) !== metaBefore) throw new Error('还原准备期间补丁记录发生变化，已取消还原。');
     keepRecovery = true;

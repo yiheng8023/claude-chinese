@@ -57,8 +57,10 @@ for (const [k, zhVal] of Object.entries(ionZh)) {
     console.log(`  ⚠️ [模式不一致] Manual -> "${zhVal}"`);
     issues.push({ key: k, type: 'mode_inconsistency', en: enVal, zh: zhVal });
   }
-  if (enVal === 'Plan' && zhVal !== '计划') {
-    console.log(`  ⚠️ [模式不一致] Plan -> "${zhVal}"`);
+  // The billing ID is shared upstream. The reviewed permission module uses
+  // the dedicated permission-mode ID through a source-scoped patch.
+  if (enVal === 'Plan' && zhVal !== (k === 'fz0z4cb6fQ' ? '套餐' : '计划')) {
+    console.log(`  ⚠️ [Plan 用词不一致] [${k}] -> "${zhVal}"`);
     issues.push({ key: k, type: 'mode_inconsistency', en: enVal, zh: zhVal });
   }
 }

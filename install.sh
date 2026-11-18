@@ -3,7 +3,7 @@ set -e
 
 echo ""
 echo "===================================================="
-echo "   Claude Desktop 桌面端自愈型中文汉化工具包"
+echo "   Claude Desktop 可恢复中文汉化工具包"
 echo "   (Claude Chinese Localization Toolkit for macOS/Linux)"
 echo "===================================================="
 echo ""

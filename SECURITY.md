@@ -15,5 +15,5 @@
 
 如果您在本工具包中发现了安全隐患或漏洞，请不要公开提交 GitHub Issue，请通过以下方式联系维护团队：
 
-* 发送邮件至安全支持邮箱或通过 GitHub Security Advisory 提交私密报告。
+* 通过 [GitHub 私密漏洞报告](https://github.com/yiheng8023/claude-chinese/security/advisories/new) 联系维护团队。
 * 我们将在 48 小时内确认并评估漏洞风险，并在修复后发布更新版本与致谢公告。

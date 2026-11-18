@@ -11,7 +11,6 @@ const latest = require('../test/fixtures/inference-help-6.6395.json');
 const hashText = text => crypto.createHash('sha256').update(text).digest('hex');
 const byHash = new Map(Object.keys(translations).map(text => [hashText(text), text]));
 function resolveFixtureDocuments(fixture) {
-  if (fixture.documents) return fixture.documents;
   return fixture.documentHashes.map(hash => {
     if (!byHash.has(hash)) throw Error(`折叠正文缺少完整译文（SHA-256 ${hash}）。`);
     return byHash.get(hash);

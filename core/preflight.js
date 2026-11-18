@@ -18,14 +18,14 @@ function runPreflightCheck(options = {}) {
 
   // 1. Node.js 运行时最低版本检测 (支持所有更高版本，绝不限制上限)
   const nodeVerStr = process.version.replace(/^v/, '');
-  const majorVer = parseInt(nodeVerStr.split('.')[0], 10);
+  const [majorVer, minorVer] = nodeVerStr.split('.').map(Number);
   const nodePassed = !isNaN(majorVer) && majorVer >= MIN_NODE_VERSION;
   let nodeDetail = `当前: v${nodeVerStr} (要求: >= v${MIN_NODE_VERSION}.0.0)`;
   if (nodePassed) {
-    if (majorVer === 20) {
-      nodeDetail += ' [兼容模式: 功能测试通过，但底层 @electron/asar 依赖声明 >=22.12，安装伴随引擎警告，推荐使用 Node 22 LTS]';
+    if (majorVer < 22 || (majorVer === 22 && minorVer < 12)) {
+      nodeDetail += ' [@electron/asar 要求 Node.js ≥22.12.0，npm 安装可能出现引擎警告]';
     } else {
-      nodeDetail += ' [推荐环境: 完全契合 @electron/asar 依赖引擎规范]';
+      nodeDetail += ' [满足 @electron/asar 的 Node.js 版本要求]';
     }
   }
   checks.push({
@@ -91,7 +91,7 @@ function runPreflightCheck(options = {}) {
   checks.push({
     id: 'filesystem-permissions',
     name: '资源目录读写权限',
-    detail: writePassed ? '正常 (直接可写)' : '受限 (首次需以管理员身份运行 install.bat)',
+    detail: installPassed ? (writePassed ? '可写' : '当前目标目录不可写，请检查目录权限') : '尚未找到可用的汉化目标',
     passed: true,
     critical: false
   });
