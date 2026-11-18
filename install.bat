@@ -3,16 +3,6 @@ setlocal
 chcp 65001 >nul 2>&1
 cd /d "%~dp0"
 
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo.
-    echo ====================================================================
-    echo   [提示] Claude 采用 ASAR 封装，汉化需同步主程序中的 ASAR 完整性记录
-    echo   若稍后提示目录写权限不足，请关闭后右键本脚本选择【以管理员身份运行】！
-    echo ====================================================================
-    echo.
-)
-
 set "CLAUDE_CN_NEED_DEPS="
 if not exist "node_modules\@electron\asar\package.json" set "CLAUDE_CN_NEED_DEPS=1"
 if not exist "node_modules\@formatjs\icu-messageformat-parser\package.json" set "CLAUDE_CN_NEED_DEPS=1"
@@ -25,7 +15,7 @@ if defined CLAUDE_CN_NEED_DEPS (
     )
 )
 
-node cli.js install
+node cli.js install %*
 set "PATCH_EXIT=%errorlevel%"
 echo.
 pause

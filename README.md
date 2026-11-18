@@ -1,4 +1,4 @@
-# Claude 桌面端自愈型中文汉化工具包 (Claude Chinese Toolkit)
+# Claude 桌面端中文汉化工具包 (Claude Chinese Toolkit)
 
 <p align="center">
   <a href="https://github.com/yiheng8023/claude-chinese/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/yiheng8023/claude-chinese/ci.yml?branch=main&label=CI&logo=github" alt="CI Status"></a>
@@ -16,7 +16,7 @@
 </p>
 
 
-用于 Anthropic **Claude Desktop** 桌面客户端的可恢复中文汉化工具包（代码版本 **v1.2.100**，本轮适配 **5.11492.5**）。沿用官方 i18n 资源做增量维护，保留现有译文与术语规则。
+用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。当前源码适配 **6.6395.0** 的资源，Windows 注册包使用原版。
 
 ---
 
@@ -24,8 +24,8 @@
 
 - **沿用原生 i18n**：增量生成中文资源，保留官方英文作为回退。
 - **保留术语规则**：区分 Diff（差异）与 Change（变更）、Branch（分支）与 Fork（分叉）。配置键、模型 ID、协议名等按上下文保留英文。
-- **四层词库**：外壳 1,664 项（当前英文基线 1,310 项）、Web UI 33,472 项、动态词库 52 项及长说明 363 篇。数量包含历史兼容条目和有意保留的英文，并非当前界面汉化率。
-- **折叠正文检查**覆盖 147 处“了解更多”引用和 145 篇不同正文。已核对 5.11492.5 的原始说明模块，补译 1 篇改写正文，并保留 4.4212、4.16336、4.23118、5.1231 快照回归。`npm run audit` 会检查完整正文、代码、链接和安装包源码指纹。
+- **四层词库**：Shell、Ion、动态模型说明与折叠长文档，保留历史兼容译文和上下文术语规则。
+- **折叠正文检查**覆盖 156 处“了解更多”引用和 152 篇不同正文。测试校验译文、代码和链接，审计核对原始源码指纹。
 - **新版语言注册**：按语言映射结构匹配主进程，不依赖每次构建变化的混淆变量名；未命中时报告失败。
 - **可恢复安装**：在临时目录完成双 ASAR 与主程序的准备和校验，再在目标同目录准备完整文件并替换；正式修改前保存恢复记录，回滚后核验完整哈希，保留同版本原版备份。
 - **更新识别**：核对文件 SHA-256、工具版本和词库摘要。官方更新后的新文件优先，拒绝混合版本或不明修改，避免旧备份回退新版。
@@ -38,14 +38,14 @@
 
 本项目专注客户端界面汉化。四层资源分别是 Shell 原生菜单、Ion/Web UI、动态模型说明与折叠长文档。第三方推理配置页面属于汉化范围；模型路由、凭据管理和账号功能继续由客户端及 CC Switch 等原有工具负责。
 
-本轮适配目标为官网安装器安装的 Windows **5.11492.5**（系统包版本 **5.11492.5.0**）。macOS/Linux 支持既有散装资源布局。双 ASAR 与可执行程序完整性同步在 Windows 路径实现并验证。
+本轮基于官网 Windows **6.6395.0**（系统包版本 **6.6395.0.0**）资源适配，双 ASAR 写入与还原在独立副本中验证。macOS/Linux 沿用既有散装资源布局。
 
 ---
 
 ## 📋 前置环境与要求 (Prerequisites)
 
 1. **操作系统支持**：
-   - **Windows**：Windows 10 / 11 (x64)（支持官网安装器安装的版本，不支持 Microsoft Store 分发版）
+   - **Windows**：Windows 10 / 11 (x64)。汉化支持兼容的散装布局和独立测试副本。
    - **macOS**：macOS 12+（Apple Silicon M 系列及 Intel 芯片）
    - **Linux**：主流发行版（x64 / ARM64）
 2. **Node.js 基础运行环境**：
@@ -56,52 +56,43 @@
      - **兼容状态说明**：CI 包含 **Node.js 20.x**，但安装依赖时可能提示 `EBADENGINE`；启用 `engine-strict=true` 时可能阻断安装。Node 20 的 CI 结果不代表所有较早小版本均兼容，建议优先使用 Node 22.12+。
 3. **已安装 Claude Desktop 客户端**：
    - 确保本机已安装官方 Claude 桌面客户端。
-   - ⚠️ **Windows 分发渠道兼容性说明 (Important)**：
-     - **支持渠道**：支持从 Claude 官网（[claude.com/download](https://claude.com/download)）下载的 `.exe` 安装器。**安装器本身也可能部署 MSIX 到 WindowsApps**，不能仅凭扩展名或目录判定分发渠道。
-     - **不支持渠道**：**暂不支持**从 Microsoft Store（微软应用商店）分发的 MSIX / AppX 版本。检测器会区分官网包 `Claude` 与商店包 `AnthropicPBC.Claude`，并拒绝向商店包写入。
+   - 从 [Claude 官网](https://claude.com/download) 下载的 EXE 也可能安装 MSIX。项目以实际注册类型区分这类安装。
 
 ---
 
 补丁会修改 ASAR 及 Windows 主程序内的完整性记录，**原发布者数字签名会因此失效**，安全软件或设备策略可能拒绝此操作。本项目保留 Electron Fuse 4，不关闭系统防护；无法写入时不创建第二个客户端。已覆盖临时写入失败、替换被拒、回滚及单文件替换后的进程中止测试。多个文件并非原子提交；发现未完成事务时会停止后续修改并保留恢复记录。断电、替换系统调用中止或外部进程同时写入不属于已验证的自动回滚保证。请保留原版备份。
 
-如果重启后仍显示英文，请在客户端的语言选择中选择“中文（简体）”；工具会保留已有语言偏好。
+兼容副本安装汉化后，可在副本的语言选择中选“中文（简体）”。
 
 安装依赖使用 `npm ci`，此步骤不再自动修改已安装的 Claude；汉化请显式运行 `node cli.js install` 或 `npm run patch`。
 
-日常打开 Claude，请使用系统应用入口或普通客户端快捷方式；普通快捷方式只负责启动 Claude，不连接本项目脚本。汉化可选用安装脚本、CLI、`launch.bat` 自愈入口或 `watch`，由使用者显式运行。项目不要求创建或修改 Claude 的快捷方式。
+Windows 官网目前由 Windows 注册 MSIX 包。项目的汉化安装、还原和监听会在写入前拒绝官网和商店的注册包。若旧版补丁已修改官方目录，请使用官网完整安装器恢复原版。保留签名的原版可照常通过 Windows 搜索或普通快捷方式启动，更新继续由官方管理。当前版本未找到从用户目录加载完整简体中文的接口。[Microsoft MSIX 包存储文档](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
 
-汉化保留官方更新器。手动更新前可先运行 `npm run restore` 还原官方文件，更新完成后退出客户端并重新汉化。若更新后无法启动，且 `app.asar` 或 `ion-dist.asar` 为 0 字节或归档头不可读，请使用官网完整安装包修复后再汉化；安装预检会明确报告此类损坏并保留备份，不会将空文件当成原版。
+### 官方 Windows 客户端的中文界面辅助
 
-Windows 官网安装的应用标识为 `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`，可用于只启动客户端的普通快捷方式，避免绑定带版本号的路径。它不执行汉化或修复。此前曾复现“新版已部署、注册因旧包占用而延迟、旧包 ASAR 已清空”的启动故障，这类故障需要另行完成官方更新或显式运行工具恢复。
+在 Windows x64 上双击 [`assist.bat`](assist.bat) 启动辅助程序，然后照常打开 Claude。本轮实测官网安装的 6.6395.0。常用导航和菜单旁会显示中文。鼠标停在第三方推理的长说明上可以看译文。托盘图标可暂停、恢复或退出辅助。首次启动需安装 Node.js，由 Windows 本地编译辅助程序。
 
-显式运行 `launch.bat` 或 `node cli.js launch` 时，若当前注册包的归档已损坏，工具会检查 Windows 部署日志记录的同包族新版，验证其身份、原始主程序签名和 ASAR 完整性，再完成注册、按需汉化并启动。如果仅解包原生文件因官方打包后的签名而无法匹配 ASAR 旧哈希，会改用官网完整 MSIX 恢复：核对官方接口的大小与 SHA-256、完整包签名和 Manifest 身份，并将安装后的主程序、双 ASAR 和所有解包文件与该包逐字节核对，不直接跳过这些文件。此完整包恢复目前仅支持 Windows x64，需要联网。客户端仍运行时会停止并提示先保存退出；未找到可信完整新版时保留原版备份并提示官网修复，不会回退旧包。此恢复仅针对已部署的 Windows 更新，不代替官方更新器。
+辅助使用 Windows UI Automation 识别界面文案，只在前台 Claude 窗口上绘制可穿透点击的提示。译文来自本地词库，保留用户内容与官方快捷键。覆盖已审核的导航、菜单、文件面板及部分配置正文，其他位置保持官方界面。辅助程序在当前 Windows 会话中运行。
 
-签名检查使用 Windows PowerShell 自带的系统模块，避免继承 PowerShell 7 的模块搜索路径。官方原生文件在 ASAR 打包后签名会改变原始字节；本工具会通过完整官方包验证这些文件，而非仅凭任意有效签名放行。5.11492.2 已验证官方完整安装及安装后文件与签名包一致；故障分支另有隔离回归。
+Windows 官网安装的应用标识为 `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`。可选的 `shortcut` 命令将已注册的应用作为启动目标，支持 Unicode 路径，启用 `--no-backup` 时跳过创建新备份。
 
 ```bat
-node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude 汉化工具.lnk"
+node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
 ```
 
-上面的 `shortcut` 命令仅用于可选的**汉化工具快捷方式**，指向本工具目录内的 `launch.bat`，会执行与显式自愈入口相同的恢复、汉化和启动流程；它不是普通的 Claude 启动快捷方式，也不是使用本项目的前提。请勿用它替换日常只启动 Claude 的快捷方式。支持 Unicode 路径，默认保留原图标和 `.before-claude-chinese.bak`；可添加 `--no-backup` 跳过新备份，该选项不会删除已有备份。保留工具目录，移动后需重新创建。
+如果官方更新已部署新版但注册失败，先退出 Claude，再单独运行 `node cli.js repair`。此命令查找同包族新版并验证身份、原始主程序签名和资源归档。必要时会下载并验证官网完整 MSIX；完整包恢复目前支持联网的 Windows x64。若找不到可信的新版，请使用官网完整安装器。
 
-显式自愈入口运行时会显示检查窗口，失败时保留错误信息。Windows 官网包仅缺少汉化写权限时，此工具入口不请求提权：确认没有未完成事务、双归档可读且与主程序完整性记录一致后，先打开现有客户端并提示安装汉化；归档损坏、文件缺失或其他汉化错误仍会停止。请在退出客户端后通过安装脚本或 CLI 完成汉化，必要时以管理员身份运行。
+维护核对了 6.6395.0 的官方日志与实际资源，包含本地 MCP 的托管策略、SSH/WSL 文件下载和更新提示。对比 5.11492.5，官方 Shell 新增 58 项，Ion 新增 2,321 项。本轮补译 58 项 Shell、110 项 Ion 文案及 20 篇第三方推理折叠说明，并为新版模块重新绑定 58 处限定文案。旧版回归快照仍有兼容用途。相同英文按词条 ID 和组件上下文分别审查。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-6395-0) [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
-每用户共享锁覆盖安装、还原、检测、注册、汉化和启动请求，避免重复点击造成并发恢复。正常返回或报错会释放锁；强制结束启动器或断电后可能保留锁，工具不会自动抢占，请按错误提示确认没有其他安装或启动操作后再清理。完成 Windows 注册仍可能停止旧包关联的后台进程，因此请在任务结束后使用恢复入口。
-
-维护时核查[官方产品更新日志](https://support.claude.com/en/articles/12138966-release-notes)、桌面发布接口、[配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog)与可取得的应用内日志，再对照实际安装包做增量翻译、不同位置的右键菜单、归档生命周期与全局一致性检查，并同步文档。5.11492.5 的官方桌面接口备注为 `Production Release - No Notes`；配置日志注明本版无配置项变化。本轮与 5.11492.2 对比，Shell、Ion 和动态英文词库均无增删或同 ID 改写；147 处帮助引用中的 1 篇正文新增计算机级托管设置覆盖 Auto 模式审核模型的说明，其余 144 篇未变。已更新当前源码指纹，保留旧译文兼容，并避免重复存储完整热修订快照。相同英文按词条 ID 和组件语境分别审核，不作全局同义替换。
-
-v1.2.100 补查第三方推理配置、导入导出、Unified/Code 会话、连接器与模型菜单、文件和侧栏菜单、工具运行状态，新增 1,226 项词条并修正 66 项旧译文。`npm run audit:ui` 绑定本轮实际审核的 54 个模块、4,128 个消息与原始源码指纹，检查既有漏译、未审核的英文回退及源码变化；CI 也会检查快照。界面硬编码文案使用限定模块与源码上下文的补丁，不改用户内容或配置值。此范围不等于整个客户端全部功能或所有账号下发文案；运行时模型说明仍需在实际界面核对。`Ultracode` 等功能名称有意保留英文。
+`npm run audit:ui` 核查 51 个模块、3,945 条界面消息与原始源码指纹，覆盖第三方推理、会话、连接器、文件和侧栏等已检查的界面。账号、模型与服务端下发文案取决于运行环境。诸如 `Ultracode` 的功能名保留英文。
 
 ## 🚀 快速开始
 
-### 方式一：一键脚本（推荐日常使用）
+### 方式一：安装脚本
 
 #### Windows
-* **一键安装**：右键以管理员身份运行 [`install.bat`](install.bat)
-* **显式自愈并启动**：双击运行 [`launch.bat`](launch.bat)（主动选择汉化工具入口时使用，按需恢复、汉化后启动）
-* **恢复英文**：双击运行 [`uninstall.bat`](uninstall.bat)
 
-恢复后如需保持英文，请使用系统原入口或普通客户端快捷方式；再次运行自愈工具会按需重新汉化。若曾用工具入口覆盖原 `.lnk`，可用保留的备份还原，或从系统应用身份重新创建普通快捷方式。
+直接从 Windows 搜索或普通快捷方式打开、更新官方客户端。用于资源测试时，先将兼容的客户端文件逐文件复制到独立目录，再运行 `install.bat --path "<副本目录>"`。还原该副本使用 `uninstall.bat --path "<副本目录>"`。副本测试只验证资源写入与还原。
 
 #### macOS / Linux
 * **一键安装**：在终端运行 `./install.sh`
@@ -118,19 +109,19 @@ node cli.js status
 # 2. 执行前置环境全维健康预检 (Node 弹性版本、客户端安装、进程锁定与权限)
 node cli.js check
 
-# 3. 一键安装汉化（自动执行前置预检、安全释放文件锁并完成增量挂载）
+# 3. 对可写散装布局安装汉化（Windows 独立副本加 --path）
 node cli.js install
 
 # 4. 可选：监听资源与词库变化（运行中不强制退出客户端；ASAR 更新后需重启）
 node cli.js watch
 
-# 5. 自愈启动（自动检测版本覆盖并在需要时秒级自愈挂载后拉起客户端）
+# 5. 启动客户端（Windows 注册包通过系统入口启动）
 node cli.js launch
 
 # 6. 执行上游版本文本漂移分析 (Drift Detection)
 node cli.js drift
 
-# 7. 一键还原回官方英文原版
+# 7. 还原兼容的汉化目标
 node cli.js restore
 ```
 
@@ -171,16 +162,16 @@ npm run audit:deps
 
 ---
 
-安装后运行 `npm run verify:client` 可只读核对真实 ASAR、主程序、原版备份、英文原始字节和熔丝状态。此命令不能替代真实界面检查。
+对已应用汉化的 Windows 独立副本，运行 `npm run verify:client -- "<副本目录>"` 可核对 ASAR、主程序、备份、英文原始字节和熔丝状态。
 
 ## 🔄 自动化演进闭环 (Self-Evolving Pipeline)
 
 ```mermaid
 flowchart LR
-    A[官方新版本推送] -->|提取 Diff| B[漂移分析器 scan:drift]
-    B -->|新增增量词条| C[AI 增量翻译与 ICU 校验]
-    C -->|验证通过词库| D[双层智能注入引擎]
-    D -->|自愈式挂载| E[客户端中文界面与保留英文回退]
+    A[官方新版本] --> N[Windows 注册包按官方流程更新和启动]
+    A --> B[对照实际包与官方更新日志]
+    B --> C[审查新增及失效词条，校验 ICU 与术语]
+    C --> D[在独立副本验证资源写入和还原]
 ```
 
 ---
@@ -194,9 +185,9 @@ claude-chinese/
 │       ├── ci.yml                    # 全平台 (Windows/macOS/Linux) CI 自动化测试流水线
 │       └── upstream-matrix-sentinel.yml # 上游事前兼容矩阵与混淆变异碰撞每日巡检哨兵
 ├── dict/                             # 核心汉化词库
-│   ├── zh-CN.json                    # Shell 壳层汉化词典 (1,664 词条)
-│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典 (33,472 词条)
-│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典 (363 篇)
+│   ├── zh-CN.json                    # Shell 壳层汉化词典
+│   ├── ion-zh-CN.json                # Web/Ion 核心 UI 词典
+│   ├── long-docs-zh-CN.json          # 全景折叠长文档与企业级深度说明词典
 │   ├── dynamic-zh-CN.json            # 动态特性与推理占位符词典
 │   └── scoped-ui-zh-CN.json          # 限定模块与源码上下文的界面文案补丁
 ├── core/                             # 核心注入与架构引擎
@@ -221,7 +212,7 @@ claude-chinese/
 ├── docs/assets/sponsoring/           # 赞助与社区资产
 ├── cli.js                            # 跨平台生命周期命令行管理入口
 ├── install.bat / install.sh          # 一键安装脚本
-├── launch.bat                        # 自愈启动脚本
+├── launch.bat                        # 客户端启动脚本
 ├── uninstall.bat / uninstall.sh      # 一键还原脚本
 ├── package.json                      # 项目配置与 npm scripts
 ├── LICENSE                           # MIT 开源许可证

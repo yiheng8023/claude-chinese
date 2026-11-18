@@ -8,6 +8,7 @@ const { getClaudeInstallation } = require('./msix-detector');
 const { isClaudeRunning, closeClaude } = require('./patcher');
 const { canWriteDirectory } = require('./permissions');
 const { assertReadableArchives } = require('./asar-transaction');
+const { localizationTargetError } = require('./localization-target');
 
 const MIN_NODE_VERSION = 20;
 
@@ -38,15 +39,17 @@ function runPreflightCheck(options = {}) {
 
   // 2. 客户端安装与资源路径自动探测
   const info = getClaudeInstallation(options.customPath);
-  const installPassed = !!(info.installPath && info.resourcesPath && info.distribution !== 'store');
+  const targetError = localizationTargetError(info);
+  const installPassed = !!(info.installPath && info.resourcesPath && !targetError);
   checks.push({
     id: 'client-installation',
     name: 'Claude 客户端安装状态',
-    detail: installPassed ? `${info.type.toUpperCase()} 安装 (版本: ${info.version || '未知'})` : info.distribution === 'store' ? '暂不支持 Microsoft Store 版本，请使用官网安装器' : (info.error || '未检测到客户端安装路径'),
+    detail: installPassed ? `${info.type.toUpperCase()} 安装 (版本: ${info.version || '未知'})` : (targetError || info.error || '未检测到客户端安装路径'),
     passed: installPassed,
     critical: true
   });
   if (!installPassed) allPassed = false;
+  if (targetError) return { allPassed, info, checks };
 
   if (installPassed) {
     let archiveError = null;
@@ -56,11 +59,11 @@ function runPreflightCheck(options = {}) {
   }
 
   // 3. 运行中进程占用与文件锁释放探测
-  const isRunning = isClaudeRunning();
+  const isRunning = installPassed && isClaudeRunning(info);
   let processDetail = '已就绪 (未运行，无文件锁占用)';
   if (isRunning) {
     if (options.autoClose === true) {
-      const closed = closeClaude();
+      const closed = closeClaude(info);
       processDetail = closed ? '已就绪 (检测到正在运行，已安全退出释放文件占用)' : '正在运行 (请手动退出客户端)';
     } else {
       processDetail = '运行中 (安装器将在执行前提示您保存工作并确认退出)';

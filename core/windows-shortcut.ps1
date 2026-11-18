@@ -55,7 +55,7 @@ public static class ClaudeShortcut {
         } finally { Marshal.FinalReleaseComObject(instance); }
     }
 
-    public static string[] Save(string output, string target, string directory, bool backupEnabled) {
+    public static string[] Save(string output, string target, string directory, string arguments, bool backupEnabled) {
         object instance = new ClaudeShellLink();
         try {
             var file = (IPersistFile)instance;
@@ -78,18 +78,18 @@ public static class ClaudeShortcut {
                 }
             }
             link.SetPath(target);
-            link.SetArguments("");
+            link.SetArguments(arguments);
             link.SetWorkingDirectory(directory);
-            link.SetDescription("Claude 汉化工具：显式恢复更新、按需汉化并启动");
+            link.SetDescription("启动 Claude");
             file.Save(output, true);
         } finally { Marshal.FinalReleaseComObject(instance); }
         var saved = Read(output);
-        if (!String.Equals(saved[0], target, StringComparison.OrdinalIgnoreCase) || saved[1] != "" ||
+        if (!String.Equals(saved[0], target, StringComparison.OrdinalIgnoreCase) || saved[1] != arguments ||
             !String.Equals(saved[2], directory, StringComparison.OrdinalIgnoreCase))
             throw new IOException("快捷方式保存后校验失败。");
         return saved;
     }
 }
 '@
-$saved = [ClaudeShortcut]::Save($request.output, $request.target, $request.root, $request.backup -ne $false)
-@{output=$request.output;target=$saved[0];workingDirectory=$saved[2];iconPath=$saved[3];iconIndex=$saved[4]} | ConvertTo-Json -Compress
+$saved = [ClaudeShortcut]::Save($request.output, $request.target, $request.root, [string]$request.args, $request.backup -ne $false)
+@{output=$request.output;target=$saved[0];arguments=$saved[1];workingDirectory=$saved[2];iconPath=$saved[3];iconIndex=$saved[4]} | ConvertTo-Json -Compress

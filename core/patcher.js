@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const asar = require('@electron/asar');
 const { patchShellLocale } = require('./shell-locale');
 const { applyAsarTransaction, restoreAsarTransaction } = require('./asar-transaction');
+const { localizationTargetError } = require('./localization-target');
 const { localizationFingerprint } = require('./localization-state');
 const { validatePair, validateSyntax } = require('../tools/icu-validator');
 const { scopedUiPatches, matchesFile } = require('./scoped-ui');
@@ -149,10 +150,20 @@ function safeTest(pattern, text) {
   return result;
 }
 
-function isClaudeRunning() {
+function targetWindowsProcesses(info, action) {
+  const exePath = path.join(path.dirname(info.resourcesPath), 'Claude.exe');
+  const resolved = fs.existsSync(exePath) ? fs.realpathSync.native(exePath) : exePath;
+  return execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+    `Get-Process -Name Claude -ErrorAction SilentlyContinue | Where-Object { $_.Path -ieq $env:CLAUDE_CN_TARGET_EXE } | ${action}`], {
+    encoding: 'utf8', windowsHide: true, env: { ...process.env, CLAUDE_CN_TARGET_EXE: resolved }
+  }).trim();
+}
+
+function isClaudeRunning(info) {
   const platform = process.platform;
   try {
     if (platform === 'win32') {
+      if (info?.resourcesPath) return targetWindowsProcesses(info, 'Select-Object -ExpandProperty Id').length > 0;
       const stdout = execSync('tasklist /FI "IMAGENAME eq Claude.exe" /NH', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
       return stdout.toLowerCase().includes('claude.exe');
     } else {
@@ -177,7 +188,7 @@ function isProtectedEnvironment() {
   );
 }
 
-function closeClaude() {
+function closeClaude(info) {
   if (isProtectedEnvironment()) {
     console.log('🛡️ [安全保护拦截] 检测到当前运行于智能体会话或受保护环境中，已严正拦截强杀宿主进程，防止会话与客户端崩溃！');
     return false;
@@ -185,7 +196,8 @@ function closeClaude() {
   const platform = process.platform;
   try {
     if (platform === 'win32') {
-      execSync('taskkill /F /IM Claude.exe', { stdio: 'ignore' });
+      if (info?.resourcesPath) targetWindowsProcesses(info, 'Stop-Process -ErrorAction Stop');
+      else execSync('taskkill /F /IM Claude.exe', { stdio: 'ignore' });
     } else if (platform === 'darwin') {
       execSync('killall Claude || pkill -i Claude || true', { stdio: 'ignore' });
     } else {
@@ -660,11 +672,12 @@ function applyPatch(options = {}) {
 
 function applyPatchUnlocked(options) {
   const info = getClaudeInstallation(options.customPath);
-  if (!options.customPath && isClaudeRunning()) {
-    if (!options.autoClose || !closeClaude() || isClaudeRunning()) return { success: false, error: '客户端仍在运行，请保存工作并退出后重试。' };
+  const targetError = localizationTargetError(info);
+  if (targetError) return { success: false, code: 'PROTECTED_INSTALLATION', error: targetError };
+  if (info.resourcesPath && (info.platform === 'win32' || !options.customPath) && isClaudeRunning(info)) {
+    if (!options.autoClose || !closeClaude(info) || isClaudeRunning(info)) return { success: false, error: '目标客户端仍在运行，请保存工作并退出后重试。' };
   }
   if (info.resourcesPath && fs.existsSync(path.join(info.resourcesPath, 'ion-dist.asar')) && !info.hasNativeChinese) {
-    if (info.distribution === 'store') return { success: false, error: '暂不支持 Microsoft Store 分发版本，请使用官网安装器。' };
     if (!fs.existsSync(path.join(path.dirname(info.resourcesPath), 'claude.exe'))) return { success: false, error: '此 ASAR 布局缺少可验证的 Windows 主程序，暂不支持注入；其他平台仅保留散装资源布局支持。' };
     if (!canWriteDirectory(info.resourcesPath) || !canWriteDirectory(path.dirname(info.resourcesPath))) {
       if (options.allowElevation === false) return { success: false, code: 'WRITE_PERMISSION_REQUIRED', error: '目录写权限不足，请以管理员身份运行安装脚本。' };
@@ -697,8 +710,8 @@ function applyPatchDirect(options = {}) {
 
   // 2. 检查进程占用，若显式要求 autoClose 则安全关闭释放文件锁
   let processAutoClosed = false;
-  if (options.autoClose === true && isClaudeRunning()) {
-    if (!closeClaude() || isClaudeRunning()) return { success: false, error: '客户端仍在运行，请先保存工作并退出。' };
+  if (options.autoClose === true && isClaudeRunning(info)) {
+    if (!closeClaude(info) || isClaudeRunning(info)) return { success: false, error: '目标客户端仍在运行，请先保存工作并退出。' };
     processAutoClosed = true;
   }
 
@@ -1016,7 +1029,7 @@ function applyPatchDirect(options = {}) {
 
     const warnings = [];
     for (const patch of JS_LITERAL_PATCHES) {
-      if (patch.file && !scopedFiles.has(patch.file)) continue;
+      if (patch.files && !patch.files.some(file => scopedFiles.has(file))) continue;
       if (patchHits[patch.id] === 0 && !patch.intlKey) {
         warnings.push(`[硬编码补丁未命中] ${patch.id} (${patch.description}): 上游代码结构可能已发生变更`);
       }
@@ -1107,12 +1120,13 @@ function restorePatch(options = {}) {
 
 function restorePatchUnlocked(options) {
   const info = getClaudeInstallation(options.customPath);
-  if (!options.customPath && isClaudeRunning()) {
-    if (!options.autoClose || !closeClaude() || isClaudeRunning()) return { success: false, error: '客户端仍在运行，请保存工作并退出后重试。' };
+  const targetError = localizationTargetError(info);
+  if (targetError) return { success: false, code: 'PROTECTED_INSTALLATION', error: targetError };
+  if (info.resourcesPath && (info.platform === 'win32' || !options.customPath) && isClaudeRunning(info)) {
+    if (!options.autoClose || !closeClaude(info) || isClaudeRunning(info)) return { success: false, error: '目标客户端仍在运行，请保存工作并退出后重试。' };
   }
 
   if (info.resourcesPath && fs.existsSync(path.join(info.resourcesPath, 'ion-dist.asar'))) {
-    if (info.distribution === 'store') return { success: false, error: '暂不支持修改 Microsoft Store 分发版本。' };
     if (!canWriteDirectory(info.resourcesPath) || !canWriteDirectory(path.dirname(info.resourcesPath))) {
       if (!grantPermissions(info.resourcesPath)) return { success: false, error: '目录写权限不足，请以管理员身份运行还原脚本。' };
     }

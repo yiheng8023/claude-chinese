@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const vm = require('node:vm');
 const { patchJsFiles, packAsarSync, JS_LITERAL_PATCHES } = require('../core/patcher');
-const { auditInferenceHelp } = require('../tools/audit-inference-help');
+const { auditInferenceHelp, resolveFixtureDocuments } = require('../tools/audit-inference-help');
 const zh = require('../dict/ion-zh-CN.json');
 const translatedDocs = require('../dict/long-docs-zh-CN.json');
 const fixture = require('./fixtures/inference-help-4.4212.json');
@@ -12,6 +12,7 @@ const currentFixture = require('./fixtures/inference-help-4.16336.json');
 const latestFixture = require('./fixtures/inference-help-4.23118.json');
 const v5Fixture = require('./fixtures/inference-help-5.1231.json');
 const v5LatestFixture = require('./fixtures/inference-help-5.11492.json');
+const v6Fixture = require('./fixtures/inference-help-6.6395.json');
 
 function protectedParts(text) {
   const blocks = [...text.matchAll(/```[^\n]*\n[\s\S]*?```/g)].map(m => m[0]);
@@ -56,6 +57,8 @@ try {
   assert.equal(v5Fixture.documents.length, 139);
   assert.equal(v5LatestFixture.helpReferences, 147);
   assert.equal(v5LatestFixture.documents.length, 145);
+  assert.equal(v6Fixture.helpReferences, 156);
+  assert.equal(resolveFixtureDocuments(v6Fixture).length, 152);
   // Identical English labels can have different meanings in distinct components.
   assert.equal(zh['IG5n0mukdA'], '键');
   assert.equal(zh['EcglP9ZtIw'], '密钥');
@@ -64,7 +67,7 @@ try {
   assert.equal(zh['IxbsWX4wj4'], '添加标头');
   assert.equal(zh['79IWiafC91'], '标头');
   assert.equal(zh['vUjsX7qaCx'], '页眉');
-  for (const english of new Set([...fixture.documents, ...currentFixture.documents, ...latestFixture.documents, ...v5Fixture.documents, ...v5LatestFixture.documents])) {
+  for (const english of new Set([fixture, currentFixture, latestFixture, v5Fixture, v5LatestFixture, v6Fixture].flatMap(resolveFixtureDocuments))) {
     assert(Object.hasOwn(translatedDocs, english), `Missing complete help body: ${english.split('\n')[0]}`);
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');
@@ -83,5 +86,5 @@ try {
   fs.writeFileSync(schema, '// Upstream help changed after the recorded review.\n');
   packAsarSync(changedSource, path.join(resources, 'ion-dist.asar'));
   assert.throws(() => auditInferenceHelp({ resourcesPath: resources, version: '4.4213.0' }), /源码.*不一致/, 'Changed installed help must require a new review instead of passing an old snapshot');
-  console.log('PASS: scoped labels and reviewed 4.x/5.x inference help render Chinese with code and links preserved');
+  console.log('PASS: scoped labels and reviewed 4.x–6.x inference help render Chinese with code and links preserved');
 } finally { fs.rmSync(root, { recursive: true, force: true }); }

@@ -5,7 +5,7 @@ const path = require('node:path');
 const acorn = require('acorn');
 const { patchJsFiles, JS_LITERAL_PATCHES } = require('../core/patcher');
 const records = require('../dict/scoped-ui-zh-CN.json');
-const { scopedUiPatches } = require('../core/scoped-ui');
+const { scopedUiPatches, scopedSourceFiles } = require('../core/scoped-ui');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-scoped-ui-'));
 try {
   for (const [index, record] of records.entries()) {
@@ -16,12 +16,18 @@ try {
       : `const preset={${record.before}};`;
     const source = `${before}\nconst authored=${JSON.stringify(record.english)};`;
     fs.writeFileSync(file, source);
+    for (const extra of scopedSourceFiles(record).slice(1)) {
+      fs.writeFileSync(path.join(dir, path.posix.basename(extra)), source);
+    }
     fs.writeFileSync(path.join(dir, 'unrelated.js'), source);
     const hits = Object.fromEntries(JS_LITERAL_PATCHES.map(p => [p.id, 0]));
     const result = patchJsFiles(dir, hits, { isAsarMode: true });
     assert.equal(result.error, null);
     const translated = fs.readFileSync(file, 'utf8');
     assert(translated.includes(record.after), record.english);
+    for (const extra of scopedSourceFiles(record).slice(1)) {
+      assert.equal(fs.readFileSync(path.join(dir, path.posix.basename(extra)), 'utf8'), translated);
+    }
     assert(translated.includes(`const authored=${JSON.stringify(record.english)};`), 'Runtime/user string remains unchanged');
     assert.equal(fs.readFileSync(path.join(dir, 'unrelated.js'), 'utf8'), source, 'Same literal in another module remains unchanged');
     acorn.parse(translated, { ecmaVersion: 'latest', sourceType: 'module' });

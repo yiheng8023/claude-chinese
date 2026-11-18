@@ -6,6 +6,7 @@
 const { getClaudeInstallation } = require('./core/msix-detector');
 const { applyPatch, restorePatch, isClaudeRunning, closeClaude } = require('./core/patcher');
 const { runPreflightCheck } = require('./core/preflight');
+const { localizationTargetError } = require('./core/localization-target');
 const { runDriftDetection } = require('./tools/drift-detector');
 const { execSync, spawn } = require('child_process');
 const path = require('path');
@@ -63,11 +64,13 @@ Claude 桌面客户端轻量级自愈型中文汉化工具包 (claude-chinese)
 可用命令:
   status         检查 Claude 客户端安装与汉化补丁状态
   check          执行前置环境全维预检 (Node 弹性版本、客户端安装、进程锁定与权限)
-  install        注入中文汉化补丁 (官网 Windows 安装 / 既有 macOS、Linux 散装布局)
+  install        对兼容的独立副本或散装资源安装汉化
   restore        还原为官方英文原版
+  repair         修复 Windows 官网客户端的待注册更新，完成后可用原入口启动
   drift          执行上游版本文本漂移分析 (Drift Detection)
-  launch         自愈式启动 Claude (检测并自动补齐汉化后启动)
-  shortcut       可选：创建汉化工具快捷方式 (--output <.lnk 文件> [--no-backup])
+  launch         启动 Claude（Windows 注册包通过系统入口打开）
+  shortcut       可选：创建 Windows 注册应用快捷方式 (--output <.lnk 文件> [--no-backup])
+  assist         启动 Windows 中文界面辅助（从任务栏托盘暂停或退出）
   watch          启动热重载与自愈守护进程 (监听字典与版本变化)
   help           显示此帮助信息
 `);
@@ -105,7 +108,7 @@ function handleStatus() {
   try { require('./core/asar-transaction').assertReadableArchives(info.resourcesPath); }
   catch (error) {
     console.error(`❌ 客户端资源异常: ${error.message}`);
-    console.error('若系统已部署新版但仍登记旧版，可运行 launch.bat 检查待注册更新。');
+    if (info.distribution === 'website') console.error('若系统已部署新版但仍登记旧版，可运行 node cli.js repair 恢复官方启动。');
     process.exitCode = 1;
     return;
   }
@@ -124,8 +127,12 @@ function handleStatus() {
     if (info.needsUpdate) console.log('⚠️ 汉化工具或词库已更新，请退出客户端后重新安装汉化。');
   } else {
     console.log('\n🟡 汉化状态: 未汉化 / 原版英文 (Original)');
-    if (info.patchStale) console.log('⚠️ 已有补丁记录与当前文件不符，可能被官方更新覆盖，需重新安装汉化。');
-    console.log('💡 运行 "node cli.js install" 或双击 "install.bat" 即可一键汉化。');
+    const targetError = localizationTargetError(info);
+    if (targetError) console.log(`💡 ${targetError}`);
+    else {
+      if (info.patchStale) console.log('⚠️ 已有补丁记录与当前文件不符，请核对目标版本后重新安装汉化。');
+      console.log('💡 运行 "node cli.js install" 或双击 "install.bat" 安装汉化。');
+    }
   }
 }
 
@@ -146,7 +153,8 @@ function handleInstall() {
     return;
   }
 
-  if (isClaudeRunning()) {
+  const info = preflight.info;
+  if (isClaudeRunning(info)) {
     const shouldClose = confirmCloseClient('Claude');
     if (!shouldClose) {
       console.log('\nℹ️ 已安全取消安装。请在保存工作并退出 Claude 客户端后重新执行。');
@@ -154,7 +162,7 @@ function handleInstall() {
       return;
     }
     console.log('\n🔄 正在安全退出客户端以释放资源写入锁...');
-    if (!closeClaude() || isClaudeRunning()) {
+    if (!closeClaude(info) || isClaudeRunning(info)) {
       console.error('❌ 客户端仍在运行，未执行安装。请保存工作后手动退出。');
       process.exitCode = 1;
       return;
@@ -188,13 +196,19 @@ function handleRestore() {
   console.log('=== 正在还原官方英文原版 ===\n');
   const customPath = getCustomPath();
   const installation = getClaudeInstallation(customPath);
+  const targetError = localizationTargetError(installation);
+  if (targetError) {
+    console.error(`❌ ${targetError} 旧补丁需要通过官方完整安装器恢复。`);
+    process.exitCode = 1;
+    return;
+  }
   if (!installation.resourcesPath) {
     console.error(`❌ 还原失败: ${installation.error || '未找到客户端资源目录。'}`);
     process.exitCode = 1;
     return;
   }
 
-  if (isClaudeRunning()) {
+  if (isClaudeRunning(installation)) {
     const shouldClose = confirmCloseClient('Claude');
     if (!shouldClose) {
       console.log('\nℹ️ 已安全取消还原。请在保存工作并退出 Claude 客户端后重新执行。');
@@ -202,7 +216,7 @@ function handleRestore() {
       return;
     }
     console.log('\n🔄 正在安全退出客户端以释放资源写入锁...');
-    if (!closeClaude() || isClaudeRunning()) {
+    if (!closeClaude(installation) || isClaudeRunning(installation)) {
       console.error('❌ 客户端仍在运行，未执行还原。请保存工作后手动退出。');
       process.exitCode = 1;
       return;
@@ -228,6 +242,52 @@ function handleDrift() {
   console.log(`🗑️ 废弃词条: ${report.staleKeysCount}`);
 }
 
+function verifyRegisteredWindowsClient(info) {
+  const { assertNoPendingTransaction, assertReadableArchives, verifyIntegrity } = require('./core/asar-transaction');
+  if (info.type !== 'msix' || !info.resourcesPath || !info.packageFamilyName) throw new Error('客户端安装状态已变化。');
+  assertNoPendingTransaction(info.resourcesPath);
+  const exe = path.join(path.dirname(info.resourcesPath), 'claude.exe');
+  for (const file of [path.join(info.resourcesPath, 'app.asar'), path.join(info.resourcesPath, 'ion-dist.asar'), exe]) {
+    if (!fs.statSync(file, { throwIfNoEntry: false })?.isFile()) throw new Error('客户端文件不完整。');
+  }
+  assertReadableArchives(info.resourcesPath);
+  verifyIntegrity(info.resourcesPath, exe);
+}
+
+function recoverOfficialUpdate(info) {
+  return require('./core/windows-package').recoverPendingUpdate(info, {
+    onProgress: message => console.log(`ℹ️ ${message}`)
+  });
+}
+
+function handleRepair() {
+  if (process.platform !== 'win32' || getCustomPath()) {
+    console.error('❌ repair 仅用于 Windows 当前用户注册的官网 Claude 安装。');
+    process.exitCode = 1;
+    return;
+  }
+
+  try {
+    require('./core/launch-lock').withLaunchLock(() => {
+      const before = getClaudeInstallation();
+      if (before.type !== 'msix' || !/^Claude_[a-z0-9]{13}$/.test(before.packageFamilyName || '') || !before.resourcesPath) {
+        throw new Error('未找到受支持的 Windows 官网安装。请使用原分发渠道修复。');
+      }
+      require('./core/asar-transaction').assertNoPendingTransaction(before.resourcesPath);
+      const after = recoverOfficialUpdate(before);
+      verifyRegisteredWindowsClient(after);
+      if (after.installPath !== before.installPath) {
+        console.log(`✅ 官方客户端 ${after.version} 已恢复，可通过 Windows 搜索或普通快捷方式打开。`);
+      } else {
+        console.log('✅ 当前客户端归档及主程序完整性检查通过。');
+      }
+    });
+  } catch (error) {
+    console.error(`❌ 官方客户端修复失败: ${error.message}`);
+    process.exitCode = 1;
+  }
+}
+
 function handleLaunch() {
   if (process.platform === 'win32') {
     try { return require('./core/launch-lock').withLaunchLock(handleLaunchUnlocked); }
@@ -242,54 +302,46 @@ function handleLaunch() {
 
 function handleLaunchUnlocked() {
   const customPath = getCustomPath();
-  let info = getClaudeInstallation(customPath);
-  if (!customPath) {
-    try { info = require('./core/windows-package').recoverPendingUpdate(info, {onProgress:message=>console.log(`ℹ️ ${message}`)}); }
+  const info = getClaudeInstallation(customPath);
+  if (info.platform === 'win32' && info.type === 'msix') {
+    try { verifyRegisteredWindowsClient(info); }
     catch (error) {
-      console.error(`❌ 启动恢复失败: ${error.message}`);
+      console.error(`❌ 官方客户端状态异常: ${error.message}`);
+      if (info.distribution === 'website') console.error('如更新未完成，可单独运行 node cli.js repair，或通过官网安装器修复。');
       process.exitCode = 1;
       return;
     }
+    const target = require('./core/windows-shortcut').registeredAppTarget(info.packageFamilyName);
+    console.log('🚀 正在通过 Windows 应用入口启动 Claude...');
+    execSync(`start ${target}`, { stdio: 'ignore' });
+    return;
   }
 
+  const targetError = localizationTargetError(info);
+  if (targetError) {
+    console.error(`❌ ${targetError}`);
+    process.exitCode = 1;
+    return;
+  }
   if (!info.isPatched || info.needsUpdate) {
     console.log('⚡ 检测到汉化尚未挂载，正在执行静默自愈注入...');
-    if (isClaudeRunning()) {
+    if (isClaudeRunning(info)) {
       console.error('❌ 客户端正在运行，请先保存工作并退出，再运行自愈启动。');
       process.exitCode = 1;
       return;
     }
-    // This explicitly selected toolkit launcher can open an intact client
-    // without requesting elevation solely for localization.
     const result = applyPatch({ customPath, allowElevation: false });
     if (!result.success) {
-      if (process.platform !== 'win32' || customPath || info.type !== 'msix' || result.code !== 'WRITE_PERMISSION_REQUIRED') {
-        console.error(`❌ 汉化失败，未继续启动: ${result.error}`);
-        process.exitCode = 1;
-        return;
-      }
-      console.warn('⚠️ 本次未更新汉化：安装目录需要管理员写权限。先启动现有客户端；请退出后以管理员身份运行 install.bat 完成汉化。');
+      console.error(`❌ 汉化失败，未继续启动: ${result.error}`);
+      process.exitCode = 1;
+      return;
     }
-  }
-
-  if (process.platform === 'win32' && info.type === 'msix') {
-    info = getClaudeInstallation(customPath);
-    const { assertNoPendingTransaction, assertReadableArchives, verifyIntegrity } = require('./core/asar-transaction');
-    if (info.type !== 'msix' || !info.resourcesPath || !info.packageFamilyName) throw new Error('客户端安装状态已变化，未继续启动。');
-    assertNoPendingTransaction(info.resourcesPath);
-    for (const file of ['app.asar', 'ion-dist.asar', '../claude.exe']) {
-      if (!fs.statSync(path.join(info.resourcesPath, file)).isFile()) throw new Error('客户端文件不完整，未继续启动。');
-    }
-    assertReadableArchives(info.resourcesPath);
-    verifyIntegrity(info.resourcesPath, path.join(path.dirname(info.resourcesPath), 'claude.exe'));
   }
 
   console.log('🚀 正在启动 Claude 客户端...');
 
   if (process.platform === 'win32') {
-    if (info.type === 'msix' && info.packageFamilyName) {
-      execSync(`start shell:AppsFolder\\${info.packageFamilyName}!Claude`, { stdio: 'ignore' });
-    } else if (info.installPath) {
+    if (info.installPath) {
       const exePath = path.join(info.installPath, 'Claude.exe');
       if (fs.existsSync(exePath)) {
         spawn(exePath, [], { detached: true, stdio: 'ignore' }).unref();
@@ -317,10 +369,12 @@ function handleShortcut() {
     return;
   }
   try {
-    const result = require('./core/windows-shortcut').createLaunchShortcut(args[index + 1], { backup: !args.includes('--no-backup') });
-    console.log(`✅ 已创建汉化工具快捷方式：${result.output}`);
-    console.log('这是可选的汉化工具入口，运行时可能执行更新恢复和汉化。');
-    console.log('请保留当前工具目录；移动目录后需重新创建快捷方式。');
+    const info = getClaudeInstallation();
+    if (info.type !== 'msix' || !info.packageFamilyName) throw new Error('未找到已注册的 Windows Claude 应用。');
+    const result = require('./core/windows-shortcut').createLaunchShortcut(args[index + 1], {
+      backup: !args.includes('--no-backup'), packageFamilyName: info.packageFamilyName
+    });
+    console.log(`✅ 已创建 Claude 原生启动快捷方式：${result.output}`);
   } catch (error) {
     console.error(`❌ 创建快捷方式失败: ${error.message}`);
     process.exitCode = 1;
@@ -331,6 +385,12 @@ function handleWatch() {
   console.log('=== 启动 Claude 中文汉化热重载与自愈守护进程 (Hot-Reload Daemon) ===\n');
   const customPath = getCustomPath();
   const info = getClaudeInstallation(customPath);
+  const targetError = localizationTargetError(info);
+  if (targetError) {
+    console.error(`❌ ${targetError}`);
+    process.exitCode = 1;
+    return;
+  }
 
   if (!info.installPath || !info.resourcesPath) {
     console.error('❌ 未找到 Claude 客户端安装路径。请确保已安装 Claude Desktop。');
@@ -341,7 +401,7 @@ function handleWatch() {
   // 1. 初次静默自愈注入
   if (!info.isPatched || info.needsUpdate) {
     console.log('⚡ 检测到当前未安装汉化，正在执行初始热注入...');
-    if (isClaudeRunning()) {
+    if (isClaudeRunning(info)) {
       console.error('❌ 客户端正在运行，请先保存工作并退出，再启动监听。');
       process.exitCode = 1;
       return;
@@ -359,7 +419,7 @@ function handleWatch() {
   console.log(`📁 监听客户端资源: ${info.resourcesPath}`);
   console.log('💡 守护特性已激活:');
   console.log('   1. 监听词库与当前资源目录；客户端运行时仅提示，不强制退出。');
-  console.log('   2. ASAR 更新后请重启；官方安装路径换版后，请重新运行 launch 或 watch。\n');
+  console.log('   2. 独立副本的 ASAR 变更后请重启。\n');
   console.log('👀 守护进程运行中 (按 Ctrl+C 退出)...');
 
   let debounceTimer = null;
@@ -430,7 +490,7 @@ function handleWatch() {
   const executePatch = (reason) => {
     const current = getClaudeInstallation(customPath);
     if (current.isPatched && !current.needsUpdate) return;
-    if (isClaudeRunning()) {
+    if (isClaudeRunning(current)) {
       console.warn('⚠️ 检测到更新，但客户端仍在运行；请退出后运行 install 或 launch，未强制关闭客户端。');
       return;
     }
@@ -521,6 +581,9 @@ switch (command) {
   case 'uninstall':
     handleRestore();
     break;
+  case 'repair':
+    handleRepair();
+    break;
   case 'drift':
   case 'scan':
     handleDrift();
@@ -531,6 +594,9 @@ switch (command) {
     break;
   case 'shortcut':
     handleShortcut();
+    break;
+  case 'assist':
+    require('./assist/windows/start.cjs').runCommand();
     break;
   case 'watch':
   case 'daemon':

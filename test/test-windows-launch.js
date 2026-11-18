@@ -196,13 +196,13 @@ if($length -eq 0){throw 'Could not inspect fixture path'}
       for(const file of ['windows-shortcut.js','windows-shortcut.ps1']) {
         fs.copyFileSync(path.join(__dirname,'../core',file),path.join(shortcutRoot,'core',file));
       }
-      fs.writeFileSync(path.join(shortcutRoot,'launch.bat'),'@echo off\r\n');
       const shortcut = path.join(shortcutRoot,'Claude 中文 😀 test.lnk');
-      const create = require(path.join(shortcutRoot,'core/windows-shortcut')).createLaunchShortcut;
+      const {createLaunchShortcut} = require(path.join(shortcutRoot,'core/windows-shortcut'));
+      const create = (output, options) => createLaunchShortcut(output, {packageFamilyName:'Claude_pzs8sxrjxfjjc', ...options});
       const saved = create(shortcut);
       assert.equal(saved.output,shortcut);
-      assert.equal(saved.target,fs.realpathSync.native(path.join(shortcutRoot,'launch.bat')));
-      assert.equal(saved.workingDirectory,fs.realpathSync.native(shortcutRoot));
+      assert.equal(saved.target.toLowerCase(), path.join(process.env.SystemRoot,'explorer.exe').toLowerCase());
+      assert.equal(saved.arguments, 'shell:AppsFolder\\Claude_pzs8sxrjxfjjc!Claude');
       const first = fs.readFileSync(shortcut);
       create(shortcut);
       assert.deepEqual(fs.readFileSync(shortcut+'.before-claude-chinese.bak'),first,'Preserve a replaced shortcut');

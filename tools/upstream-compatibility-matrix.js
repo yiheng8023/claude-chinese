@@ -48,7 +48,13 @@ function runCompatibilityMatrix(options = {}) {
   console.log('【阶段 1】JS 硬编码补丁拓扑命中率矩阵 (Patch Hit Rate Matrix)');
   const assetsDir = resDir ? path.join(resDir, 'ion-dist', 'assets', 'v1') : null;
   const asarPath = resDir ? path.join(resDir, 'ion-dist.asar') : null;
+  const scopedNames = new Set(JS_LITERAL_PATCHES.flatMap(patch => patch.files || []));
+  const scopedSource = new Map();
   let allJs = '';
+  function collectJs(file, content) {
+    allJs += content + '\n';
+    if (scopedNames.has(file)) scopedSource.set(file, content);
+  }
 
   if (asarPath && fs.existsSync(asarPath)) {
     const asar = require('@electron/asar');
@@ -57,14 +63,15 @@ function runCompatibilityMatrix(options = {}) {
       const jsEntries = list.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
       for (const entry of jsEntries) {
         try {
-          allJs += asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8') + '\n';
+          const file = entry.split(/[\\/]/).at(-1);
+          collectJs(file, asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8'));
         } catch (_) {}
       }
     } catch (_) {}
   } else if (assetsDir && fs.existsSync(assetsDir)) {
     const files = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js') && !f.endsWith('.orig.bak'));
     for (const f of files) {
-      allJs += fs.readFileSync(path.join(assetsDir, f), 'utf8') + '\n';
+      collectJs(f, fs.readFileSync(path.join(assetsDir, f), 'utf8'));
     }
   }
 
@@ -78,14 +85,19 @@ function runCompatibilityMatrix(options = {}) {
   let activeHits = 0;
   let standardizedCount = 0;
   let missingCount = 0;
+  let outOfScopeCount = 0;
 
   for (const patch of JS_LITERAL_PATCHES) {
     let status = 'UNKNOWN';
     if (allJs) {
-      if (patch.zhPattern && safeTest(patch.zhPattern, allJs)) {
+      const sources = patch.files ? patch.files.filter(file => scopedSource.has(file)).map(file => scopedSource.get(file)) : [allJs];
+      if (!sources.length) {
+        status = 'OUTSIDE_MODULE_SCOPE';
+        outOfScopeCount++;
+      } else if (sources.some(source => safeTest(patch.zhPattern, source))) {
         status = 'ACTIVE_PATCHED';
         activeHits++;
-      } else if (patch.enPattern && safeTest(patch.enPattern, allJs)) {
+      } else if (sources.some(source => safeTest(patch.enPattern, source))) {
         status = 'ACTIVE_READY';
         activeHits++;
       } else if (patch.intlKey && (patch.intlLayer === 'dynamic' ? dynamicEn[patch.intlKey] && dynamicZh[patch.intlKey] : ionEn[patch.intlKey] && ionZh[patch.intlKey])) {
@@ -215,7 +227,7 @@ function runCompatibilityMatrix(options = {}) {
 
   // 4. 统计与终审报告
   console.log('\n====================================================');
-  console.log(`兼容矩阵测试完成: 活跃补丁命中 ${activeHits} | 上游标准化 ${standardizedCount} | 脱靶未命中 ${missingCount}`);
+  console.log(`兼容矩阵测试完成: 活跃补丁命中 ${activeHits} | 上游标准化 ${standardizedCount} | 其他版本的限定模块 ${outOfScopeCount} | 脱靶未命中 ${missingCount}`);
   console.log(`综合健康判定: ${report.allPassed ? '🎉 100% PASS (事前兼容矩阵全线绿灯)' : '⚠️ 存在需要适配的变动'}`);
   console.log('====================================================\n');
 

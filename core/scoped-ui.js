@@ -2,10 +2,11 @@
 const path = require('node:path');
 const records = require('../dict/scoped-ui-zh-CN.json');
 const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const scopedSourceFiles = record => [record.file, ...(record.additionalFiles || [])];
 const scopedUiPatches = records.map((record, index) => ({
   id: `scoped-ui-${index + 1}`,
   description: `界面限定文案: ${record.english}`,
-  file: path.posix.basename(record.file),
+  files: scopedSourceFiles(record).map(file => path.posix.basename(file)),
   enGuard: record.before,
   enPattern: new RegExp(escape(record.before), 'g'),
   zhSnippet: () => record.after,
@@ -13,5 +14,5 @@ const scopedUiPatches = records.map((record, index) => ({
   zhPattern: new RegExp(escape(record.after), 'g'),
   restoreEn: () => record.before
 }));
-const matchesFile = (patch, file) => !patch.file || patch.file === file;
-module.exports = { scopedUiPatches, matchesFile };
+const matchesFile = (patch, file) => !patch.files || patch.files.includes(file);
+module.exports = { scopedUiPatches, matchesFile, scopedSourceFiles };
