@@ -15,7 +15,9 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. This checkout adapts the **6.6395.0** resources and leaves registered Windows packages in their official state.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. The verified Windows client version is **6.6395.0**.
+
+> **Windows 10 / 11 (x64)** users only need the [official Claude Desktop Win32 (Squirrel) installer](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect). Then follow the [Windows quick start](#windows) to add the localization.
 
 ---
 
@@ -53,9 +55,7 @@ This release supports Windows **6.6395.0**. In-place localization was verified o
    - ⚠️ **Engine Dependency Compatibility Note**:
      - **Recommended Baseline (Zero Warning)**: **Node.js ≥ 22.12.0** (Node 22 LTS or Node 24+). The underlying archive dependency `@electron/asar` declares `engines.node: ">=22.12.0"`, providing a native, zero-warning installation and execution environment.
      - **Compatibility Status**: CI includes **Node.js 20.x**, but dependency installation may emit `EBADENGINE` and may fail with `engine-strict=true`. Passing Node 20 CI does not establish compatibility with every earlier minor version. Prefer Node 22.12+.
-3. **Claude Desktop Installed**:
-   - Ensure the official Claude Desktop client is installed on your system.
-   - The EXE from the [official website](https://claude.com/download) can install an MSIX package. The toolkit detects the registered package type.
+3. **Official Claude Desktop installed**. On Windows, use the Win32 (Squirrel) installer above. Its installation root is `%LOCALAPPDATA%\AnthropicClaude`. The general-purpose `ClaudeSetup.exe` and Microsoft Store can deploy MSIX, which this toolkit does not localize in place. Desktop Cowork requires the MSIX virtual machine service. [Official Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
 
 ---
 
@@ -65,28 +65,7 @@ After installing the localization, select Chinese (Simplified) in the target cli
 
 Install dependencies with `npm ci`; dependency installation no longer patches an installed Claude client. Run `node cli.js install` or `npm run patch` explicitly.
 
-The website's `ClaudeSetup.exe` can deploy an MSIX package with the Cowork service. The localization installer, restorer and watcher refuse writes to registered Claude packages from either distribution channel. For an official installation modified by an earlier toolkit release, restore it with the complete official installer. The signed installation opens normally through Windows Search or an ordinary shortcut and uses the official updater. This version has no identified user-directory entry point for full Simplified Chinese resources. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) [Microsoft MSIX package storage documentation](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
-
-**Windows Win32 installation.** Anthropic also distributes a [full x64 Squirrel installer](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect). The installation root is `%LOCALAPPDATA%\AnthropicClaude`, and its `packages\RELEASES` points to an installed `app-<version>` directory. This edition supports in-place localization. Desktop Cowork requires the virtual machine service installed by MSIX. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
-
-The website app identity is `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`. The optional `shortcut` command uses the registered application as its launch target, supports Unicode paths and skips creating a backup with `--no-backup`.
-
-```bat
-node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
-```
-
-When Win32 and MSIX are installed side by side, the default entry selects MSIX. Pass the Win32 root explicitly to select the localization target and create a separate launch shortcut:
-
-```bat
-install.bat --path "%LOCALAPPDATA%\AnthropicClaude"
-node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude Win32.lnk" --no-backup
-```
-
-The Win32 shortcut uses the official Squirrel launch entry in the installation root. Squirrel puts each update in a new `app-<version>` directory and updates its release index. Localization writes the resources and executable of the current version. Run `install.bat` again to localize an updated version.
-
 On a Windows test machine, the stock Squirrel updater applied a pre-downloaded and verified 6.6395.0 package over a localized 5.11492.5 installation. The same Win32 shortcut opened the new version. After rerunning `install.bat`, we verified the Chinese UI and observed the client starting its automatic update check.
-
-If an official update deploys a new package but registration fails, exit Claude and run `node cli.js repair` separately. It locates the newer version in the same family and checks identity, the original executable signature and archive integrity. It can download and verify the complete official MSIX when required. Full-package recovery requires Windows x64 and network access. If no trusted deployed update is available, use the complete official installer.
 
 The 6.6395.0 maintenance pass checked official release notes and packaged resources, including managed policy for local MCP servers, SSH/WSL file downloads and update messages. Compared with 5.11492.5, the upstream Shell added 58 entries and Ion added 2,321. This pass translates 58 Shell entries, 110 Ion messages and 20 third-party inference help bodies, and rebinds 58 context-specific strings to the new modules. Older regression snapshots remain useful for compatibility. Identical English text is reviewed by message ID and component context. [Desktop changelog](https://claude.com/docs/cowork/changelog#v6-6395-0) [Configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
@@ -98,7 +77,9 @@ The 6.6395.0 maintenance pass checked official release notes and packaged resour
 
 #### Windows
 
-Run `install.bat` when Win32 is the only edition installed. For a side-by-side install, use the Win32 root shown above. Use the same path with `uninstall.bat` to restore the files. MSIX uses Windows Search or an ordinary shortcut and updates through its official updater. For resource testing, you can pass an independent directory containing copied compatible files to either script.
+1. Download and install the official Win32 edition linked above. The installer may be an earlier build. Open Claude and check for updates from Help. After the update and restart, check the version in About. We verified **6.6395.0**.
+2. Save your work and exit Claude completely, then run this project's `install.bat`. If MSIX is also installed, use `install.bat --path "%LOCALAPPDATA%\AnthropicClaude"` to select Win32. To restore English, run `uninstall.bat` with the same `--path` if you specified one.
+3. Open Claude from the Start menu or a shortcut. Optionally run `node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup` to create a shortcut pointing to the official Squirrel launcher. Run the localization installer again after Claude updates.
 
 #### macOS / Linux
 - **Install Patch**: Run `./install.sh` in terminal
@@ -121,7 +102,7 @@ node cli.js install
 # 4. Optional resource/dictionary watcher (exit the client before patching; restart after ASAR changes)
 node cli.js watch
 
-# 5. Launch the client (uses the system entry for registered Windows packages)
+# 5. Launch the client (uses the official entry for the Windows Squirrel build)
 node cli.js launch
 
 # 6. Run upstream drift scan

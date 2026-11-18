@@ -16,7 +16,9 @@
 </p>
 
 
-用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。当前源码适配 **6.6395.0** 的资源，Windows 注册包使用原版。
+用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。Windows 实机适配版本为 **6.6395.0**。
+
+> **Windows 10 / 11（x64）** 只需安装 [Claude Desktop Win32（Squirrel）官方版](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)，然后按 [Windows 快速开始](#windows) 安装汉化。
 
 ---
 
@@ -54,9 +56,7 @@
    - ⚠️ **引擎依赖兼容性声明 (Compatibility Note)**：
      - **推荐基线（零警告原生支持）**：**Node.js ≥ 22.12.0**（如 Node 22 LTS 或 Node 24+）。项目底层核心打包依赖 `@electron/asar` 声明 `engines.node: ">=22.12.0"`，在 Node 22+ 下可获得零引擎警告（`EBADENGINE`）的最佳体验；
      - **兼容状态说明**：CI 包含 **Node.js 20.x**，但安装依赖时可能提示 `EBADENGINE`；启用 `engine-strict=true` 时可能阻断安装。Node 20 的 CI 结果不代表所有较早小版本均兼容，建议优先使用 Node 22.12+。
-3. **已安装 Claude Desktop 客户端**：
-   - 确保本机已安装官方 Claude 桌面客户端。
-   - 从 [Claude 官网](https://claude.com/download) 下载的 EXE 也可能安装 MSIX。项目以实际注册类型区分这类安装。
+3. **已安装官方 Claude Desktop**。Windows 请使用上方的 Win32（Squirrel）安装器，安装根目录为 `%LOCALAPPDATA%\AnthropicClaude`。官网通用 `ClaudeSetup.exe` 和微软商店可部署 MSIX，MSIX 不支持本项目的原位汉化。桌面 Cowork 需要 MSIX 的虚拟机服务。[Claude 官方 Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
 
 ---
 
@@ -66,28 +66,7 @@
 
 安装依赖使用 `npm ci`，此步骤不再自动修改已安装的 Claude；汉化请显式运行 `node cli.js install` 或 `npm run patch`。
 
-官网的 `ClaudeSetup.exe` 可部署带 Cowork 服务的 MSIX 包。项目的汉化安装、还原和监听会在写入前拒绝官网和商店的注册包。若旧版补丁已修改官方目录，请使用官网完整安装器恢复原版。保留签名的原版可照常通过 Windows 搜索或普通快捷方式启动，更新继续由官方管理。当前版本未找到从用户目录加载完整简体中文的接口。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) [Microsoft MSIX 包存储文档](https://learn.microsoft.com/en-us/windows/msix/package/package-volumes)
-
-**Windows Win32 安装。** Anthropic 还分发 [x64 Squirrel 完整安装器](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)。安装根目录是 `%LOCALAPPDATA%\AnthropicClaude`，其中的 `packages\RELEASES` 指向已安装的 `app-<版本>`。此渠道支持原位汉化。桌面 Cowork 需要 MSIX 安装的虚拟机服务。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
-
-Windows 官网安装的应用标识为 `shell:AppsFolder\Claude_pzs8sxrjxfjjc!Claude`。可选的 `shortcut` 命令将已注册的应用作为启动目标，支持 Unicode 路径，启用 `--no-backup` 时跳过创建新备份。
-
-```bat
-node cli.js shortcut --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup
-```
-
-Win32 版与 MSIX 并装时，默认入口识别 MSIX。显式指定 Win32 根目录可以选择汉化目标，并创建单独的纯启动快捷方式：
-
-```bat
-install.bat --path "%LOCALAPPDATA%\AnthropicClaude"
-node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude Win32.lnk" --no-backup
-```
-
-Win32 快捷方式使用 Squirrel 根目录的官方启动入口。Squirrel 将新版本放到新的 `app-<版本>` 目录，并更新发行索引。汉化只写当前版本的资源与主程序，更新后可对新版再次运行 `install.bat`。
-
 实机在 5.11492.5 已汉化的情况下，用原版 Squirrel 更新程序应用预先下载并校验的 6.6395.0 官方包。同一个 Win32 快捷方式成功启动新版。再次运行 `install.bat` 后，已核对实际中文界面，并观察到客户端发起官方自动更新检查。
-
-如果官方更新已部署新版但注册失败，先退出 Claude，再单独运行 `node cli.js repair`。此命令查找同包族新版并验证身份、原始主程序签名和资源归档。必要时会下载并验证官网完整 MSIX；完整包恢复目前支持联网的 Windows x64。若找不到可信的新版，请使用官网完整安装器。
 
 维护核对了 6.6395.0 的官方日志与实际资源，包含本地 MCP 的托管策略、SSH/WSL 文件下载和更新提示。对比 5.11492.5，官方 Shell 新增 58 项，Ion 新增 2,321 项。本轮补译 58 项 Shell、110 项 Ion 文案及 20 篇第三方推理折叠说明，并为新版模块重新绑定 58 处限定文案。旧版回归快照仍有兼容用途。相同英文按词条 ID 和组件上下文分别审查。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-6395-0) [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
@@ -99,7 +78,9 @@ Win32 快捷方式使用 Squirrel 根目录的官方启动入口。Squirrel 将�
 
 #### Windows
 
-Win32 单独安装时可运行 `install.bat`。并装时按上文选择 Win32 根目录，恢复使用相同路径执行 `uninstall.bat`。MSIX 仍通过 Windows 搜索或普通快捷方式启动，并由官方更新。用于资源测试时，也可将兼容文件逐文件复制到独立目录，再将该目录传给安装或还原脚本。
+1. 下载并安装上方链接中的官方 Win32 版。安装器可能是较早的版本。启动 Claude 后从“帮助”检查更新，待更新并重启后，从“关于”确认版本。本轮已验证 **6.6395.0**。
+2. 保存工作并完全退出 Claude，再运行本项目的 `install.bat`。如果还装着 MSIX，可用 `install.bat --path "%LOCALAPPDATA%\AnthropicClaude"` 显式选择 Win32。恢复英文时运行 `uninstall.bat`，如使用了 `--path`，请传入相同路径。
+3. 平时通过开始菜单或快捷方式启动。可选命令 `node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup` 会创建一个指向 Squirrel 官方启动入口的快捷方式。Claude 更新后，重新运行汉化安装脚本即可。
 
 #### macOS / Linux
 * **一键安装**：在终端运行 `./install.sh`
@@ -122,7 +103,7 @@ node cli.js install
 # 4. 可选：监听资源与词库变化（运行中不强制退出客户端；ASAR 更新后需重启）
 node cli.js watch
 
-# 5. 启动客户端（Windows 注册包通过系统入口启动）
+# 5. 启动客户端（Windows Squirrel 版通过官方入口启动）
 node cli.js launch
 
 # 6. 执行上游版本文本漂移分析 (Drift Detection)
