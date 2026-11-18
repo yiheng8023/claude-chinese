@@ -733,6 +733,53 @@
       ]
     },
     {
+      "file": "assets/v1/c04c75274-DvgFmP9V.js",
+      "sha256": "10b0da810dba1cadb74e3c49c49f54d6edf9796a74bdc0907c3ea30193afedf7",
+      "ids": [
+        "0sJMp1ryM0",
+        "77+UwSEeml",
+        "8ADdfSZlby",
+        "9Ni9ggkEz/",
+        "Am/OiB+RNE",
+        "E4hYufUZgc",
+        "I4XHm8hYft",
+        "ILhDNxxaV3",
+        "KBS7gm+BUe",
+        "NFFrpClKmb",
+        "Qeo+56OCVl",
+        "RK0L7BuwI0",
+        "Seanpxav9K",
+        "UMwj6Q+Eev",
+        "VOBOyAzm88",
+        "VyaYmFzK9j",
+        "XNZZ52Z8ux",
+        "XkeXbcw2yR",
+        "YZEahccTg+",
+        "azjOW1NMeR",
+        "bgxVDlyNqh",
+        "bmGzHZmkPQ",
+        "c9ndaX48SF",
+        "d4rHbgCsf4",
+        "dC6z4MUunB",
+        "dwSwhkzTxF",
+        "e+I67jdgnv",
+        "fzS7X8WeEI",
+        "k5A94Jzbiq",
+        "kfY+MUUjJl",
+        "me7lzCdQ3c",
+        "oNlPV+Vyah",
+        "pc9YT+Nd9y",
+        "qww56XgHqj",
+        "toxdrPSjBR",
+        "vFVnWo9Fxm",
+        "vKMj39KhGw",
+        "xYzrrGyzW7",
+        "xzUls4Ryc4",
+        "yscPN0QqQM",
+        "zc666LLev6"
+      ]
+    },
+    {
       "file": "assets/v1/c090820a6-D6bj8RWM.js",
       "sha256": "06dca7d5bbba63ae0041e69cf54d76877878688b1e97faaf4b242dba2a99aed0",
       "ids": [
@@ -743,6 +790,68 @@
         "ngdMTkeH22",
         "scfgdMgq4h",
         "t8bpVp3c82"
+      ]
+    },
+    {
+      "file": "assets/v1/c0db37792-CEEqOKLJ.js",
+      "sha256": "a74f44d41eb6c0b6485b0ab2b5ebee497ee2a98e7e5ef50ac05d4f042d2fd021",
+      "ids": [
+        "+9S+i9OHpn",
+        "+NtGuRTRpM",
+        "/+WjRhGY9p",
+        "/8lcaWVENH",
+        "0iG6KVJuYc",
+        "2M5tmqcvyl",
+        "3eknETcjZF",
+        "3hYpLYs0dC",
+        "4CkDZGBNMu",
+        "4EAtPWhM42",
+        "4bX1PIcQOm",
+        "5zrbeNP6YE",
+        "6pNQyD+JCw",
+        "7QT7WO8Wtz",
+        "7cY29DbotW",
+        "Awq32I7D2B",
+        "Cs33xZFR6o",
+        "Dw23igsr+8",
+        "EorfioVaPJ",
+        "GQM96kFSM3",
+        "GzzPVMOYC7",
+        "HH/bLSGM/Y",
+        "KpNp7wDaY4",
+        "LQOsG3yWng",
+        "MqdAQHF1x/",
+        "MzMg+gIepF",
+        "NAidKbB0vi",
+        "Pe0ogRZhIF",
+        "QWTP0t8UTt",
+        "R9oOWXgWxi",
+        "UOaDUxqghR",
+        "ZHco1GSUHH",
+        "ZhkFBG4biD",
+        "blWvagsLt7",
+        "cd010aRrI4",
+        "cxfXVHDjYE",
+        "ezjkREa6xp",
+        "fsgonkJSAf",
+        "g18veWcko1",
+        "ghSj3dz9nV",
+        "i45x7uFt8Y",
+        "inRgR8YUJ1",
+        "kQAf2d9u+x",
+        "ke/5wpsWdJ",
+        "nwKczbeayM",
+        "ovJ26CKo4Q",
+        "qnhEQK6Ni0",
+        "qshVSCfplf",
+        "rPFZ93PZaU",
+        "s6OueH6eJQ",
+        "sy7vzf+1SO",
+        "tf+yHLZoYV",
+        "uALpKq2tu/",
+        "vc8werC57E",
+        "wtOt83XrGz",
+        "yhU1etXT1A"
       ]
     },
     {
@@ -2384,6 +2493,24 @@
       ]
     },
     {
+      "file": "assets/v1/c5fe795fb-BUztL9Rq.js",
+      "sha256": "47e9ef5781c7f45a30935dc561dd5cb35787e3373535dbb82a3b9128c440e887",
+      "ids": [
+        "4x7waLyr1M",
+        "Br/kN/xOLy",
+        "UuWxnbdmsu",
+        "WkFwCECJDT",
+        "bxF5LBtAbe",
+        "fXcHTYDnkk",
+        "kEjS/8bwYx",
+        "sjzLbXqRP8",
+        "suQYbqVzZU",
+        "tyeyubRVu/",
+        "vUH9m5I0+0",
+        "yZfJXSDJb8"
+      ]
+    },
+    {
       "file": "assets/v1/c62dc633f-DcpgDwHp.js",
       "sha256": "ed14b9b49e060b6c9bf3e889456598676598be75493e372fc2b58c5dba5dc00c",
       "ids": [
@@ -2601,6 +2728,219 @@
         "vHi7djeZSl",
         "zk3q7SLDGQ",
         "zqHQjhseui"
+      ]
+    },
+    {
+      "file": "assets/v1/c71860c77-CzUPctmH.js",
+      "sha256": "8a2e9abeaa9aa7baa321bbb2562493edb620b147950e8d041d1dc4570b7428c8",
+      "ids": [
+        "+7q49yZLhG",
+        "+Q29KcsEom",
+        "+T+zIDo6RW",
+        "+aFNFcCKyk",
+        "/VnDMl81rh",
+        "/mTTBc8DHL",
+        "0AzlrbMWV9",
+        "0Jh6jsTpeC",
+        "0QLubSrZ2p",
+        "1Q5mWhLy/g",
+        "1W7bgk+3po",
+        "21nbDHxeW7",
+        "30a8efDMfa",
+        "3IwWOiZZzG",
+        "3PalZDIKhf",
+        "3fBbl4h1Ff",
+        "3kbIhS7KZS",
+        "40oSRxwGyQ",
+        "47FYwba+bI",
+        "4C/lYNg9yc",
+        "4YqpRgbuFg",
+        "5FT1qPNbOQ",
+        "5aPhneVnWt",
+        "5f3BoFWoLf",
+        "5tVLXRUZrl",
+        "66kGA0NpIm",
+        "6TLN5pLPXq",
+        "6nD7bwj4F7",
+        "77wp2/msqJ",
+        "7QF+z7vW73",
+        "7QT7WO8Wtz",
+        "86qsqa/8Gd",
+        "8S0SpZ11zE",
+        "8pV1VCvSE6",
+        "9C34O37Mh0",
+        "9R88hRWJT8",
+        "9mRD/6SHCw",
+        "A0UfcXyoLH",
+        "A6zifrQ7q4",
+        "AnCNsaW4DM",
+        "B1bo+Ne/pc",
+        "BJGgfFVBJ4",
+        "BWLRWdU2PN",
+        "BpSvPpCSnA",
+        "C07HKzgJ2r",
+        "CRPpegUiGz",
+        "DUIDEquXSb",
+        "Dy5j7d8zvH",
+        "E3oB+tM0Ou",
+        "E4EU0fFV3W",
+        "F/gx6J+oqX",
+        "Fimpo6W4ww",
+        "FjFJD1RJWm",
+        "G/yZLul6P1",
+        "G18SmiUkbH",
+        "GRbQIADc+L",
+        "GeTbcnUeUm",
+        "GrTaIET7mv",
+        "H8uWPfMPJh",
+        "HLLozacr0N",
+        "HPWgg5fZ83",
+        "HT0EwshToA",
+        "HsVMyHuq5H",
+        "I2acb3TGcT",
+        "IH1kYGlmNz",
+        "IOkQSnl4a0",
+        "IUG5+Eq5xX",
+        "IaEKQjmL/Y",
+        "IthY5gqRs/",
+        "Iwjb7O6rvq",
+        "JMyB0ZN8qR",
+        "K3r6DQW7h+",
+        "KCDXOJuU3S",
+        "KKwwuQ+ktn",
+        "KXmFYaLJGF",
+        "KgrpttojX+",
+        "KxkGpmc1rf",
+        "LCL//I9PAf",
+        "LcvmLn8Wlv",
+        "Lv0zJuL1jH",
+        "Mk/EHfLx4Z",
+        "Mmuj1Rb6ck",
+        "NGbaRxLuud",
+        "NYTGIbSNz5",
+        "NylxDJU7QF",
+        "O46RzZKauY",
+        "OEDx2shlzz",
+        "OFsENslkxR",
+        "OOyYkBlff+",
+        "OZMqaRKSwu",
+        "ObsS9h5nIQ",
+        "OqSJj13qy+",
+        "P1MIIoPQiS",
+        "P1bU4oCDkI",
+        "POPGPskVs1",
+        "Ps0CoiNXOT",
+        "PxhYEde2lq",
+        "QLAgDU4H9h",
+        "Qd3RkFWJqn",
+        "QzZqsQjiLm",
+        "R4r2WXtD8+",
+        "RCt35y3Iw8",
+        "RWux9B/cSX",
+        "RZWls20x16",
+        "S0xbsFUexi",
+        "SNuQo7IJH/",
+        "SXWK2NTfKx",
+        "Sy/ujcLBH3",
+        "TF/CdEwTEv",
+        "TMeenHCszI",
+        "TdTXXf940t",
+        "TjgF6KXhEX",
+        "TvGEXwDFHH",
+        "U5LFGxv+xz",
+        "UBBqQHn48j",
+        "UCeCr4d731",
+        "UH0JCRCkNG",
+        "UQ3fCFzclo",
+        "VLudnwB37M",
+        "W+znbCrCL6",
+        "W5Eo4Ira7F",
+        "WBvq3HlPae",
+        "WRVYAfFJ2V",
+        "WUpPCDbJ8g",
+        "WaKGlISxvI",
+        "XK8ej7dftk",
+        "XLME9GQD8G",
+        "XN9Pj/pLgN",
+        "XUir8trSmd",
+        "XkoHa9QcvL",
+        "Y4he/pW2Mn",
+        "YPNYZXiGJD",
+        "YfZxTAshfp",
+        "Z3oXcH7Vy+",
+        "ZEJ/Ki3uhW",
+        "abH/dkDEM4",
+        "bGQN9Kppvo",
+        "bl3zqqfXmm",
+        "boU96NdwR+",
+        "cQTxPTnrgn",
+        "cUnWxAxEYc",
+        "dOEgDshfXV",
+        "dstYVzrLL0",
+        "eMLhMHxe7n",
+        "enac+ccOCg",
+        "fUJIDRoWvh",
+        "fVIi0h0uIb",
+        "fuzyuUCXBZ",
+        "fzDl58Rwrd",
+        "gONuw2Ad8o",
+        "gnENYzT+/5",
+        "hCcWWt16U7",
+        "i7m2b6Jn4t",
+        "iUQn3KbsRd",
+        "ilfk95/I4Z",
+        "j2hlcpE79k",
+        "jTSWKC1Xf7",
+        "jhXfYwaItm",
+        "jqITpemI4c",
+        "jqh+OOlFhh",
+        "jvKP7SKvKC",
+        "jxGHpnOQ0Z",
+        "khGRop66Ch",
+        "l8gheLPrPo",
+        "lKjjJ7PIFW",
+        "lafEN74cQd",
+        "m/DmtCOPfJ",
+        "m3juYwfF5J",
+        "mDK+F/3TPT",
+        "mGOKdTsQmq",
+        "mvuhmFZkZR",
+        "n00KPnUQww",
+        "nItRP95eNV",
+        "nLL2AqBtBT",
+        "nb2FlN/G2m",
+        "nl4F4hf2Zm",
+        "np6RL3Yhid",
+        "oWUaOSGs0u",
+        "p12p75mB+5",
+        "p5gDBGQSbr",
+        "puzWzo2p9/",
+        "q/uwLTb3Zf",
+        "rELDbByu8U",
+        "rOZptgrtp0",
+        "rVtgHBWCOO",
+        "rWYCtL0eNK",
+        "rhIlv2Cqp+",
+        "rtbNQQ2C8O",
+        "sFMK25d7po",
+        "sYDsuxbWJx",
+        "t0eCW57c4v",
+        "t6sxIMkk1A",
+        "tPrRgPHF6R",
+        "tyn7+Sr4QO",
+        "u6jOv5zF39",
+        "uYg6zgvKu8",
+        "uu47TeN43k",
+        "vKMj39KhGw",
+        "vsENV++qTA",
+        "wRD0h8StFW",
+        "wVO4PdyNF1",
+        "wmojw5mZau",
+        "xIG84NwUlL",
+        "z7yp64+Mvf",
+        "zSP70MVzIo",
+        "zZKbhTvr+r",
+        "zdj+o1a4TH"
       ]
     },
     {
@@ -2899,6 +3239,68 @@
         "xg0Dcgs/Ch",
         "yr7wM8kd/2",
         "zIb3AJxFSO"
+      ]
+    },
+    {
+      "file": "assets/v1/c85887d38-DY4PiDcx.js",
+      "sha256": "fc441b018da5c82163e97c79de47095438642a3c6e9dd5e3e9345d840c764977",
+      "ids": [
+        "/i57xrxtJL",
+        "4x7waLyr1M",
+        "FazwRldA7z",
+        "HXx+J2ojkF",
+        "HoO32qFLKt",
+        "PBtMitJ1wI",
+        "SpovY7kwwD",
+        "T4VxQNSBvZ",
+        "UuWxnbdmsu",
+        "WUV28A6Pf2",
+        "WkFwCECJDT",
+        "acrOozm08x",
+        "bxF5LBtAbe",
+        "fNFOznt68Y",
+        "fXcHTYDnkk",
+        "jfnp8XG0n4",
+        "kEjS/8bwYx",
+        "p+y6Z2PCW1",
+        "sjzLbXqRP8",
+        "suQYbqVzZU",
+        "vUH9m5I0+0",
+        "wJrNgcBCLL",
+        "yZfJXSDJb8",
+        "zI4J/bY/sY"
+      ]
+    },
+    {
+      "file": "assets/v1/c8828a060-BkWWtrlG.js",
+      "sha256": "a4f192eacb9e2708d0c5efb4e9534012a6cd251559c5657a7149d7a643bca4e8",
+      "ids": [
+        "/Z1D1eCmBA",
+        "4qP7MjrQfC",
+        "5Hrjkmew04",
+        "7+U8x5o7v9",
+        "CZwl8X2D85",
+        "E4wAMW5Ily",
+        "GDoDijLG+q",
+        "HC0OdPtRvg",
+        "IeexSlMkuP",
+        "J1rj3Exw6V",
+        "L32WRR6NOL",
+        "LUG9VV2VK6",
+        "PfRJ+/Son7",
+        "TrS+kwadjI",
+        "b3wAwXc0RY",
+        "cQX5Wv5op+",
+        "edWlt+5w83",
+        "h2kOgf50w3",
+        "lBnPWjUArB",
+        "nDyaq/M7Oj",
+        "pgaCSv2/6H",
+        "urCd4k/cE0",
+        "vJozdi3Mka",
+        "vXCeIi67rj",
+        "yDONwLk37L",
+        "zCIK9K8J4a"
       ]
     },
     {
@@ -3373,6 +3775,60 @@
       ]
     },
     {
+      "file": "assets/v1/c9081d688-C1vKKr8Q.js",
+      "sha256": "df95692f22758fbb38daadf449811334cac64e9466fdfbe725405fd170b81a9c",
+      "ids": [
+        "+FrtwE4w30",
+        "/P5bn91i4e",
+        "2GipiKrcSA",
+        "3eJSqrqoza",
+        "5CSbMyQYHa",
+        "6ibl/RaI7T",
+        "87YQsoUXlN",
+        "8y9/uZAl5U",
+        "9/f4ZfFJIU",
+        "9sHca1tBPQ",
+        "HTz7XaS8CW",
+        "K6AtDqbU7d",
+        "LDeTShiZns",
+        "LmA/7qyRAc",
+        "MetXnqfPw8",
+        "NPKQv3P/2g",
+        "NPfglfEL1+",
+        "OP05qc8VG7",
+        "QFvcZ4s/cW",
+        "R79ZUHPpUZ",
+        "RG4fexqyaO",
+        "T+5/01Dxrs",
+        "WTEeF8a/9V",
+        "XSRBCufGlI",
+        "XdlHHKhIxM",
+        "XpnjzSC+xi",
+        "ZHNpXzRniL",
+        "Zf63aqWK6G",
+        "byD7Ln5TjP",
+        "dYmXDuNn5N",
+        "eDHPT1pAfr",
+        "eZe/sy1+2M",
+        "gvr5+jGmwG",
+        "jvxgwULlQ6",
+        "kTPYL0wZ7I",
+        "kaxCNx9MJC",
+        "mItEAxzS/J",
+        "o+7su3wplb",
+        "p2y3nST/qw",
+        "pWOY40DfLz",
+        "rfjQsjPv4B",
+        "tHiujbRkEF",
+        "tW/aAbNADE",
+        "v++NPNRuCM",
+        "wQcOPelwG3",
+        "xaAomaYv7Z",
+        "xv8diByX5m",
+        "zfBB0xiNUF"
+      ]
+    },
+    {
       "file": "assets/v1/c90ba2a6f-Cm4KqGzZ.js",
       "sha256": "17bdb11ee23d86aab842ee0fb7e337efd8553980b23d979d8a99127bec881127",
       "ids": [
@@ -3760,6 +4216,137 @@
       ]
     },
     {
+      "file": "assets/v1/ca25db325-BT_6vjqZ.js",
+      "sha256": "c9f82de08425433fbfdc1fbffe7fb366e39fe5c10d7d72297dfe9023ff094b4f",
+      "ids": [
+        "+TFOeIaaS0",
+        "+uuOSvguH2",
+        "/bbAWHUyaz",
+        "05vLZxGUnU",
+        "18gCDdEl3N",
+        "2ZQ8rou89q",
+        "2mHBurTcuD",
+        "3hYpLYs0dC",
+        "3r6quQWFdB",
+        "4CkDZGBNMu",
+        "4I0CXWxDrL",
+        "53DiPrdI5r",
+        "5UZ7woP+0X",
+        "5lU0AsuNui",
+        "6orx1cxush",
+        "7+U8x5o7v9",
+        "7WvgyzdB8p",
+        "88wJXbOjoo",
+        "9LsCMdpN+j",
+        "Awq32I7D2B",
+        "BxVqgx1N4R",
+        "ChuNUIOgHy",
+        "CoWpJWiYVJ",
+        "Cy53njAE//",
+        "DUIDEquXSb",
+        "Dcuckg7MEU",
+        "DjVOGPn3dG",
+        "E3oB+tM0Ou",
+        "EJP4sduJXT",
+        "EJSVsOA19u",
+        "ElnDv39eAw",
+        "FN6rexGl/C",
+        "Fycjnepb7X",
+        "GM3+8hWL04",
+        "GQM96kFSM3",
+        "HJmw3I9e8e",
+        "Hz/CbmmXoJ",
+        "IavEdz5ApJ",
+        "J7o7OA4yOa",
+        "JIAWSQbG7m",
+        "JxlSRWr2J/",
+        "KpNp7wDaY4",
+        "LQOsG3yWng",
+        "LgkdiZ92a8",
+        "Lyw82eUMg3",
+        "MIchTR1xRO",
+        "NAidKbB0vi",
+        "OB9r5xDmXK",
+        "PDAvLFzXA4",
+        "Pe0ogRZhIF",
+        "QI4yy6zTI9",
+        "QOojJ8jVqu",
+        "QWTP0t8UTt",
+        "RfG2KsHAez",
+        "SHujm/DXOW",
+        "SuJjHnT9jE",
+        "SysRkWinmu",
+        "TG5+W8kPCU",
+        "V2Ac8jibT4",
+        "VnXp8ZIfSy",
+        "W42/BNvKWG",
+        "WOv3R0XYQC",
+        "XN3dMpQHE9",
+        "Xe0tHuqTEO",
+        "Y2q5SU8kAQ",
+        "Yl8GBPTj+x",
+        "YqqUhGXHRI",
+        "ZHco1GSUHH",
+        "ZmcwrBzQa7",
+        "ZpVtCaSh1Z",
+        "cGSF0vB/eU",
+        "cJT9hml5Dm",
+        "ciLKOe5nmN",
+        "cuPGQUHxR4",
+        "cxfXVHDjYE",
+        "dYhtB41jpk",
+        "e/C8Gxlwxz",
+        "e6Cv5Y4QTL",
+        "eFxUdHSIkq",
+        "fc+oEygAS4",
+        "fgCBG8/Fm+",
+        "fsgonkJSAf",
+        "fzDl58Rwrd",
+        "gUEgZj+jjf",
+        "gtfwBkRCnG",
+        "hIk1k4YxSV",
+        "iTM1PGTIqQ",
+        "j2hlcpE79k",
+        "jkdBuvvxbr",
+        "kEyKMjPNH+",
+        "kTlOneJyPr",
+        "ke/5wpsWdJ",
+        "nwKczbeayM",
+        "nwujE1hYLq",
+        "o9kK50oQVe",
+        "oLmAVj5phI",
+        "olMzVVw01M",
+        "p5zpXqu2Vt",
+        "pBhjDS1NXE",
+        "pVn0H046yS",
+        "psuGulikXK",
+        "pvsYTc0TOp",
+        "qOK+MzYYBJ",
+        "s6OueH6eJQ",
+        "sHRXIdTx3F",
+        "sV2v5LjRpX",
+        "sy7vzf+1SO",
+        "t6CoyspugC",
+        "ti2sWECZFG",
+        "uALpKq2tu/",
+        "uDMSR+gnHL",
+        "um5I+OmbZQ",
+        "utsoAOqm23",
+        "uvL4fkz/bT",
+        "vUH9m5I0+0",
+        "vc8werC57E",
+        "vo0j+m3s21",
+        "wUV2EbNd4F",
+        "wUfJCDln9R",
+        "wbVh5JSa6C",
+        "wtOt83XrGz",
+        "xBU5hYIiNs",
+        "xhhRGTvihK",
+        "yUsyxi1gKs",
+        "yk4PT9S4sc"
+      ]
+    },
+    {
       "file": "assets/v1/ca275bfc4-DDqeitYP.js",
       "sha256": "cdb8d3fc473869314f93962e6330b75f1bd8669faf908cc1f2a00abf40358a67",
       "ids": [
@@ -4007,6 +4594,27 @@
       ]
     },
     {
+      "file": "assets/v1/ce03dc203-D6PkRR9y.js",
+      "sha256": "ea6f102df382b78eb598c35878e16ed2d623e30d49428c411487101a9e2e5415",
+      "ids": [
+        "09snYUm2u1",
+        "Vqv6GUqbKO",
+        "bEP1fZ8uSe",
+        "fzMSwtthQS",
+        "q29dVy10XD",
+        "uXinBOnUV7"
+      ]
+    },
+    {
+      "file": "assets/v1/ce2be2435-D54vebKE.js",
+      "sha256": "2a302a82d65d1ab4baf94b87a91d0553f89832ea2107a763d1649700bb4d6883",
+      "ids": [
+        "A0UsqIrpdq",
+        "BX2/DcCVek",
+        "ghSj3dz9nV"
+      ]
+    },
+    {
       "file": "assets/v1/ce38f2fa6-DpcCusrb.js",
       "sha256": "a9c9f861019ecf5314a1cc396e487347879422092a42a03300272e8e9e17c239",
       "ids": [
@@ -4137,6 +4745,68 @@
         "vx9PyxWrqA",
         "xu6eM89cZx",
         "zd6kBu7o9f"
+      ]
+    },
+    {
+      "file": "assets/v1/ce4f4374c-DrwWf_mN.js",
+      "sha256": "393911f21290a8e5d3e87287c11a96c9e6f7566357498aeb2cd1ef8c886eec0e",
+      "ids": [
+        "+9Y66VlT9i",
+        "+G6/w5tqeq",
+        "/jFmdFrLzq",
+        "3Qhw9wya7k",
+        "4nONiiddCv",
+        "64Hq/+q+KI",
+        "7m+xur1GM0",
+        "7nIe3545al",
+        "8Gmf83x+ay",
+        "96GJ5wSQam",
+        "AJ2W7itqO2",
+        "Ag1TzTm++9",
+        "B2B5sIxbna",
+        "CapHOIPauL",
+        "D3yzl2PiJD",
+        "FPJlgifNwD",
+        "GE7Vqpsyct",
+        "ID9MKARV89",
+        "J2D0+ihfKQ",
+        "JMrdBWkgTQ",
+        "JdqAgc2NFS",
+        "K3r6DQW7h+",
+        "NOMnBofwOT",
+        "OKhRC6eWRw",
+        "OcHw9o00qo",
+        "Q2QyZ42lOG",
+        "QNnL+i+891",
+        "QhJxtbMJfB",
+        "SR19nKO/BD",
+        "SVwJTM5AmL",
+        "SWSZIzLoC3",
+        "UmH4IX1ER9",
+        "XP5vxiZixk",
+        "XzejZSc1R2",
+        "aWZzyB3FYG",
+        "cumvSICF35",
+        "fiPvwYljok",
+        "ftDYZo4V2C",
+        "geFUpymS6v",
+        "gkoSAmTJDl",
+        "gkvdf7tU5r",
+        "h3DqseeqHl",
+        "hjmtm/nNLv",
+        "jBQAwvukAZ",
+        "jICgXbsnLU",
+        "k/1sa+m76H",
+        "l7jQfhDtOr",
+        "lbr3Lq2Lnm",
+        "nR6dLhVwqy",
+        "oIGoNawMHy",
+        "pVa0LkY9SK",
+        "q/JBTY6wmN",
+        "qHSVoA5wlM",
+        "rjl8lfaUv3",
+        "uApIz8mSsT",
+        "vLAPJDu9y6"
       ]
     },
     {
@@ -4894,6 +5564,1580 @@
     },
     "xCqeDwXnPb": {
       "english": "Rejecting plan from {to}"
+    },
+    "+7q49yZLhG": {
+      "english": "No worktrees can be removed right now."
+    },
+    "+9S+i9OHpn": {
+      "english": "Couldn’t turn on notifications here."
+    },
+    "+9Y66VlT9i": {
+      "english": "Move to project"
+    },
+    "+FrtwE4w30": {
+      "english": "Blocked by host admin"
+    },
+    "+G6/w5tqeq": {
+      "english": "This session is still working or needs your input."
+    },
+    "+NtGuRTRpM": {
+      "english": "OpenDyslexic"
+    },
+    "+Q29KcsEom": {
+      "english": "Deleting {done, number} of {total, number}…"
+    },
+    "+T+zIDo6RW": {
+      "english": "Recheck"
+    },
+    "+TFOeIaaS0": {
+      "english": "Screen recording"
+    },
+    "+aFNFcCKyk": {
+      "english": "{versions, plural, =0 {Claude Code downloads.} one {# installed Claude Code version.} other {# installed Claude Code versions.}}"
+    },
+    "+uuOSvguH2": {
+      "english": "receipts"
+    },
+    "/+WjRhGY9p": {
+      "english": "Maximum width of the transcript and composer columns."
+    },
+    "/8lcaWVENH": {
+      "english": "Reduced"
+    },
+    "/P5bn91i4e": {
+      "english": "Claude Code’s settings weren’t available when this session started, so your own MCP servers are off. Start a new session to try again."
+    },
+    "/VnDMl81rh": {
+      "english": "Other"
+    },
+    "/Z1D1eCmBA": {
+      "english": "Edit config"
+    },
+    "/bbAWHUyaz": {
+      "english": "Location metadata"
+    },
+    "/i57xrxtJL": {
+      "english": "Got it"
+    },
+    "/jFmdFrLzq": {
+      "english": "Output style"
+    },
+    "/mTTBc8DHL": {
+      "english": "A cleanup is still finishing. Try again in a moment."
+    },
+    "05vLZxGUnU": {
+      "english": "Your feedback"
+    },
+    "09snYUm2u1": {
+      "english": "Auto"
+    },
+    "0AzlrbMWV9": {
+      "english": "Manage"
+    },
+    "0Jh6jsTpeC": {
+      "english": "Claude will browse and interact with any website in Chrome without asking. Applies to new sessions. This setting can put your data at risk. <link>Learn more</link>"
+    },
+    "0QLubSrZ2p": {
+      "english": "Alt+Space",
+      "retainReason": "键盘快捷键。"
+    },
+    "0iG6KVJuYc": {
+      "english": "Wide"
+    },
+    "0sJMp1ryM0": {
+      "english": "Statement {statement}: Actions must be a list with at least one action."
+    },
+    "18gCDdEl3N": {
+      "english": "Trusted devices"
+    },
+    "1Q5mWhLy/g": {
+      "english": "{count, plural, one {# session selected} other {# sessions selected}} · {size}. <warn>Uncommitted changes in {lost, number} of them will be lost.</warn>"
+    },
+    "1W7bgk+3po": {
+      "english": "This shortcut is already in use by another app. Try a different combination."
+    },
+    "21nbDHxeW7": {
+      "english": "Checked {when}."
+    },
+    "2GipiKrcSA": {
+      "english": "Claude Code’s settings allow only listed MCP servers, and this one isn’t listed."
+    },
+    "2M5tmqcvyl": {
+      "english": "When safeguards flag a message, automatically switch to a different model to keep going. When off, the chat or session pauses instead. Applies to chats, Cowork, and Claude Code cloud sessions."
+    },
+    "2ZQ8rou89q": {
+      "english": "light mode"
+    },
+    "2mHBurTcuD": {
+      "english": "file icons"
+    },
+    "30a8efDMfa": {
+      "english": "{count, plural, =0 {Stopped before deleting anything} one {Stopped after deleting # task} other {Stopped after deleting # tasks}}."
+    },
+    "3IwWOiZZzG": {
+      "english": "{count, plural, one {# folder} other {# folders}}"
+    },
+    "3PalZDIKhf": {
+      "english": "Some sizes are from {when}."
+    },
+    "3Qhw9wya7k": {
+      "english": "Moved under {title}"
+    },
+    "3eJSqrqoza": {
+      "english": "{host}’s own is off"
+    },
+    "3eknETcjZF": {
+      "english": "Anthropic Serif"
+    },
+    "3fBbl4h1Ff": {
+      "english": "{size} of the attachments are links to files elsewhere on this computer and take no extra space."
+    },
+    "3hYpLYs0dC": {
+      "english": "Email notifications"
+    },
+    "3r6quQWFdB": {
+      "english": "Auto-open files Claude writes"
+    },
+    "40oSRxwGyQ": {
+      "english": "{count, plural, one {# task or chat couldn’t be deleted} other {# tasks and chats couldn’t be deleted}}."
+    },
+    "4C/lYNg9yc": {
+      "english": "{count, plural, one {Remove # worktree} other {Remove # worktrees}}"
+    },
+    "4CkDZGBNMu": {
+      "english": "Claude Security activity"
+    },
+    "4EAtPWhM42": {
+      "english": "Anthropic Sans",
+      "retainReason": "官方字体名称。"
+    },
+    "4I0CXWxDrL": {
+      "english": "Invoices"
+    },
+    "4YqpRgbuFg": {
+      "english": "Chrome instances signed in to your account that Claude can automate."
+    },
+    "4bX1PIcQOm": {
+      "english": "Match interface"
+    },
+    "4qP7MjrQfC": {
+      "english": "Environment variables"
+    },
+    "4x7waLyr1M": {
+      "english": "What’s changing?"
+    },
+    "53DiPrdI5r": {
+      "english": "Global instructions"
+    },
+    "5CSbMyQYHa": {
+      "english": "the remote host"
+    },
+    "5FT1qPNbOQ": {
+      "english": "Remove unused worktrees"
+    },
+    "5Hrjkmew04": {
+      "english": "Not responding"
+    },
+    "5UZ7woP+0X": {
+      "english": "Trusted Cowork folders"
+    },
+    "5aPhneVnWt": {
+      "english": "Code sessions and worktrees"
+    },
+    "5f3BoFWoLf": {
+      "english": "{count, plural, one {# inactive task or chat} other {# inactive tasks and chats}} · {size}"
+    },
+    "5lU0AsuNui": {
+      "english": "Inline visualizations"
+    },
+    "5tVLXRUZrl": {
+      "english": "Caps Lock"
+    },
+    "5zrbeNP6YE": {
+      "english": "To turn this on, try again and allow notifications when your browser asks."
+    },
+    "66kGA0NpIm": {
+      "english": "Runtime"
+    },
+    "6TLN5pLPXq": {
+      "english": "Inactive for at least"
+    },
+    "6ibl/RaI7T": {
+      "english": "{count, plural, one {Environment variable kept on this computer, not sent to {host}: {names}} other {Environment variables kept on this computer, not sent to {host}: {names}}}"
+    },
+    "6nD7bwj4F7": {
+      "english": "Option+Space",
+      "retainReason": "键盘快捷键。"
+    },
+    "6orx1cxush": {
+      "english": "Billing address"
+    },
+    "6pNQyD+JCw": {
+      "english": "Get emails about activity in your Claude Security projects."
+    },
+    "7+U8x5o7v9": {
+      "english": "Local MCP servers"
+    },
+    "77+UwSEeml": {
+      "english": "Statement {statement}, identifier {identifier}: choose an identifier type and fill in one value."
+    },
+    "77wp2/msqJ": {
+      "english": "Press once to start dictation, and press again when you’re done speaking."
+    },
+    "7QF+z7vW73": {
+      "english": "This shortcut combination isn’t supported. Try a different combination."
+    },
+    "7WvgyzdB8p": {
+      "english": "Export data"
+    },
+    "7cY29DbotW": {
+      "english": "Notifications can’t be turned on here. Open Claude in its own browser tab and try again."
+    },
+    "7nIe3545al": {
+      "english": "Go to scheduled task"
+    },
+    "86qsqa/8Gd": {
+      "english": "; {count, plural, one {# is kept ready for new sessions ({size})} other {# are kept ready for new sessions ({size})}}."
+    },
+    "87YQsoUXlN": {
+      "english": "{host} only runs MCP servers its admin allows. Ask that admin to add this one."
+    },
+    "88wJXbOjoo": {
+      "english": "Branch prefix"
+    },
+    "8ADdfSZlby": {
+      "english": "In Model ID, enter the provider’s full model ID, not an alias like “sonnet”."
+    },
+    "8Gmf83x+ay": {
+      "english": "Continue in"
+    },
+    "8S0SpZ11zE": {
+      "english": "App cache details"
+    },
+    "8pV1VCvSE6": {
+      "english": "{done, number} of {total, plural, one {# session} other {# sessions}} done…"
+    },
+    "8y9/uZAl5U": {
+      "english": "Not installed on {host}"
+    },
+    "9/f4ZfFJIU": {
+      "english": "Blocked by your organization"
+    },
+    "9C34O37Mh0": {
+      "english": "{count, plural, =0 {Stopped before removing anything} one {Stopped after removing worktrees from # session} other {Stopped after removing worktrees from # sessions}}."
+    },
+    "9LsCMdpN+j": {
+      "english": "SSH sessions"
+    },
+    "9Ni9ggkEz/": {
+      "english": "Unknown group"
+    },
+    "9R88hRWJT8": {
+      "english": "Uncommitted changes"
+    },
+    "9mRD/6SHCw": {
+      "english": "Ctrl+D",
+      "retainReason": "键盘快捷键。"
+    },
+    "9sHca1tBPQ": {
+      "english": "Claude Code’s policy blocks this server in this session. Ask your admin for access."
+    },
+    "A0UfcXyoLH": {
+      "english": "Code session details"
+    },
+    "A0UsqIrpdq": {
+      "english": "Light"
+    },
+    "A6zifrQ7q4": {
+      "english": "Some folders weren’t measured, so the total could be higher."
+    },
+    "AJ2W7itqO2": {
+      "english": "Pin"
+    },
+    "Am/OiB+RNE": {
+      "english": "{named, select, yes {Server “{server}”} other {A server with no name}}: tool {tool} needs a name. Enter one, or remove the tool."
+    },
+    "AnCNsaW4DM": {
+      "english": "On metered connections, updates wait up to 12 hours."
+    },
+    "Awq32I7D2B": {
+      "english": "Push notifications"
+    },
+    "B1bo+Ne/pc": {
+      "english": "Cleanup didn’t finish. Try again."
+    },
+    "B2B5sIxbna": {
+      "english": "Edit cloud environment"
+    },
+    "BJGgfFVBJ4": {
+      "english": "Checking worktrees…"
+    },
+    "BWLRWdU2PN": {
+      "english": "Data disk"
+    },
+    "BX2/DcCVek": {
+      "english": "Dark"
+    },
+    "BpSvPpCSnA": {
+      "english": "Web cache"
+    },
+    "Br/kN/xOLy": {
+      "english": "Off for all emails using your domain"
+    },
+    "BxVqgx1N4R": {
+      "english": "Allowed sites"
+    },
+    "C07HKzgJ2r": {
+      "english": "{count, plural, one {They’ll be discarded with the worktree.} other {They’ll be discarded with the worktrees.}} This can’t be undone."
+    },
+    "CRPpegUiGz": {
+      "english": "{count, plural, one {# can’t be removed safely} other {# can’t be removed safely}}"
+    },
+    "CZwl8X2D85": {
+      "english": "Advanced options"
+    },
+    "ChuNUIOgHy": {
+      "english": "Your plan"
+    },
+    "CoWpJWiYVJ": {
+      "english": "Instructions for Claude"
+    },
+    "Cs33xZFR6o": {
+      "english": "Narrow"
+    },
+    "Cy53njAE//": {
+      "english": "UI font"
+    },
+    "DUIDEquXSb": {
+      "english": "Storage"
+    },
+    "Dcuckg7MEU": {
+      "english": "cards"
+    },
+    "DjVOGPn3dG": {
+      "english": "Cancellation"
+    },
+    "Dw23igsr+8": {
+      "english": "Font for the whole interface — menus, sidebars, and panels."
+    },
+    "Dy5j7d8zvH": {
+      "english": "Couldn’t calculate storage. Try again."
+    },
+    "E4EU0fFV3W": {
+      "english": "{title} · {size}",
+      "retainReason": "只渲染用户标题、分隔符与格式化的存储大小。"
+    },
+    "E4hYufUZgc": {
+      "english": "Every Office application is disabled below, so members can’t use the add-in after they sign in."
+    },
+    "E4wAMW5Ily": {
+      "english": "Are you sure you want to remove the MCP server “{serverKey}”?"
+    },
+    "EJP4sduJXT": {
+      "english": "payment methods"
+    },
+    "ElnDv39eAw": {
+      "english": "Cowork memory"
+    },
+    "EorfioVaPJ": {
+      "english": "OpenDyslexic"
+    },
+    "F/gx6J+oqX": {
+      "english": "Stopped after removing worktrees from {count, plural, one {# session} other {# sessions}}. No session was deleted."
+    },
+    "FN6rexGl/C": {
+      "english": "upgrade"
+    },
+    "Fimpo6W4ww": {
+      "english": "{count, plural, one {# more session’s worktrees aren’t} other {# more sessions’ worktrees aren’t}} listed here"
+    },
+    "FjFJD1RJWm": {
+      "english": "Earlier version"
+    },
+    "Fycjnepb7X": {
+      "english": "Prompt suggestions"
+    },
+    "G18SmiUkbH": {
+      "english": "{count, plural, one {Delete # session} other {Delete # sessions}}"
+    },
+    "GDoDijLG+q": {
+      "english": "Developer MCP servers are disabled on this device. Please contact your IT administrator to enable developer MCP servers."
+    },
+    "GM3+8hWL04": {
+      "english": "Memory preferences"
+    },
+    "GQM96kFSM3": {
+      "english": "Style"
+    },
+    "GRbQIADc+L": {
+      "english": "Attachments and generated files"
+    },
+    "GeTbcnUeUm": {
+      "english": "{sessions, plural, one {# session} other {# sessions}}"
+    },
+    "GrTaIET7mv": {
+      "english": "Worktrees from {count, plural, one {# session} other {# sessions}} weren’t fully removed (in use, pinned, or changed since)."
+    },
+    "GzzPVMOYC7": {
+      "english": "Reduce motion in the app, or follow your system setting."
+    },
+    "H8uWPfMPJh": {
+      "english": "Connected browsers"
+    },
+    "HC0OdPtRvg": {
+      "english": "This server is managed by an extension"
+    },
+    "HH/bLSGM/Y": {
+      "english": "Claude can choose to notify you about important updates from a Code session."
+    },
+    "HJmw3I9e8e": {
+      "english": "Shared chats"
+    },
+    "HLLozacr0N": {
+      "english": "Also remove {count, plural, one {# worktree with uncommitted changes ({size}); those changes are lost} other {# worktrees with uncommitted changes ({size}); those changes are lost}}"
+    },
+    "HPWgg5fZ83": {
+      "english": "Nothing here can be removed."
+    },
+    "HT0EwshToA": {
+      "english": "See how much space Claude uses on this computer."
+    },
+    "HTz7XaS8CW": {
+      "english": "Desktop extension"
+    },
+    "HXx+J2ojkF": {
+      "english": "Allow the use of your chats and coding sessions to train and improve Anthropic AI models. Change anytime in privacy settings. <learnMoreLink>Learn more</learnMoreLink>"
+    },
+    "HoO32qFLKt": {
+      "english": "Help improve our AI models:"
+    },
+    "HsVMyHuq5H": {
+      "english": "Device ID: {id}"
+    },
+    "Hz/CbmmXoJ": {
+      "english": "opt out of AI model training"
+    },
+    "I2acb3TGcT": {
+      "english": "System"
+    },
+    "I4XHm8hYft": {
+      "english": "For tokens or API keys use Collector authentication or the headers helper script; static headers here are for non-secret routing (tenant IDs, org routing) only."
+    },
+    "ID9MKARV89": {
+      "english": "Fork"
+    },
+    "IH1kYGlmNz": {
+      "english": "{count, plural, one {# session selected} other {# sessions selected}} · {size}. <warn>Uncommitted changes in all of them will be lost.</warn>"
+    },
+    "ILhDNxxaV3": {
+      "english": "Header “{name}” looks like a credential. Hosted config can’t store secrets in headers. Remove it to save."
+    },
+    "IOkQSnl4a0": {
+      "english": "Remove worktrees"
+    },
+    "IUG5+Eq5xX": {
+      "english": "This key can’t be a shortcut on its own. Press it together with a modifier key, like {modifier}."
+    },
+    "IaEKQjmL/Y": {
+      "english": "Closing the window quits Claude because your desktop doesn’t show tray icons."
+    },
+    "IavEdz5ApJ": {
+      "english": "Organization ID"
+    },
+    "IeexSlMkuP": {
+      "english": "Desktop extensions and developer MCP servers are disabled on this device. Please contact your IT administrator to enable these features."
+    },
+    "IthY5gqRs/": {
+      "english": "Any"
+    },
+    "Iwjb7O6rvq": {
+      "english": "Select what to remove."
+    },
+    "J1rj3Exw6V": {
+      "english": "Developer docs"
+    },
+    "J2D0+ihfKQ": {
+      "english": "Mark as completed"
+    },
+    "J7o7OA4yOa": {
+      "english": "Run code in the cloud"
+    },
+    "JIAWSQbG7m": {
+      "english": "What best describes your work?"
+    },
+    "JMrdBWkgTQ": {
+      "english": "Couldn’t move the session. Try again."
+    },
+    "JMyB0ZN8qR": {
+      "english": "History from Claude Code in the terminal. Shown for completeness; not counted above and never removed from here."
+    },
+    "JdqAgc2NFS": {
+      "english": "Pin {count}"
+    },
+    "JxlSRWr2J/": {
+      "english": "Memory"
+    },
+    "K6AtDqbU7d": {
+      "english": "After next restart"
+    },
+    "KBS7gm+BUe": {
+      "english": "Static headers here are for non-secret routing (tenant IDs, org routing) only; hosted config can’t store collector tokens or API keys."
+    },
+    "KCDXOJuU3S": {
+      "english": "Checking inactive sessions…"
+    },
+    "KKwwuQ+ktn": {
+      "english": "Cowork storage by kind"
+    },
+    "KXmFYaLJGF": {
+      "english": "Their uncommitted changes will be lost if removed"
+    },
+    "KgrpttojX+": {
+      "english": "Clean up inactive sessions"
+    },
+    "KpNp7wDaY4": {
+      "english": "Response completions"
+    },
+    "KxkGpmc1rf": {
+      "english": "Per-task plugin copies"
+    },
+    "L32WRR6NOL": {
+      "english": "Delete"
+    },
+    "LCL//I9PAf": {
+      "english": "and {count, number} more"
+    },
+    "LDeTShiZns": {
+      "english": "{reason}. Install it there, or remove it in Settings → Developer."
+    },
+    "LQOsG3yWng": {
+      "english": "Code permission requests"
+    },
+    "LUG9VV2VK6": {
+      "english": "Couldn’t load MCP server configurations. Try again."
+    },
+    "LcvmLn8Wlv": {
+      "english": "Runtime details"
+    },
+    "LgkdiZ92a8": {
+      "english": "Open links in built-in browser"
+    },
+    "LmA/7qyRAc": {
+      "english": "This server"
+    },
+    "Lv0zJuL1jH": {
+      "english": "Details"
+    },
+    "Lyw82eUMg3": {
+      "english": "Generate memory from chat history"
+    },
+    "MIchTR1xRO": {
+      "english": "Dispatch"
+    },
+    "MetXnqfPw8": {
+      "english": "Didn’t start in time on {host}. The server printed: “{line}”"
+    },
+    "Mk/EHfLx4Z": {
+      "english": "{count, plural, one {# worktree} other {# worktrees}}"
+    },
+    "Mmuj1Rb6ck": {
+      "english": "Platform"
+    },
+    "MqdAQHF1x/": {
+      "english": "Notifications are blocked. Allow them in your browser or system settings, then try again."
+    },
+    "MzMg+gIepF": {
+      "english": "Default · {font}"
+    },
+    "NAidKbB0vi": {
+      "english": "Notifications"
+    },
+    "NFFrpClKmb": {
+      "english": "Statement {statement}, identifier {identifier}: a label GUID must be a full GUID, like 48c8274f-1b2c-4d3e-8f90-a1b2c3d4e5f6."
+    },
+    "NGbaRxLuud": {
+      "english": "Task history"
+    },
+    "NPKQv3P/2g": {
+      "english": "Its command is a file on this computer, so {host} can’t run it"
+    },
+    "NPfglfEL1+": {
+      "english": "Command only on this computer"
+    },
+    "NYTGIbSNz5": {
+      "english": "Got it"
+    },
+    "NylxDJU7QF": {
+      "english": "Free up space…"
+    },
+    "O46RzZKauY": {
+      "english": "{count, plural, one {# worktree} other {# worktrees}} from inactive sessions · {size}"
+    },
+    "OB9r5xDmXK": {
+      "english": "AI model training data"
+    },
+    "OEDx2shlzz": {
+      "english": "Runtime storage by kind"
+    },
+    "OFsENslkxR": {
+      "english": "Workspace image"
+    },
+    "OOyYkBlff+": {
+      "english": "Clear cache and restart…"
+    },
+    "OP05qc8VG7": {
+      "english": "Blocked by policy"
+    },
+    "OZMqaRKSwu": {
+      "english": "{total, plural, one {# worktree isn’t listed} other {# worktrees aren’t listed}}: {reasons}."
+    },
+    "ObsS9h5nIQ": {
+      "english": "{count, plural, one {# task or chat couldn’t be deleted because files in it are in use} other {# tasks and chats couldn’t be deleted because files in them are in use}}."
+    },
+    "OcHw9o00qo": {
+      "english": "Go to routine"
+    },
+    "OqSJj13qy+": {
+      "english": "{count, plural, one {Deleted # session} other {Deleted # sessions}}."
+    },
+    "P1MIIoPQiS": {
+      "english": "{count, plural, one {# also has a cloud copy, which is deleted too} other {# also have a cloud copy, which is deleted too}}."
+    },
+    "P1bU4oCDkI": {
+      "english": "{days} days"
+    },
+    "PBtMitJ1wI": {
+      "english": "A few things to know, plus one setting to review"
+    },
+    "PDAvLFzXA4": {
+      "english": "Delete account"
+    },
+    "POPGPskVs1": {
+      "english": "{count, plural, one {# is pinned} other {# are pinned}}"
+    },
+    "PfRJ+/Son7": {
+      "english": "Starting"
+    },
+    "Ps0CoiNXOT": {
+      "english": "Cowork tasks"
+    },
+    "PxhYEde2lq": {
+      "english": "App storage by kind"
+    },
+    "Q2QyZ42lOG": {
+      "english": "Move under"
+    },
+    "QFvcZ4s/cW": {
+      "english": "Not accepted on {host}"
+    },
+    "QI4yy6zTI9": {
+      "english": "Allowed connector tools"
+    },
+    "QLAgDU4H9h": {
+      "english": "Code storage by kind"
+    },
+    "QNnL+i+891": {
+      "english": "Runs without your computer"
+    },
+    "QOojJ8jVqu": {
+      "english": "dark theme"
+    },
+    "QWTP0t8UTt": {
+      "english": "Speed"
+    },
+    "Qd3RkFWJqn": {
+      "english": "Worktrees kept ready for new sessions"
+    },
+    "Qeo+56OCVl": {
+      "english": "For tokens or API keys use the credential helper script; static headers here are for non-secret routing (tenant IDs, Bedrock Guardrails) only."
+    },
+    "QhJxtbMJfB": {
+      "english": "Archive {count}"
+    },
+    "QzZqsQjiLm": {
+      "english": "Deleting…"
+    },
+    "R4r2WXtD8+": {
+      "english": "Couldn’t work out what to clean up. Try again."
+    },
+    "R79ZUHPpUZ": {
+      "english": "Output from {name} on {host}"
+    },
+    "R9oOWXgWxi": {
+      "english": "Normal"
+    },
+    "RCt35y3Iw8": {
+      "english": "Close any app that’s using a worktree first, such as an editor or a dev server."
+    },
+    "RG4fexqyaO": {
+      "english": "{host}’s own is used"
+    },
+    "RK0L7BuwI0": {
+      "english": "Server “{server}”: hosted config stores only a Google Desktop-app client secret (GOCSPX-…). For any other client secret use the client secret helper script."
+    },
+    "RWux9B/cSX": {
+      "english": "{sessions, plural, one {# session} other {# sessions}} and {worktrees}"
+    },
+    "RZWls20x16": {
+      "english": "You’re offline. Connect to the internet and try again."
+    },
+    "RfG2KsHAez": {
+      "english": "Computer use"
+    },
+    "S0xbsFUexi": {
+      "english": "Storage by area"
+    },
+    "SHujm/DXOW": {
+      "english": "Voice"
+    },
+    "SNuQo7IJH/": {
+      "english": "Logs"
+    },
+    "SR19nKO/BD": {
+      "english": "Desktop app"
+    },
+    "SXWK2NTfKx": {
+      "english": "{count, plural, =0 {Stopped before deleting anything} one {Stopped after deleting # task or chat} other {Stopped after deleting # tasks and chats}}."
+    },
+    "SpovY7kwwD": {
+      "english": "Can’t load this setting"
+    },
+    "SuJjHnT9jE": {
+      "english": "Enable computer use"
+    },
+    "Sy/ujcLBH3": {
+      "english": "{count, plural, one {# task couldn’t be deleted because files in it are in use} other {# tasks couldn’t be deleted because files in them are in use}}."
+    },
+    "SysRkWinmu": {
+      "english": "cancel plan"
+    },
+    "T+5/01Dxrs": {
+      "english": "Not installed on {host}. Install it there, then reconnect here."
+    },
+    "TF/CdEwTEv": {
+      "english": "Sessions and their conversations stay. Committed work stays on its branch."
+    },
+    "TG5+W8kPCU": {
+      "english": "colour"
+    },
+    "TMeenHCszI": {
+      "english": "No shortcut"
+    },
+    "TjgF6KXhEX": {
+      "english": "{count, plural, one {# inactive task} other {# inactive tasks}} · {size}"
+    },
+    "TrS+kwadjI": {
+      "english": "No servers added"
+    },
+    "TvGEXwDFHH": {
+      "english": "Not available in cloud Code sessions, which don’t run on this computer."
+    },
+    "U5LFGxv+xz": {
+      "english": "{count, plural, =0 {Stopped before deleting anything} one {Stopped after deleting # session} other {Stopped after deleting # sessions}}."
+    },
+    "UBBqQHn48j": {
+      "english": "{count, plural, one {The inactive session no longer has a worktree} other {None of the # inactive sessions still has a worktree}}"
+    },
+    "UCeCr4d731": {
+      "english": "Close or unpin a session to remove its worktree."
+    },
+    "UH0JCRCkNG": {
+      "english": "Committed work stays on its branch."
+    },
+    "UMwj6Q+Eev": {
+      "english": "Add-in features turned off for everyone, on every file."
+    },
+    "UOaDUxqghR": {
+      "english": "If safeguards flag a message, Claude can switch to another model so you can keep going. When off, Claude stops at the flagged message."
+    },
+    "UQ3fCFzclo": {
+      "english": "{count, plural, one {# session couldn’t be deleted} other {# sessions couldn’t be deleted}}."
+    },
+    "UmH4IX1ER9": {
+      "english": "Mark {count} as unread"
+    },
+    "UuWxnbdmsu": {
+      "english": "Allow the use of your chats and coding sessions to train and improve Anthropic AI models. You can change this anytime in Privacy Settings."
+    },
+    "V2Ac8jibT4": {
+      "english": "Chat font"
+    },
+    "VLudnwB37M": {
+      "english": "Clean up inactive sessions…"
+    },
+    "VOBOyAzm88": {
+      "english": "Remove the query string and fragment. This URL must be a bare https origin and path."
+    },
+    "VnXp8ZIfSy": {
+      "english": "Avatar"
+    },
+    "Vqv6GUqbKO": {
+      "english": "Accept edits"
+    },
+    "VyaYmFzK9j": {
+      "english": "{setting} ({group})"
+    },
+    "W+znbCrCL6": {
+      "english": "Open folder"
+    },
+    "W42/BNvKWG": {
+      "english": "Your account’s primary owner"
+    },
+    "W5Eo4Ira7F": {
+      "english": "Tap Option twice"
+    },
+    "WBvq3HlPae": {
+      "english": "Set shortcut"
+    },
+    "WOv3R0XYQC": {
+      "english": "cancel subscription"
+    },
+    "WRVYAfFJ2V": {
+      "english": "All active in the last {days} days."
+    },
+    "WTEeF8a/9V": {
+      "english": "Didn’t start in time on {host}"
+    },
+    "WUpPCDbJ8g": {
+      "english": "Removing…"
+    },
+    "WaKGlISxvI": {
+      "english": "{count, plural, one {# session has} other {# sessions have}} changes that were never committed."
+    },
+    "WkFwCECJDT": {
+      "english": "We’ve updated our Consumer Terms and Privacy Policy."
+    },
+    "XK8ej7dftk": {
+      "english": "Web cache, browser panes and logs."
+    },
+    "XLME9GQD8G": {
+      "english": "Refreshing…"
+    },
+    "XN3dMpQHE9": {
+      "english": "What should Claude call you?"
+    },
+    "XN9Pj/pLgN": {
+      "english": "{total, plural, one {# more worktree isn’t listed} other {# more worktrees aren’t listed}}: {reasons}."
+    },
+    "XNZZ52Z8ux": {
+      "english": "Statement {statement}: add at least one identifier."
+    },
+    "XP5vxiZixk": {
+      "english": "Detach to top level"
+    },
+    "XSRBCufGlI": {
+      "english": "Stopped running on {host}"
+    },
+    "XUir8trSmd": {
+      "english": "Tap Alt twice"
+    },
+    "XdlHHKhIxM": {
+      "english": "Claude Code’s policy allows only MCP servers that come with plugins. Ask your admin for access."
+    },
+    "Xe0tHuqTEO": {
+      "english": "color"
+    },
+    "XkeXbcw2yR": {
+      "english": "{named, select, yes {Server “{server}”} other {A server with no name}}: choose a permission for “{toolName}”."
+    },
+    "XkoHa9QcvL": {
+      "english": "Removing {done, number} of {total, number}…"
+    },
+    "XpnjzSC+xi": {
+      "english": "Your organization has turned off connectors from your Claude account in Claude Code. Ask your admin for access."
+    },
+    "Y2q5SU8kAQ": {
+      "english": "Artifacts"
+    },
+    "Y4he/pW2Mn": {
+      "english": "I understand the deleted conversations and the uncommitted changes can’t be recovered"
+    },
+    "YPNYZXiGJD": {
+      "english": "No uncommitted changes"
+    },
+    "YZEahccTg+": {
+      "english": "Code and Unified Claude are both off, so Claude Desktop has nothing to open. Turn on at least one of them."
+    },
+    "YfZxTAshfp": {
+      "english": "{count, plural, one {# task couldn’t be deleted} other {# tasks couldn’t be deleted}}."
+    },
+    "Yl8GBPTj+x": {
+      "english": "Tax ID"
+    },
+    "YqqUhGXHRI": {
+      "english": "Import"
+    },
+    "Z3oXcH7Vy+": {
+      "english": "The Cowork workspace (virtual machine) is counted under Runtime."
+    },
+    "ZEJ/Ki3uhW": {
+      "english": "{count, plural, one {# session selected} other {# sessions selected}} · {size}. Sessions, conversations, and branches stay."
+    },
+    "ZHNpXzRniL": {
+      "english": "{count, number} more"
+    },
+    "ZHco1GSUHH": {
+      "english": "Interface font"
+    },
+    "Zf63aqWK6G": {
+      "english": "Its name starts with a built-in server’s name. Rename it in Settings → Developer → Edit config, then quit and reopen Claude."
+    },
+    "ZhkFBG4biD": {
+      "english": "Get notified when Claude has finished a response. Useful for long-running tasks."
+    },
+    "ZmcwrBzQa7": {
+      "english": "light theme"
+    },
+    "ZpVtCaSh1Z": {
+      "english": "Shipping address"
+    },
+    "aWZzyB3FYG": {
+      "english": "Search sessions"
+    },
+    "abH/dkDEM4": {
+      "english": "Other Claude Code history"
+    },
+    "azjOW1NMeR": {
+      "english": "Couldn’t save: {named, select, yes {“{setting}”} other {a setting}} in the permission policy for “{group}” is no longer valid. Edit that policy, then try again."
+    },
+    "b3wAwXc0RY": {
+      "english": "Create keys, check usage, and more on Claude Platform. This requires another account, and API usage is billed separately."
+    },
+    "bEP1fZ8uSe": {
+      "english": "Manual"
+    },
+    "bGQN9Kppvo": {
+      "english": "No worktrees from sessions unused for {days} days."
+    },
+    "bgxVDlyNqh": {
+      "english": "A localhost address only works for members on an up-to-date Claude Desktop who run that local proxy on their own machine."
+    },
+    "bl3zqqfXmm": {
+      "english": "Cleanup isn’t available right now."
+    },
+    "bmGzHZmkPQ": {
+      "english": "Fix “{entry}”. Write it as name@marketplace, with no spaces."
+    },
+    "boU96NdwR+": {
+      "english": "{count, plural, one {Delete # task} other {Delete # tasks}}"
+    },
+    "bxF5LBtAbe": {
+      "english": "Updates to Consumer Terms and Policies"
+    },
+    "byD7Ln5TjP": {
+      "english": "Desktop extensions run on this computer only"
+    },
+    "c9ndaX48SF": {
+      "english": "Header “{name}” looks like a credential. Hosted config can’t store secrets in headers. Use the helper script instead."
+    },
+    "cGSF0vB/eU": {
+      "english": "Preferred browser"
+    },
+    "cJT9hml5Dm": {
+      "english": "Browser tools"
+    },
+    "cQTxPTnrgn": {
+      "english": "{count, plural, one {Remove worktree} other {Remove worktrees}}"
+    },
+    "cQX5Wv5op+": {
+      "english": "View logs"
+    },
+    "cUnWxAxEYc": {
+      "english": "{count, plural, one {# has} other {# have}} had no activity in the last {days} days ({size})."
+    },
+    "cd010aRrI4": {
+      "english": "Slow"
+    },
+    "ciLKOe5nmN": {
+      "english": "Cowork files"
+    },
+    "cuPGQUHxR4": {
+      "english": "How Claude uses the apps you allow"
+    },
+    "cumvSICF35": {
+      "english": "Unpinned {count, plural, one {# session} other {# sessions}}"
+    },
+    "cxfXVHDjYE": {
+      "english": "Switch models when a message is flagged"
+    },
+    "d4rHbgCsf4": {
+      "english": "Statement {statement}: Resource can’t be read."
+    },
+    "dC6z4MUunB": {
+      "english": "Statement {statement} lists “{action}”, which isn’t an action this page recognizes. Remove it to save."
+    },
+    "dOEgDshfXV": {
+      "english": "Browser panes"
+    },
+    "dYhtB41jpk": {
+      "english": "Uploaded files"
+    },
+    "dYmXDuNn5N": {
+      "english": "Reserved name"
+    },
+    "dstYVzrLL0": {
+      "english": "Cleanup didn’t finish. Check that you’re online and signed in, then try again."
+    },
+    "dwSwhkzTxF": {
+      "english": "Statement {statement}, identifier {identifier}: enter the label name to match."
+    },
+    "e+I67jdgnv": {
+      "english": "{row} on the {page} page"
+    },
+    "e/C8Gxlwxz": {
+      "english": "Active sessions"
+    },
+    "e6Cv5Y4QTL": {
+      "english": "Keep cookies"
+    },
+    "eDHPT1pAfr": {
+      "english": "Couldn’t read settings"
+    },
+    "eFxUdHSIkq": {
+      "english": "Shared artifacts"
+    },
+    "eMLhMHxe7n": {
+      "english": "Show Claude in the menu bar."
+    },
+    "eZe/sy1+2M": {
+      "english": "Blocked by policy"
+    },
+    "edWlt+5w83": {
+      "english": "Desktop extensions are disabled on this device. Please contact your IT administrator to enable desktop extensions."
+    },
+    "enac+ccOCg": {
+      "english": "Nothing was deleted. Check that you’re online and signed in, then try again."
+    },
+    "ezjkREa6xp": {
+      "english": "Atkinson Hyperlegible Next",
+      "retainReason": "正式字体名称。"
+    },
+    "fNFOznt68Y": {
+      "english": "As of {time}"
+    },
+    "fUJIDRoWvh": {
+      "english": "{count, plural, one {# inactive session} other {# inactive sessions}} · only worktrees with uncommitted changes are left"
+    },
+    "fVIi0h0uIb": {
+      "english": "Allow all browser actions"
+    },
+    "fXcHTYDnkk": {
+      "english": "<learnMoreLink>Learn more</learnMoreLink> and read the <termsLink>Consumer Terms</termsLink> and <privacyLink>Privacy Policy</privacyLink>."
+    },
+    "fc+oEygAS4": {
+      "english": "iOS Simulator"
+    },
+    "fgCBG8/Fm+": {
+      "english": "Accessibility"
+    },
+    "fsgonkJSAf": {
+      "english": "Dispatch messages"
+    },
+    "fuzyuUCXBZ": {
+      "english": "Command+D",
+      "retainReason": "键盘快捷键。"
+    },
+    "fzDl58Rwrd": {
+      "english": "Desktop app version"
+    },
+    "fzMSwtthQS": {
+      "english": "Don’t ask"
+    },
+    "fzS7X8WeEI": {
+      "english": "Statement {statement}: set Effect to allow or deny."
+    },
+    "g18veWcko1": {
+      "english": "Get a push notification on your phone when Claude messages you in Dispatch."
+    },
+    "gONuw2Ad8o": {
+      "english": "{count, plural, one {# session’s worktrees} other {# sessions’ worktrees}} can’t be removed here"
+    },
+    "gUEgZj+jjf": {
+      "english": "Auto-archive after PR merge"
+    },
+    "ghSj3dz9nV": {
+      "english": "System"
+    },
+    "gkoSAmTJDl": {
+      "english": "Delete {count}"
+    },
+    "gnENYzT+/5": {
+      "english": "Removed worktrees from {count, plural, one {# session} other {# sessions}}."
+    },
+    "gtfwBkRCnG": {
+      "english": "Delete sessions stored by Anthropic"
+    },
+    "gvr5+jGmwG": {
+      "english": "{host} has its own server of this name, turned off there"
+    },
+    "h2kOgf50w3": {
+      "english": "Add and manage MCP servers that you’re working on. "
+    },
+    "h3DqseeqHl": {
+      "english": "No sessions to move under"
+    },
+    "hCcWWt16U7": {
+      "english": "Space Claude uses on this computer."
+    },
+    "hIk1k4YxSV": {
+      "english": "Code appearance"
+    },
+    "hjmtm/nNLv": {
+      "english": "Mark {count} as read"
+    },
+    "i45x7uFt8Y": {
+      "english": "Faster"
+    },
+    "i7m2b6Jn4t": {
+      "english": "No Chrome instances are connected. Open Chrome with the Claude extension and sign in."
+    },
+    "iTM1PGTIqQ": {
+      "english": "Authorization tokens"
+    },
+    "iUQn3KbsRd": {
+      "english": "I understand the uncommitted changes can’t be recovered"
+    },
+    "ilfk95/I4Z": {
+      "english": "Show Claude in the system tray."
+    },
+    "inRgR8YUJ1": {
+      "english": "Couldn’t save your change. Try again."
+    },
+    "j2hlcpE79k": {
+      "english": "Browser use"
+    },
+    "jICgXbsnLU": {
+      "english": "Set model for {count}"
+    },
+    "jTSWKC1Xf7": {
+      "english": "No worktrees from sessions unused for {days} days. Choose “Any” to see the rest."
+    },
+    "jfnp8XG0n4": {
+      "english": "Couldn’t save your setting. Try again."
+    },
+    "jhXfYwaItm": {
+      "english": "Removing a worktree also removes files that Git ignores, such as <file>.env</file> files and build output. This can’t be undone."
+    },
+    "jkdBuvvxbr": {
+      "english": "accessibility"
+    },
+    "jqITpemI4c": {
+      "english": "I understand deleted conversations can’t be recovered"
+    },
+    "jqh+OOlFhh": {
+      "english": "{count, plural, one {# worktree} other {# worktrees}} · <s>{size}</s>"
+    },
+    "jvKP7SKvKC": {
+      "english": "App caches and logs"
+    },
+    "jvxgwULlQ6": {
+      "english": "Reported for this server"
+    },
+    "jxGHpnOQ0Z": {
+      "english": "Stopping after what’s in progress…"
+    },
+    "k/1sa+m76H": {
+      "english": "Unpin {count}"
+    },
+    "k5A94Jzbiq": {
+      "english": "An anthropic.com address expects the x-api-key auth scheme. Set Credential kind to Helper script and Gateway auth scheme to x-api-key."
+    },
+    "kEjS/8bwYx": {
+      "english": "How this affects data retention"
+    },
+    "kEyKMjPNH+": {
+      "english": "Open pull requests in browser"
+    },
+    "kQAf2d9u+x": {
+      "english": "Select"
+    },
+    "kTPYL0wZ7I": {
+      "english": "Starts when Claude Code restarts on {host}"
+    },
+    "kTlOneJyPr": {
+      "english": "Code execution and file creation"
+    },
+    "kaxCNx9MJC": {
+      "english": "Blocked by your organization’s Claude Code policy on {host}"
+    },
+    "ke/5wpsWdJ": {
+      "english": "Language"
+    },
+    "kfY+MUUjJl": {
+      "english": "Statement {statement}: set “Applies to”, or remove the Resource’s identifiers and description."
+    },
+    "khGRop66Ch": {
+      "english": "Your Code sessions are still being gathered. Try again shortly."
+    },
+    "l7jQfhDtOr": {
+      "english": "New style…"
+    },
+    "l8gheLPrPo": {
+      "english": "Nothing has been inactive for {days} days, so there is nothing to delete."
+    },
+    "lBnPWjUArB": {
+      "english": "Go to Claude Platform"
+    },
+    "lKjjJ7PIFW": {
+      "english": "Custom…"
+    },
+    "lafEN74cQd": {
+      "english": "Worktrees from {count, plural, one {# session} other {# sessions}} couldn’t be removed."
+    },
+    "m/DmtCOPfJ": {
+      "english": "Cowork task details"
+    },
+    "m3juYwfF5J": {
+      "english": "{count, plural, one {# is running or open now} other {# are running or open now}}"
+    },
+    "mDK+F/3TPT": {
+      "english": "The list of worktrees changed. Check what’s selected and try again."
+    },
+    "mGOKdTsQmq": {
+      "english": "{count, plural, one {# task or chat} other {# tasks and chats}}."
+    },
+    "mItEAxzS/J": {
+      "english": "Not available on {host}"
+    },
+    "me7lzCdQ3c": {
+      "english": "Enter an https:// URL that isn’t on the member’s own computer (such as localhost or 127.0.0.1)."
+    },
+    "mvuhmFZkZR": {
+      "english": "Measuring again… Last checked {when}."
+    },
+    "n00KPnUQww": {
+      "english": "{count, plural, one {# task} other {# tasks}}. Measuring…"
+    },
+    "nDyaq/M7Oj": {
+      "english": "Running"
+    },
+    "nItRP95eNV": {
+      "english": "{count, plural, one {Deleted # task} other {Deleted # tasks}}{skipped, plural, =0 {} one {; # was kept} other {; # were kept}}."
+    },
+    "nLL2AqBtBT": {
+      "english": "No Code session has been inactive for {days} days."
+    },
+    "nl4F4hf2Zm": {
+      "english": "at least {size}"
+    },
+    "np6RL3Yhid": {
+      "english": "{count, plural, one {# session wasn’t deleted (in use, pinned, or changed since)} other {# sessions weren’t deleted (in use, pinned, or changed since)}}."
+    },
+    "nwKczbeayM": {
+      "english": "Appearance"
+    },
+    "nwujE1hYLq": {
+      "english": "Payment"
+    },
+    "o+7su3wplb": {
+      "english": "Added after this session started. Available once Claude Code restarts on {host}."
+    },
+    "o9kK50oQVe": {
+      "english": "Connector search"
+    },
+    "oIGoNawMHy": {
+      "english": "Open PR"
+    },
+    "oLmAVj5phI": {
+      "english": "dark mode"
+    },
+    "oNlPV+Vyah": {
+      "english": "Server “{server}”: header “{name}” looks like a credential. Hosted config can’t store secrets in headers. Use the headers helper script instead."
+    },
+    "oWUaOSGs0u": {
+      "english": "Conversation history"
+    },
+    "olMzVVw01M": {
+      "english": "custom instructions"
+    },
+    "p+y6Z2PCW1": {
+      "english": "Your “Help improve our AI models” choice wasn’t saved. Go to Settings > Privacy to try again."
+    },
+    "p12p75mB+5": {
+      "english": "<muted>At least</muted> {size}"
+    },
+    "p2y3nST/qw": {
+      "english": "Not available on this host"
+    },
+    "p5gDBGQSbr": {
+      "english": "{versions, plural, =0 {The Cowork workspace and Claude Code downloads.} one {The Cowork workspace and # installed Claude Code version.} other {The Cowork workspace and # installed Claude Code versions.}}"
+    },
+    "p5zpXqu2Vt": {
+      "english": "Classify session states"
+    },
+    "pBhjDS1NXE": {
+      "english": "AI-powered artifacts"
+    },
+    "pVa0LkY9SK": {
+      "english": "Pause session"
+    },
+    "pVn0H046yS": {
+      "english": "Export"
+    },
+    "pWOY40DfLz": {
+      "english": "Couldn’t start on {host}. The server printed: “{line}”"
+    },
+    "pc9YT+Nd9y": {
+      "english": "{field} is required."
+    },
+    "pgaCSv2/6H": {
+      "english": "Arguments"
+    },
+    "psuGulikXK": {
+      "english": "Use memory in sessions"
+    },
+    "puzWzo2p9/": {
+      "english": "{count, plural, one {# task looks} other {# tasks look}} inactive but changed on this computer in the last {days} days (recently copied or restored, for example), so nothing can be freed yet."
+    },
+    "pvsYTc0TOp": {
+      "english": "Generate memory from chats"
+    },
+    "q/JBTY6wmN": {
+      "english": "Couldn’t load sessions."
+    },
+    "q29dVy10XD": {
+      "english": "Bypass permissions"
+    },
+    "qHSVoA5wlM": {
+      "english": "Unarchive {count}"
+    },
+    "qOK+MzYYBJ": {
+      "english": "Use built-in Node.js for MCP"
+    },
+    "qnhEQK6Ni0": {
+      "english": "Font licenses"
+    },
+    "qshVSCfplf": {
+      "english": "Get notified when scheduled tasks finish, can’t run, or need your input."
+    },
+    "qww56XgHqj": {
+      "english": "From {date} ({time}), current versions of Claude Desktop start new conversations as Cowork tasks by default. This period doesn’t delete Cowork tasks. “{setting}” does. To delete chats and Cowork tasks after the same number of days, set both to the same number."
+    },
+    "rELDbByu8U": {
+      "english": "Refresh"
+    },
+    "rOZptgrtp0": {
+      "english": "Workspace"
+    },
+    "rPFZ93PZaU": {
+      "english": "Get a push notification when Claude needs your approval to run a command in a Code session."
+    },
+    "rVtgHBWCOO": {
+      "english": "I understand this can’t be undone"
+    },
+    "rWYCtL0eNK": {
+      "english": "Scratch files"
+    },
+    "rfjQsjPv4B": {
+      "english": "{host} uses the one in its own Claude Code settings. Your tool switches still apply, and “Always allow” isn’t offered for its tools."
+    },
+    "rhIlv2Cqp+": {
+      "english": "Skip past the sessions"
+    },
+    "rjl8lfaUv3": {
+      "english": "Transcript view"
+    },
+    "rtbNQQ2C8O": {
+      "english": "Manage"
+    },
+    "s6OueH6eJQ": {
+      "english": "Response font"
+    },
+    "sFMK25d7po": {
+      "english": "Adding…"
+    },
+    "sHRXIdTx3F": {
+      "english": "Auto-reload"
+    },
+    "sV2v5LjRpX": {
+      "english": "Instructions"
+    },
+    "sYDsuxbWJx": {
+      "english": "This shortcut is reserved for common actions. Try a different combination."
+    },
+    "sjzLbXqRP8": {
+      "english": "Accept"
+    },
+    "suQYbqVzZU": {
+      "english": "Couldn’t save your choice. Try again."
+    },
+    "sy7vzf+1SO": {
+      "english": "Scheduled tasks"
+    },
+    "t0eCW57c4v": {
+      "english": "Allow Claude to directly interact with apps, data, and tools on your computer."
+    },
+    "t6CoyspugC": {
+      "english": "Tool access mode"
+    },
+    "t6sxIMkk1A": {
+      "english": "Plugins and skills"
+    },
+    "tHiujbRkEF": {
+      "english": "MCP servers you added on this computer don’t run on this SSH host. To use this one, add it to ~/.claude.json on the host under a different name, then start a new session. If it doesn’t appear, ask the host’s admin to allow it."
+    },
+    "tPrRgPHF6R": {
+      "english": "Keep Claude running in the system tray."
+    },
+    "tW/aAbNADE": {
+      "english": "Plugin servers only"
+    },
+    "tf+yHLZoYV": {
+      "english": "Fast"
+    },
+    "ti2sWECZFG": {
+      "english": "subscriptions"
+    },
+    "toxdrPSjBR": {
+      "english": "Cowork, Code, and Chat are all off, so Claude Desktop turns {surface} on for members anyway. Turn on at least one of them."
+    },
+    "tyeyubRVu/": {
+      "english": "Not available for this account."
+    },
+    "tyn7+Sr4QO": {
+      "english": "Its uncommitted changes will be lost if removed"
+    },
+    "u6jOv5zF39": {
+      "english": "{count, plural, one {# session selected} other {# sessions selected}} · {size}. <warn>Its uncommitted changes will be lost.</warn>"
+    },
+    "uALpKq2tu/": {
+      "english": "Motion"
+    },
+    "uXinBOnUV7": {
+      "english": "Plan"
+    },
+    "uYg6zgvKu8": {
+      "english": "{count, plural, one {Deleted # task or chat} other {Deleted # tasks and chats}}{skipped, plural, =0 {} one {; # was kept} other {; # were kept}}."
+    },
+    "um5I+OmbZQ": {
+      "english": "Sharing settings"
+    },
+    "urCd4k/cE0": {
+      "english": "Command"
+    },
+    "utsoAOqm23": {
+      "english": "file icon theme"
+    },
+    "uu47TeN43k": {
+      "english": "Disk space used"
+    },
+    "uvL4fkz/bT": {
+      "english": "change plan"
+    },
+    "v++NPNRuCM": {
+      "english": "{host} uses the one in this project’s .mcp.json. Your tool switches still apply, and “Always allow” isn’t offered for its tools."
+    },
+    "vFVnWo9Fxm": {
+      "english": "Statement {statement} can’t be read. Check its values."
+    },
+    "vJozdi3Mka": {
+      "english": "Want an API key?"
+    },
+    "vKMj39KhGw": {
+      "english": "Claude Code",
+      "retainReason": "Claude Code 产品名。"
+    },
+    "vUH9m5I0+0": {
+      "english": "Help improve our AI models"
+    },
+    "vc8werC57E": {
+      "english": "Transcript width"
+    },
+    "vo0j+m3s21": {
+      "english": "Your role"
+    },
+    "vsENV++qTA": {
+      "english": "{count, plural, one {Delete # task or chat} other {Delete # tasks and chats}}"
+    },
+    "wJrNgcBCLL": {
+      "english": "Your “Help improve our AI models” choice may not have been saved. You can review it in privacy settings."
+    },
+    "wQcOPelwG3": {
+      "english": "{host} uses the one in its organization’s Claude Code settings. Your tool switches still apply, and “Always allow” isn’t offered for its tools."
+    },
+    "wRD0h8StFW": {
+      "english": "Time since last use"
+    },
+    "wUV2EbNd4F": {
+      "english": "Auto-fix pull requests"
+    },
+    "wUfJCDln9R": {
+      "english": "Search and reference chats"
+    },
+    "wVO4PdyNF1": {
+      "english": "{count, plural, one {Remove a worktree with uncommitted changes?} other {Remove worktrees with uncommitted changes?}}"
+    },
+    "wbVh5JSa6C": {
+      "english": "Enable Claude in Chrome"
+    },
+    "wmojw5mZau": {
+      "english": "Also delete the {count, plural, one {inactive session and its conversation} other {# inactive sessions and their conversations}}"
+    },
+    "wtOt83XrGz": {
+      "english": "Code notifications"
+    },
+    "xBU5hYIiNs": {
+      "english": "Enable auto-updates for extensions"
+    },
+    "xIG84NwUlL": {
+      "english": "{count, plural, one {# task} other {# tasks}}."
+    },
+    "xYzrrGyzW7": {
+      "english": "Since {date} ({time}), current versions of Claude Desktop turn on Unified Claude by default, which turns on Cowork even though this setting is off. To turn Cowork off, turn off Unified Claude on the Capabilities page. This also turns off Chat."
+    },
+    "xaAomaYv7Z": {
+      "english": "Not accepted by Claude Code on {host}"
+    },
+    "xhhRGTvihK": {
+      "english": "Log out of all devices"
+    },
+    "xv8diByX5m": {
+      "english": "this server"
+    },
+    "xzUls4Ryc4": {
+      "english": "Remove “The add-in itself” from Disabled add-in features, or members can’t use the add-in after they sign in."
+    },
+    "yDONwLk37L": {
+      "english": "Loading MCP servers"
+    },
+    "yUsyxi1gKs": {
+      "english": "Android Emulator"
+    },
+    "yZfJXSDJb8": {
+      "english": "Turning ON the improve Claude setting extends data retention from 30 days to 5 years to improve our model performance and safety. Turning it OFF keeps the default 30-day data retention. Delete data anytime."
+    },
+    "yhU1etXT1A": {
+      "english": "Tasks"
+    },
+    "yk4PT9S4sc": {
+      "english": "Full name"
+    },
+    "yscPN0QqQM": {
+      "english": "The configuration as a whole: {rule}"
+    },
+    "z7yp64+Mvf": {
+      "english": "Free up space"
+    },
+    "zCIK9K8J4a": {
+      "english": "Error"
+    },
+    "zI4J/bY/sY": {
+      "english": "Allow the use of your chats and coding sessions to train and improve Anthropic AI models. <learnMoreLink>Learn more</learnMoreLink>."
+    },
+    "zSP70MVzIo": {
+      "english": "Clear shortcut"
+    },
+    "zZKbhTvr+r": {
+      "english": "Session worktrees"
+    },
+    "zc666LLev6": {
+      "english": "Server “{server}”: hosted config stores a client secret only when Authorization server is [\"https://accounts.google.com\"] alone and Tenant ID, Authorization URL and Token URL are empty. For other providers use the client secret helper script."
+    },
+    "zdj+o1a4TH": {
+      "english": "{count, plural, one {# task or chat} other {# tasks and chats}}. Measuring…"
+    },
+    "zfBB0xiNUF": {
+      "english": "Not on allowed list"
     }
   }
 }

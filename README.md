@@ -56,7 +56,7 @@
    - ⚠️ **引擎依赖兼容性声明 (Compatibility Note)**：
      - **推荐基线（零警告原生支持）**：**Node.js ≥ 22.12.0**（如 Node 22 LTS 或 Node 24+）。项目底层核心打包依赖 `@electron/asar` 声明 `engines.node: ">=22.12.0"`，在 Node 22+ 下可获得零引擎警告（`EBADENGINE`）的最佳体验；
      - **兼容状态说明**：CI 包含 **Node.js 20.x**，但安装依赖时可能提示 `EBADENGINE`；启用 `engine-strict=true` 时可能阻断安装。Node 20 的 CI 结果不代表所有较早小版本均兼容，建议优先使用 Node 22.12+。
-3. **已安装官方 Claude Desktop**。Windows 请使用上方的 Win32（Squirrel）安装器，安装根目录为 `%LOCALAPPDATA%\AnthropicClaude`。官网通用 `ClaudeSetup.exe` 和微软商店可部署 MSIX，MSIX 不支持本项目的原位汉化。桌面 Cowork 需要 MSIX 的虚拟机服务。[Claude 官方 Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
+3. **已安装官方 Claude Desktop**。Windows 请使用上方的 Win32（Squirrel）安装器，安装根目录为 `%LOCALAPPDATA%\AnthropicClaude`。官网通用 `ClaudeSetup.exe` 和微软商店可部署 MSIX，MSIX 不支持本项目的原位汉化。`Unified Claude` 将 Chat 和 Cowork 合并到同一界面。Windows 上在本机运行 Cowork 任务仍需要完整版提供的虚拟机服务。[Claude Windows 部署说明](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) · [桌面配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog)
 
 ---
 
@@ -70,7 +70,7 @@
 
 维护核对了 6.6395.0 的官方日志与实际资源，包含本地 MCP 的托管策略、SSH/WSL 文件下载和更新提示。对比 5.11492.5，官方 Shell 新增 58 项，Ion 新增 2,321 项。本轮补译 58 项 Shell、110 项 Ion 文案及 20 篇第三方推理折叠说明，并为新版模块重新绑定 58 处限定文案。旧版回归快照仍有兼容用途。相同英文按词条 ID 和组件上下文分别审查。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-6395-0) [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
-`npm run audit:ui` 核查 51 个模块、3,945 条界面消息与原始源码指纹，覆盖第三方推理、会话、连接器、文件和侧栏等已检查的界面。账号、模型与服务端下发文案取决于运行环境。诸如 `Ultracode` 的功能名保留英文。
+后续新增 266 个界面词条，涉及权限模式、会话层级菜单、常规与隐私设置、系统存储、MCP 状态和第三方推理配置校验。`npm run audit:ui` 核查 62 个模块、4,471 条界面消息及原始源码指纹。账号、模型与服务端下发文案取决于运行环境。`Unified Claude` 和 `Ultracode` 等官方功能名保留英文。
 
 ## 🚀 快速开始
 

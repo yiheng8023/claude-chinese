@@ -33,7 +33,11 @@ const labels = {
   'SM/PSyq5fS': '没有已展开的文件夹可供折叠。', '42YfXqKAm8': '新建侧边会话',
   '65lRW0A2LM': '问个简单问题', myljfhoK3X: '选择环境',
   '8DbsasU3Hw': '跳转到行', PTtw6MZuiL: '创建分区',
-  '9WSR22vPgm': '保存为环境', fs9XMzW72m: '删除所有会话'
+  '9WSR22vPgm': '保存为环境', fs9XMzW72m: '删除所有会话',
+  uXinBOnUV7: '计划', Q2QyZ42lOG: '移至会话下',
+  '4bX1PIcQOm': '与界面一致', s6OueH6eJQ: '回复字体',
+  'MzMg+gIepF': '默认 · {font}', ghSj3dz9nV: '系统',
+  GzzPVMOYC7: '减少应用中的动效，或跟随系统设置。', wwA2NzN0nb: 'Unified Claude'
 };
 for (const [id, text] of Object.entries(labels)) assert.equal(zh[id], text, `Reported UI label ${id}`);
 const menuBadge = JS_LITERAL_PATCHES.find(patch => patch.id === 'effort-menu-recommended-badge');

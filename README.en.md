@@ -55,7 +55,7 @@ This release supports Windows **6.6395.0**. In-place localization was verified o
    - ⚠️ **Engine Dependency Compatibility Note**:
      - **Recommended Baseline (Zero Warning)**: **Node.js ≥ 22.12.0** (Node 22 LTS or Node 24+). The underlying archive dependency `@electron/asar` declares `engines.node: ">=22.12.0"`, providing a native, zero-warning installation and execution environment.
      - **Compatibility Status**: CI includes **Node.js 20.x**, but dependency installation may emit `EBADENGINE` and may fail with `engine-strict=true`. Passing Node 20 CI does not establish compatibility with every earlier minor version. Prefer Node 22.12+.
-3. **Official Claude Desktop installed**. On Windows, use the Win32 (Squirrel) installer above. Its installation root is `%LOCALAPPDATA%\AnthropicClaude`. The general-purpose `ClaudeSetup.exe` and Microsoft Store can deploy MSIX, which this toolkit does not localize in place. Desktop Cowork requires the MSIX virtual machine service. [Official Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows)
+3. **Official Claude Desktop installed**. On Windows, use the Win32 (Squirrel) installer above. Its installation root is `%LOCALAPPDATA%\AnthropicClaude`. The general-purpose `ClaudeSetup.exe` and Microsoft Store can deploy MSIX, which this toolkit does not localize in place. Unified Claude combines Chat and Cowork in one interface. Running local Cowork tasks on Windows still requires the virtual machine service in the full installation. [Claude Windows deployment guide](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) · [Desktop configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog)
 
 ---
 
@@ -69,7 +69,7 @@ On a Windows test machine, the stock Squirrel updater applied a pre-downloaded a
 
 The 6.6395.0 maintenance pass checked official release notes and packaged resources, including managed policy for local MCP servers, SSH/WSL file downloads and update messages. Compared with 5.11492.5, the upstream Shell added 58 entries and Ion added 2,321. This pass translates 58 Shell entries, 110 Ion messages and 20 third-party inference help bodies, and rebinds 58 context-specific strings to the new modules. Older regression snapshots remain useful for compatibility. Identical English text is reviewed by message ID and component context. [Desktop changelog](https://claude.com/docs/cowork/changelog#v6-6395-0) [Configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-6395-0)
 
-`npm run audit:ui` checks 51 modules and 3,945 UI messages against source fingerprints, covering the reviewed third-party inference, session, connector, files and sidebar UI. Account, model and service-delivered messages depend on the runtime environment. Feature names such as `Ultracode` are kept in English.
+The follow-up adds 266 catalog entries across permission modes, session nesting, general and privacy settings, system storage, MCP status, and third-party inference validation. `npm run audit:ui` checks 62 modules and 4,471 UI messages against their original source fingerprints. Account, model and service-delivered messages depend on the runtime environment. Official feature names such as `Unified Claude` and `Ultracode` are kept in English.
 
 ## 🚀 Quick Start
 
