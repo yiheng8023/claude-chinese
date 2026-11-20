@@ -47,36 +47,46 @@ function runDriftDetection(customEnPath = null, options = {}) {
     const dynamicZh = require('../dict/dynamic-zh-CN.json');
     const asarPath = path.join(resourcesDir, 'ion-dist.asar');
     const assetsDir = path.join(resourcesDir, 'ion-dist', 'assets', 'v1');
+    const scopedNames = new Set(JS_LITERAL_PATCHES.flatMap(patch => patch.files || []));
+    const scopedSources = new Map();
     let allJsContent = '';
+
+    function collectJs(file, read) {
+      const name = path.posix.basename(file.replaceAll('\\', '/'));
+      if (scopedNames.has(name)) scopedSources.set(name, '');
+      try {
+        const source = read();
+        allJsContent += source + '\n';
+        if (scopedNames.has(name)) scopedSources.set(name, source);
+      } catch (_) {}
+    }
 
     if (fs.existsSync(asarPath)) {
       try {
         const list = asar.listPackage(asarPath);
         const jsEntries = list.filter(e => (e.startsWith('\\assets\\v1\\') || e.startsWith('/assets/v1/')) && e.endsWith('.js'));
         for (const entry of jsEntries) {
-          try {
-            allJsContent += asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8') + '\n';
-          } catch (_) {}
+          collectJs(entry, () => asar.extractFile(asarPath, entry.replace(/^[\\\/]/, '')).toString('utf8'));
         }
       } catch (_) {}
     } else if (fs.existsSync(assetsDir)) {
       const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
       for (const f of jsFiles) {
-        try {
-          allJsContent += fs.readFileSync(path.join(assetsDir, f), 'utf8') + '\n';
-        } catch (e) {}
+        collectJs(f, () => fs.readFileSync(path.join(assetsDir, f), 'utf8'));
       }
     }
 
     if (allJsContent) {
       for (const patch of (JS_LITERAL_PATCHES || [])) {
-        const matchesEn = patch.enPattern ? safeTest(patch.enPattern, allJsContent) : false;
-        const matchesZh = patch.zhPattern ? safeTest(patch.zhPattern, allJsContent) : false;
-        
+        const sources = patch.files
+          ? patch.files.filter(file => scopedSources.has(file)).map(file => scopedSources.get(file))
+          : [allJsContent];
         let status = 'DRIFTED';
-        if (matchesZh) {
+        if (!sources.length) {
+          status = 'OUTSIDE_MODULE_SCOPE';
+        } else if (sources.some(source => safeTest(patch.zhPattern, source))) {
           status = 'ACTIVE_PATCHED';
-        } else if (matchesEn) {
+        } else if (sources.some(source => safeTest(patch.enPattern, source))) {
           status = 'MATCHED_UNPATCHED';
         } else if (patch.intlKey && (patch.intlLayer === 'dynamic' ? dynamicEn[patch.intlKey] && dynamicZh[patch.intlKey] : upstreamDict[patch.intlKey] && zhDict[patch.intlKey])) {
           status = 'UPSTREAM_STANDARDIZED';

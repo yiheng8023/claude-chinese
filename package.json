@@ -1,6 +1,6 @@
 {
   "name": "claude-chinese",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Claude Desktop 中文汉化工具包 (Chinese Localization for Claude Desktop)",
   "main": "cli.js",
   "engines": {

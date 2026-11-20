@@ -5,9 +5,16 @@ const crypto = require('node:crypto');
 const asar = require('@electron/asar');
 const { getClaudeInstallation } = require('../core/msix-detector');
 const { baselineArtifacts, readMeta } = require('../core/asar-transaction');
-const fixtures = [require('../test/fixtures/inference-help-4.4212.json'), require('../test/fixtures/inference-help-4.16336.json'), require('../test/fixtures/inference-help-4.23118.json'), require('../test/fixtures/inference-help-5.1231.json'), require('../test/fixtures/inference-help-5.11492.json')];
+const fixtures = [
+  require('../test/fixtures/inference-help-4.4212.json'),
+  require('../test/fixtures/inference-help-4.16336.json'),
+  require('../test/fixtures/inference-help-4.23118.json'),
+  require('../test/fixtures/inference-help-5.1231.json'),
+  require('../test/fixtures/inference-help-5.11492.json'),
+  require('../test/fixtures/inference-help-6.6395.json'),
+  require('../test/fixtures/inference-help-6.28899.json')
+];
 const translations = require('../dict/long-docs-zh-CN.json');
-const latest = require('../test/fixtures/inference-help-6.6395.json');
 const hashText = text => crypto.createHash('sha256').update(text).digest('hex');
 const byHash = new Map(Object.keys(translations).map(text => [hashText(text), text]));
 function resolveFixtureDocuments(fixture) {
@@ -16,8 +23,6 @@ function resolveFixtureDocuments(fixture) {
     return byHash.get(hash);
   });
 }
-fixtures.push(latest);
-
 function auditInferenceHelp(info = getClaudeInstallation()) {
   const documents = [...new Set(fixtures.flatMap(resolveFixtureDocuments))];
   const missing = documents.filter(text => !Object.hasOwn(translations, text));

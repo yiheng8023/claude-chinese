@@ -13,6 +13,7 @@ const latestFixture = require('./fixtures/inference-help-4.23118.json');
 const v5Fixture = require('./fixtures/inference-help-5.1231.json');
 const v5LatestFixture = require('./fixtures/inference-help-5.11492.json');
 const v6Fixture = require('./fixtures/inference-help-6.6395.json');
+const v628899Fixture = require('./fixtures/inference-help-6.28899.json');
 
 function protectedParts(text) {
   const blocks = [...text.matchAll(/```[^\n]*\n[\s\S]*?```/g)].map(m => m[0]);
@@ -68,6 +69,8 @@ try {
   assert.equal(resolveFixtureDocuments(v5LatestFixture).length, 145);
   assert.equal(v6Fixture.helpReferences, 156);
   assert.equal(resolveFixtureDocuments(v6Fixture).length, 152);
+  assert.equal(v628899Fixture.helpReferences, 184);
+  assert.equal(resolveFixtureDocuments(v628899Fixture).length, 180);
   // Identical English labels can have different meanings in distinct components.
   assert.equal(zh['IG5n0mukdA'], '键');
   assert.equal(zh['EcglP9ZtIw'], '密钥');
@@ -76,7 +79,7 @@ try {
   assert.equal(zh['IxbsWX4wj4'], '添加标头');
   assert.equal(zh['79IWiafC91'], '标头');
   assert.equal(zh['vUjsX7qaCx'], '页眉');
-  for (const english of new Set([fixture, currentFixture, latestFixture, v5Fixture, v5LatestFixture, v6Fixture].flatMap(resolveFixtureDocuments))) {
+  for (const english of new Set([fixture, currentFixture, latestFixture, v5Fixture, v5LatestFixture, v6Fixture, v628899Fixture].flatMap(resolveFixtureDocuments))) {
     assert(Object.hasOwn(translatedDocs, english), `Missing complete help body: ${english.split('\n')[0]}`);
     const translated = translatedDocs[english];
     assert(/\p{Script=Han}/u.test(translated), 'Help prose must be translated');

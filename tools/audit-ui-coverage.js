@@ -5,14 +5,18 @@ const { getClaudeInstallation } = require('../core/msix-detector');
 const { baselineArtifacts, readMeta } = require('../core/asar-transaction');
 const { validateReview, validateSources } = require('./ui-coverage');
 const { scopedSourceFiles } = require('../core/scoped-ui');
-const previous = require('../test/fixtures/desktop-ui-5.11492.json');
-const current = require('../test/fixtures/desktop-ui-6.6395.json');
+const snapshots = [
+  require('../test/fixtures/desktop-ui-5.11492.json'),
+  require('../test/fixtures/desktop-ui-6.6395.json'),
+  require('../test/fixtures/desktop-ui-6.28899.json')
+];
 const translated = require('../dict/ion-zh-CN.json');
-const messages = { ...previous.messages, ...current.messages };
-const currentReview = { ...current, messages: Object.fromEntries(
-  [...new Set(current.sourceFiles.flatMap(file => file.ids))].map(id => [id, messages[id]])
-) };
-const reviews = [currentReview, previous];
+const messages = {};
+const reviews = snapshots.map(snapshot => {
+  Object.assign(messages, snapshot.messages);
+  const ids = new Set(snapshot.sourceFiles.flatMap(file => file.ids));
+  return { ...snapshot, messages: Object.fromEntries([...ids].map(id => [id, messages[id]])) };
+}).reverse();
 
 function auditUiCoverage(info = getClaudeInstallation()) {
   const counts = reviews.map(review => validateReview(review, translated));
