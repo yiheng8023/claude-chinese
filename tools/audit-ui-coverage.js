@@ -8,14 +8,22 @@ const { scopedSourceFiles } = require('../core/scoped-ui');
 const snapshots = [
   require('../test/fixtures/desktop-ui-5.11492.json'),
   require('../test/fixtures/desktop-ui-6.6395.json'),
-  require('../test/fixtures/desktop-ui-6.28899.json')
+  require('../test/fixtures/desktop-ui-6.28899.json'),
+  require('../test/fixtures/desktop-ui-6.28899.6.json')
 ];
 const translated = require('../dict/ion-zh-CN.json');
 const messages = {};
+const reviewedIds = new Map();
 const reviews = snapshots.map(snapshot => {
   Object.assign(messages, snapshot.messages);
-  const ids = new Set(snapshot.sourceFiles.flatMap(file => file.ids));
-  return { ...snapshot, messages: Object.fromEntries([...ids].map(id => [id, messages[id]])) };
+  const sourceFiles = snapshot.sourceFiles.map(file => {
+    const ids = file.ids || reviewedIds.get(file.idsFrom);
+    if (!ids?.length) throw Error(`No reviewed message IDs for ${file.file}`);
+    return { ...file, ids };
+  });
+  for (const file of sourceFiles) reviewedIds.set(file.file, file.ids);
+  const ids = new Set(sourceFiles.flatMap(file => file.ids));
+  return { ...snapshot, sourceFiles, messages: Object.fromEntries([...ids].map(id => [id, messages[id]])) };
 }).reverse();
 
 function auditUiCoverage(info = getClaudeInstallation()) {

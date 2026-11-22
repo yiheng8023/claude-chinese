@@ -14,7 +14,8 @@
     "after": "label:\"Cowork 插件\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -25,7 +26,8 @@
     "after": "description:\"GitHub 上的 anthropics/knowledge-work-plugins\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -36,7 +38,8 @@
     "after": "label:\"Claude Code 插件\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -47,7 +50,8 @@
     "after": "description:\"GitHub 上的 anthropics/claude-plugins-official\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -58,7 +62,8 @@
     "after": "description:\"GitHub 上的 anthropics/financial-services\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -69,7 +74,8 @@
     "after": "description:\"GitHub 上的 anthropics/claude-for-legal\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -80,7 +86,8 @@
     "after": "description:\"GitHub 上的 anthropics/life-sciences\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -91,7 +98,8 @@
     "after": "label:\"插件市场 URL\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -102,7 +110,8 @@
     "after": "label:\"GitHub 仓库\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -113,7 +122,8 @@
     "after": "section:\"来自合作伙伴\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -124,7 +134,8 @@
     "after": "description:\"GitHub 上的 salesforce/salesforce-skills\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -135,7 +146,8 @@
     "after": "title:\"测试失败\"",
     "additionalFiles": [
       "assets/v1/ce459c687-DKOHA_Ae.js",
-      "assets/v1/ce459c687-Ho1QxwHM.js"
+      "assets/v1/ce459c687-Ho1QxwHM.js",
+      "assets/v1/ce459c687-CgvHJmyU.js"
     ]
   },
   {
@@ -146,7 +158,8 @@
     "after": "message:\"发生了意外错误。\"",
     "additionalFiles": [
       "assets/v1/ce459c687-DKOHA_Ae.js",
-      "assets/v1/ce459c687-Ho1QxwHM.js"
+      "assets/v1/ce459c687-Ho1QxwHM.js",
+      "assets/v1/ce459c687-CgvHJmyU.js"
     ]
   },
   {
@@ -157,7 +170,8 @@
     "after": "title:\"登录失败\"",
     "additionalFiles": [
       "assets/v1/ce459c687-DKOHA_Ae.js",
-      "assets/v1/ce459c687-Ho1QxwHM.js"
+      "assets/v1/ce459c687-Ho1QxwHM.js",
+      "assets/v1/ce459c687-CgvHJmyU.js"
     ]
   },
   {
@@ -170,7 +184,8 @@
     "after": "reason:\"应为 Bedrock 上的 Anthropic 模型 ID（如 us.anthropic.claude-sonnet-4-5-20250929-v1:0），或推理配置文件 ARN\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -183,7 +198,8 @@
     "after": "reason:\"Vertex 模型 ID 不能包含“/”、“\\\\”、“?”、“#”、“%”或空白字符\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -196,7 +212,8 @@
     "after": "reason:\"应为以“claude-”开头的 Vertex Model Garden ID（如 claude-sonnet-4-5@20250929）\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -209,7 +226,8 @@
     "after": "reason:\"应为引用 Anthropic 模型的 Foundry 部署名称（如 claude-sonnet-4-5）。请将部署命名为与底层模型一致的名称。\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -222,7 +240,8 @@
     "after": "reason:\"应为引用 Anthropic 模型的网关模型路由（如 claude-sonnet-4-5、anthropic/claude-*）。请将路由命名为与底层模型一致的名称。\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -235,7 +254,8 @@
     "after": "message:`不是 ${t} 的成员（${t} 包含 ${i}）`",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -248,7 +268,8 @@
     "after": "message:\"当 Auth 为 credentialHelper 时必须填写凭据辅助程序，否则必须留空\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -261,7 +282,8 @@
     "after": "message:\"必须是设备上的路径，不能是网络路径，也不能以 \\\\\\\\?\\\\ 或 \\\\??\\\\ 开头\"",
     "additionalFiles": [
       "assets/v1/c8dbdda48-DUXM2gkb.js",
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -274,7 +296,8 @@
     "after": "message:\"应为 UUID，或 [\\\"<uuid>\\\",\\\"<uuid>\\\"] 这样的 UUID JSON 数组\"",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -287,7 +310,8 @@
     "after": "message:\"应为组织 UUID\"",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -300,7 +324,8 @@
     "after": "message:\"必须是独立程序，不能是脚本（.cmd、.bat、.ps1）、shell 或解释器\"",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -313,7 +338,8 @@
     "after": "message:\"不能包含控制字符（在注册表或 plist 的 JSON 字符串中，每个反斜杠应写成 \\\\\\\\）\"",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -326,7 +352,8 @@
     "after": "message:\"必须同时填写 url、oauthIssuer 和 oauthClientId（导入端点缺少其中任意一项都无法使用）\"",
     "additionalFiles": [
       "assets/v1/c04850347-94z3r7Sc.js",
-      "assets/v1/c04850347-Bt_Tc2Qo.js"
+      "assets/v1/c04850347-Bt_Tc2Qo.js",
+      "assets/v1/c04850347-BiqbTh6S.js"
     ]
   },
   {
@@ -339,7 +366,8 @@
     "after": "message:\"请填写 macOS 或 Linux 路径：不含盘符和反斜杠\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -352,7 +380,8 @@
     "after": "message:\"请填写带盘符的 Windows 路径（C:\\\\... 或 C:/...）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -365,7 +394,8 @@
     "after": "message:\"authFlow 为“broker”时必须填写 tenantId（操作系统代理登录使用已注册应用在指定租户中的 Entra 授权机构）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -378,7 +408,8 @@
     "after": "message:\"authFlow 为“broker”时需要租户 GUID；“common”/“organizations”/“consumers”别名不是操作系统代理可以登录的租户\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -391,7 +422,8 @@
     "after": "message:\"设置 tenantId 时必须填写 scope（固定租户的应用必须明确指定资源作用域；需要静默刷新时，请包含 offline_access）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -404,7 +436,8 @@
     "after": "message:\"omitResource 为 true 时，必须填写 tenantId、单个 authorizationServer，或同时填写 authorizationUrl 和 tokenUrl 且不填写 authorizationServer（否则 MCP 服务器元数据可以影响登录目的地，而 resource 参数可让身份提供商拒绝不认识的服务器）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -417,7 +450,8 @@
     "after": "message:\"omitResource 为 true 时，scope 必须至少列出一个 API 作用域；省略 resource 参数后，只有 scope 能告诉身份提供商令牌用于哪个 API（openid、profile、email、address、phone 和 offline_access 不算 API 作用域）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -430,7 +464,8 @@
     "after": "message:\"设置 clientSecret/clientSecretHelper/tenantId/callbackHost/callbackPort/authFlow/omitResource/authorizationServer 时必须填写 clientId（只有 scope/appendOfflineAccess/additionalRedirectReferrerHosts 可以在未预注册客户端时配置）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -443,7 +478,8 @@
     "after": "message:\"设置 authorizationUrl 或 tokenUrl 时，必须同时填写两者（显式端点会成对替代 .well-known 发现）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -456,7 +492,8 @@
     "after": "message:\"设置 authorizationUrl/tokenUrl 时必须填写 clientId（动态客户端注册不会对手动配置的端点运行）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -469,7 +506,8 @@
     "after": "message:\"配置客户端密钥时必须填写 authorizationServer（Google 客户端使用 [\\\"https://accounts.google.com\\\"]；mcp.box.com 使用 [\\\"https://api.box.com\\\"]）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -482,7 +520,8 @@
     "after": "message:\"还需在条目自身设置 headersHelper\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -504,7 +543,8 @@
     "after": "message:\"必须是带 Windows 盘符的路径（C:\\\\... 或 C:/...）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -517,7 +557,8 @@
     "after": "message:\"必须是 macOS 或 Linux 文件路径（以 / 开头且不以 / 结尾）\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -530,7 +571,8 @@
     "after": "message:\"不能包含控制字符、格式字符、专用字符或未分配字符\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -543,7 +585,8 @@
     "after": "message:\"必须由 1 到 32 个小写字母、数字或连字符组成，且不能以连字符开头\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -556,7 +599,8 @@
     "after": "message:\"必须是单独的命令名（如 npx）或本地绝对路径（Windows：C:/... 或 C:\\\\...）；不能使用 ~、..、UNC 或 \\\\??\\\\ 前缀，也不能包含控制字符\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -569,7 +613,8 @@
     "after": "message:\"设置 sensitivityLabels 时，必须填写租户 GUID，不能使用“common”、“organizations”或“consumers”\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -582,7 +627,8 @@
     "after": "message:\"azureCloud 为美国政府云时必须填写 clientId\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -595,7 +641,8 @@
     "after": "message:\"provider 为 custom 时必须填写 customUrl\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -608,7 +655,8 @@
     "after": "message:`提供商“${e.provider}”需要 headers 或 headersHelper`",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -621,7 +669,8 @@
     "after": "message:\"条目自身没有 command 时，此处只能填写 win32、darwin 和 linux\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -634,7 +683,8 @@
     "after": "message:\"有其他值但未填写 command，且条目自身也没有 command。请添加 command，或移除这些值。\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -647,7 +697,8 @@
     "after": "message:\"MCP 服务器名称必须唯一\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -660,7 +711,8 @@
     "after": "message:\"最多只能有一个内置 WebSearch 条目\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -673,7 +725,8 @@
     "after": "message:\"必须填写 issuer，或同时填写 authorizationUrl 和 tokenUrl\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -686,7 +739,8 @@
     "after": "message:\"必填\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -699,7 +753,8 @@
     "after": "message:\"bearerTokenType 为 access_token 时必须填写 scopes\"",
     "additionalFiles": [
       "assets/v1/c9de94b11-DZKZU3-t.js",
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -718,7 +773,8 @@
     "before": "J=\"Curated by Anthropic\"",
     "after": "J=\"Anthropic 精选\"",
     "additionalFiles": [
-      "assets/v1/c8dbdda48-CaSdRY9k.js"
+      "assets/v1/c8dbdda48-CaSdRY9k.js",
+      "assets/v1/c8dbdda48-DExnohhy.js"
     ]
   },
   {
@@ -737,7 +793,8 @@
     "before": "message:'must be a local absolute path (Windows: C:/... or C:\\\\...) with no ~, .., UNC or \\\\??\\\\ prefix, not containing \" % CR LF NUL, and not ending with a dot or space'",
     "after": "message:\"必须是本地绝对路径（Windows：C:/... 或 C:\\\\...），不能以 ~、..、UNC 或 \\\\??\\\\ 开头，不能包含 \\\" % CR LF NUL，也不能以点或空格结尾\"",
     "additionalFiles": [
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -749,7 +806,8 @@
     "before": "message:'must be a local absolute path (Windows: C:/... or C:\\\\...) with no ~, .., UNC or \\\\??\\\\ prefix, not containing \" % CR LF NUL, and not ending with a dot or space; it may begin with %LOCALAPPDATA%\\\\'",
     "after": "message:\"必须是本地绝对路径（Windows：C:/... 或 C:\\\\...），不能以 ~、..、UNC 或 \\\\??\\\\ 开头，不能包含 \\\" % CR LF NUL，也不能以点或空格结尾；可使用 %LOCALAPPDATA%\\\\ 作为开头\"",
     "additionalFiles": [
-      "assets/v1/c9de94b11-CYAzUuIB.js"
+      "assets/v1/c9de94b11-CYAzUuIB.js",
+      "assets/v1/c9de94b11-vRyZhcnv.js"
     ]
   },
   {
@@ -757,6 +815,9 @@
     "english": "Plan",
     "translation": "计划",
     "before": "plan:m({defaultMessage:\"Plan\",id:\"fz0z4cb6fQ\"})",
-    "after": "plan:m({defaultMessage:\"Plan\",id:\"uXinBOnUV7\"})"
+    "after": "plan:m({defaultMessage:\"Plan\",id:\"uXinBOnUV7\"})",
+    "additionalFiles": [
+      "assets/v1/c8dbdda48-DExnohhy.js"
+    ]
   }
 ]

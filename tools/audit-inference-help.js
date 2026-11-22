@@ -13,7 +13,7 @@ const fixtures = [
   require('../test/fixtures/inference-help-5.11492.json'),
   require('../test/fixtures/inference-help-6.6395.json'),
   require('../test/fixtures/inference-help-6.28899.json')
-];
+].flatMap(fixture => [fixture, ...(fixture.variants || []).map(variant => ({ ...fixture, ...variant }))]);
 const translations = require('../dict/long-docs-zh-CN.json');
 const hashText = text => crypto.createHash('sha256').update(text).digest('hex');
 const byHash = new Map(Object.keys(translations).map(text => [hashText(text), text]));

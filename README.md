@@ -16,7 +16,7 @@
 </p>
 
 
-用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。Windows 实机适配版本为 **6.28899.2**。
+用于 Anthropic **Claude Desktop** 的可恢复中文汉化工具包。Windows 实机适配版本为 **6.28899.6**。
 
 > **Windows 10 / 11（x64）** 请从 [Anthropic 下载 Claude Desktop Win32（Squirrel）版](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect)，然后按 [Windows 快速开始](#windows) 安装汉化。
 
@@ -40,7 +40,7 @@
 
 本项目专注客户端界面汉化。四层资源分别是 Shell 原生菜单、Ion/Web UI、动态模型说明与折叠长文档。第三方推理配置页面属于汉化范围；模型路由、凭据管理和账号功能继续由客户端及 CC Switch 等原有工具负责。
 
-本轮在官网 Squirrel 版 Windows **6.28899.2** 上核对原始资源和原界面汉化。macOS/Linux 沿用既有散装资源布局。
+本轮适配官网 Squirrel 版 Windows **6.28899.6**。macOS/Linux 沿用既有散装资源布局。
 
 ---
 
@@ -66,13 +66,15 @@
 
 安装脚本会在缺少依赖时执行 `npm ci --ignore-scripts`。首次直接使用 CLI 前，请运行 `npm ci`，然后用 `node cli.js install` 或 `npm run patch` 安装汉化。
 
-实机的 Win32 客户端从 6.6395.0 更新到 6.28899.2 后，运行 `install.bat` 重新应用汉化，并通过原有的 Squirrel 快捷方式冷启动新版。已核对实际主界面、设置和权限菜单。
+实机的 Win32 客户端从 6.28899.2 更新到 6.28899.6 后，运行 `install.bat` 重新应用汉化，并通过原有的 Squirrel 快捷方式冷启动新版。
 
 另在 Windows x64 的 Win32 6.6395.0 上，使用 CC Switch 配置的第三方推理，通过统一 Claude 入口启动 Cowork 任务。客户端记录了任务成功结束，生成的 CSV 文件也通过逐行校验。这个结果适用于上述测试环境和文件生成任务。
 
 6.28899.2 增补 214 项原生外壳文案、181 项界面文案和 53 篇配置说明，覆盖产物应用、第三方推理、MCP、SSH、托管设置等变更，并为新版重新核对和绑定限定文案。配置说明保留了原有的参数名、代码和链接。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-28899-2) · [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-28899-2)
 
-`npm run audit:ui` 核查新版所覆盖的 69 个模块、4,646 条界面消息及原始源码指纹。账号、模型与服务端下发文案取决于运行环境。`Unified Claude` 和 `Ultracode` 等官方功能名保留英文。
+6.28899.6 增补 13 条文案，涵盖新版提示、SSH 会话恢复菜单和无障碍标签，并为新版重新绑定 59 处限定文案。180 篇折叠说明的原文与 6.28899.2 一致，沿用已审阅的译文。[桌面端更新日志](https://claude.com/docs/cowork/changelog#v6-28899-6) · [配置更新日志](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-28899-6)
+
+`npm run audit:ui` 核查新版所覆盖的 70 个模块、4,685 条界面消息及原始源码指纹。账号、模型与服务端下发文案取决于运行环境。`Unified Claude` 和 `Ultracode` 等官方功能名保留英文。
 
 Code 的 `Routines` 是 `Scheduled tasks` 的旧名，同一功能的标题、操作和提示统一译为“定时任务”。原文区分本地、云端或不同触发方式时，译文保留这些区别。[Claude Code 定时任务](https://code.claude.com/docs/en/routines)
 
@@ -82,7 +84,7 @@ Code 的 `Routines` 是 `Scheduled tasks` 的旧名，同一功能的标题、�
 
 #### Windows
 
-1. 下载并安装上方链接中的官方 Win32 版。安装器可能是较早的版本。启动 Claude 后从“帮助”检查更新，待更新并重启后，从“关于”确认版本。本轮已验证 **6.28899.2**。
+1. 下载并安装上方链接中的官方 Win32 版。安装器可能是较早的版本。启动 Claude 后从“帮助”检查更新，待更新并重启后，从“关于”确认版本。本轮已验证 **6.28899.6**。
 2. 保存工作并完全退出 Claude，再运行本项目的 `install.bat`。如果还装着 MSIX，可用 `install.bat --path "%LOCALAPPDATA%\AnthropicClaude"` 显式选择 Win32。恢复英文时运行 `uninstall.bat`，如使用了 `--path`，请传入相同路径。
 3. 平时通过开始菜单或快捷方式启动。可选命令 `node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup` 会创建一个指向 Squirrel 官方启动入口的快捷方式。Claude 更新后，重新运行汉化安装脚本即可。
 

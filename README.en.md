@@ -15,7 +15,7 @@
   <a href="README.md">简体中文</a> | <a href="README.en.md">English</a>
 </p>
 
-A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. The verified Windows client version is **6.28899.2**.
+A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. The verified Windows client version is **6.28899.6**.
 
 > **Windows 10 / 11 (x64)** users can [download Claude Desktop Win32 (Squirrel) from Anthropic](https://releases.claude.com/api/desktop/win32/x64/exe/latest/redirect) and follow the [Windows quick start](#windows) to install the localization.
 
@@ -39,7 +39,7 @@ A recoverable Chinese localization toolkit for Anthropic **Claude Desktop**. The
 
 This project localizes the client UI through four layers: native Shell menus, Ion/Web UI, dynamic model descriptions and foldable long documents. Third-party inference settings are in scope for translation; routing, credential management and account features remain with the client and existing tools such as CC Switch.
 
-This release was checked against the original resources and in-place localization of the official Windows **6.28899.2** Squirrel client. Existing loose-resource layouts on macOS/Linux remain supported.
+This release supports the official Windows **6.28899.6** Squirrel client. Existing loose-resource layouts on macOS/Linux remain supported.
 
 ---
 
@@ -65,13 +65,15 @@ After installing the localization, select Chinese (Simplified) in the target cli
 
 The install scripts run `npm ci --ignore-scripts` when dependencies are missing. Before using the CLI directly for the first time, run `npm ci`, then apply the localization with `node cli.js install` or `npm run patch`.
 
-On a Windows test machine, the Win32 client was updated from 6.6395.0 to 6.28899.2. We reapplied the localization with `install.bat`, cold-started the new build with the existing Squirrel shortcut, and checked the main interface, Settings, and permission menu.
+On a Windows test machine, the Win32 client was updated from 6.28899.2 to 6.28899.6. We reapplied the localization with `install.bat` and cold-started the current build with the existing Squirrel shortcut.
 
 We also launched a Cowork task from the unified Claude entry on Windows x64 Win32 6.6395.0 with third-party inference configured through CC Switch. The client logged successful task completion, and we verified the generated CSV row by row. This result covers the tested setup and file-generation task.
 
 The 6.28899.2 update adds 214 native shell strings, 181 interface strings, and 53 configuration help translations. It covers changes to artifact apps, third-party inference, MCP, SSH, and managed settings, and updates the module scopes for context-specific translations. Configuration help preserves the original keys, code, and links. [Desktop changelog](https://claude.com/docs/cowork/changelog#v6-28899-2) · [Configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-28899-2)
 
-`npm run audit:ui` checks the 69 reviewed modules and 4,646 UI messages against their original source fingerprints. Account, model and service-delivered messages depend on the runtime environment. Official feature names such as `Unified Claude` and `Ultracode` are kept in English.
+The 6.28899.6 update adds 13 translations for new messages, the SSH session picker, and accessibility labels. It rebinds 59 context-specific translations to the current modules. The 180 reviewed configuration help texts are unchanged from 6.28899.2 and use the existing translations. [Desktop changelog](https://claude.com/docs/cowork/changelog#v6-28899-6) · [Configuration changelog](https://claude.com/docs/third-party/claude-desktop/configuration-changelog#v6-28899-6)
+
+`npm run audit:ui` checks the 70 reviewed modules and 4,685 UI messages against their original source fingerprints. Account, model and service-delivered messages depend on the runtime environment. Official feature names such as `Unified Claude` and `Ultracode` are kept in English.
 
 Claude Code formerly called Scheduled tasks “Routines.” Labels, actions, and notices for the same feature now use the same Chinese term, 定时任务. The translation preserves distinctions between local and cloud tasks and between trigger types. [Claude Code scheduled tasks](https://code.claude.com/docs/en/routines)
 
@@ -81,7 +83,7 @@ Claude Code formerly called Scheduled tasks “Routines.” Labels, actions, and
 
 #### Windows
 
-1. Download and install the official Win32 edition linked above. The installer may be an earlier build. Open Claude and check for updates from Help. After the update and restart, check the version in About. We verified **6.28899.2**.
+1. Download and install the official Win32 edition linked above. The installer may be an earlier build. Open Claude and check for updates from Help. After the update and restart, check the version in About. We verified **6.28899.6**.
 2. Save your work and exit Claude completely, then run this project's `install.bat`. If MSIX is also installed, use `install.bat --path "%LOCALAPPDATA%\AnthropicClaude"` to select Win32. To restore English, run `uninstall.bat` with the same `--path` if you specified one.
 3. Open Claude from the Start menu or a shortcut. Optionally run `node cli.js shortcut --path "%LOCALAPPDATA%\AnthropicClaude" --output "%USERPROFILE%\Desktop\Claude.lnk" --no-backup` to create a shortcut pointing to the official Squirrel launcher. Run the localization installer again after Claude updates.
 

@@ -200,5 +200,28 @@
     "05f1a232d34a99e1ee5bd155db31c3184d187049f3195a120f1b563ec5ea90d3",
     "9bd56906678e34fb53e7c71dde0c07c2fc3a6678d83d721b213753f9f3683739",
     "43d07d92e3dfe73d1f66b1191fe27f6b154e67efd57cb0461c3a893dc3c6578f"
+  ],
+  "variants": [
+    {
+      "clientVersion": "6.28899.6",
+      "sourceFiles": [
+        {
+          "file": "assets/v1/c04850347-BiqbTh6S.js",
+          "sha256": "818dffe356a1cbd6add529b6798b6353b0445e95cde07ca44a2203ca32b4d1d2"
+        },
+        {
+          "file": "assets/v1/c5c7984e1-OKDxFsHc.js",
+          "sha256": "5ab3ef3d637458e84832299a61c89c7c9da05fdcaa647a63c1894c0b5a7746e7"
+        },
+        {
+          "file": "assets/v1/c8dbdda48-DExnohhy.js",
+          "sha256": "7c358b2b9412759cb75ca62749658fdeda3ea10b730beb0a2e266e404994cbdf"
+        },
+        {
+          "file": "assets/v1/c9de94b11-vRyZhcnv.js",
+          "sha256": "76bb38e8457e71c20f2a6c670847fe3a2770fd62cdacb3c82cadf0fa66a61cbc"
+        }
+      ]
+    }
   ]
 }

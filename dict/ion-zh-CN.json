@@ -34077,5 +34077,18 @@
   "qpj0hoLSig": "请放大此窗口以继续。",
   "ec1T8F+Ro8": "已归档会话",
   "sV2Xbk5oFm": "已删除会话",
-  "DQdW9E6p2Q": "为 {count} 项设置模型"
+  "DQdW9E6p2Q": "为 {count} 项设置模型",
+  "J5MyIE7Qp5": "会话不会使用你为 {name} 设置的值。",
+  "okFGaP/EGD": "部分会话未列出。要恢复其中一个，请在主机上的此文件夹中运行 <code>claude --resume</code>。",
+  "W90cZ2JcPO": "会话工具",
+  "dsFi2Ih7yW": "最近使用的文件夹",
+  "1iph2HcRqV": "无法打开主机上的此文件夹。请选择其他文件夹。",
+  "3Tz1crT63D": "此计算机尚未信任此文件夹，因此无法列出其中的会话。",
+  "a8YVDZWUc2": "没有符合筛选条件的会话。",
+  "CaUZTCpozF": "在主机上的此文件夹中找不到 Claude Code 会话。",
+  "gCjM+q6GHt": "你的组织设置不允许从此主机或文件夹恢复会话。请联系 IT 团队。",
+  "jicoEz7+I8": "按标题或文件夹搜索",
+  "PLjUr+g/Rt": "无法列出此主机上的会话。要恢复会话，请在主机上的此文件夹中运行 claude --resume。",
+  "sC57pcGKUr": "无法加载主机上的会话。请等主机连上后重试。",
+  "vV5jt5fKHu": "暂不支持从 SSH 主机恢复会话。"
 }

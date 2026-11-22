@@ -43,6 +43,9 @@ const labels = {
   ZTK8vIOPS5: '新建定时任务', 'nqu1699+6Q': '暂无定时任务。',
   '/2UegjsIBr': '总结和后续建议', 'biG+krWPOa': '搜索文件夹…',
   '3Wav1LT0EM': '无法使用 SSH。模型提供商的端点在此计算机上，远程主机无法访问。',
+  J5MyIE7Qp5: '会话不会使用你为 {name} 设置的值。',
+  'okFGaP/EGD': '部分会话未列出。要恢复其中一个，请在主机上的此文件夹中运行 <code>claude --resume</code>。',
+  W90cZ2JcPO: '会话工具', dsFi2Ih7yW: '最近使用的文件夹',
   fz0z4cb6fQ: '套餐', 'P6EE/aQ7SS': 'Token 用量', ZON8uMn14w: '个 Token'
 };
 for (const [id, text] of Object.entries(labels)) assert.equal(zh[id], text, `Reported UI label ${id}`);
